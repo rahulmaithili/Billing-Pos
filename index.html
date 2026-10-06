@@ -2665,6 +2665,561 @@
       size: 80mm auto;
       margin: 0;
     }
+
+    /* Header Theme Menu & Palette Selector */
+    .thm-dd {
+      position: relative;
+    }
+    .thm-menu {
+      position: absolute;
+      right: 0;
+      top: calc(100% + 10px);
+      width: 320px;
+      background: #fff;
+      border: 1px solid #e8ecf1;
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.16);
+      padding: 14px;
+      display: none;
+      z-index: 300;
+    }
+    .thm-dd.open .thm-menu {
+      display: block;
+    }
+    .thm-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #f0f3f6;
+      margin-bottom: 12px;
+    }
+    .thm-lbl {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #2b3541;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tgl {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+      cursor: pointer;
+    }
+    .tgl input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .tgl-track {
+      position: absolute;
+      inset: 0;
+      background: #cbd5e1;
+      border-radius: 24px;
+      transition: .3s;
+    }
+    .tgl-track:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: .3s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    .tgl input:checked + .tgl-track {
+      background: var(--navy-accent);
+    }
+    .tgl input:checked + .tgl-track:before {
+      transform: translateX(20px);
+    }
+    .thm-sec-h {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      color: #718096;
+      margin-bottom: 8px;
+    }
+    .thm-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 7px;
+      max-height: 210px;
+      overflow-y: auto;
+      padding: 4px;
+      margin: 0 -4px 10px;
+    }
+    .thm-sw {
+      width: 38px;
+      height: 38px;
+      border-radius: 6px;
+      overflow: hidden;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      border: 2px solid transparent;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      transition: transform .15s, border-color .15s;
+    }
+    .thm-sw:hover {
+      transform: scale(1.1);
+      border-color: #2b3541;
+    }
+    .thm-sw.on {
+      border-color: #000;
+      transform: scale(1.12);
+      box-shadow: 0 0 0 2px var(--navy-accent);
+    }
+    .thm-sw span {
+      flex: 1;
+      display: block;
+      width: 100%;
+    }
+    .thm-hint {
+      font-size: 11px;
+      color: #8896a6;
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+    .thm-foot {
+      display: flex;
+      gap: 8px;
+    }
+    .thm-reset {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid #cbd5e1;
+      background: #f8fafc;
+      color: #475569;
+      border-radius: 5px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .thm-reset:hover {
+      background: #edf2f7;
+    }
+    .thm-apply {
+      flex: 1;
+      padding: 8px;
+      border: none;
+      background: var(--navy-accent);
+      color: #fff;
+      border-radius: 5px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .thm-apply:hover {
+      opacity: .92;
+    }
+
+    /* Appearance gallery in Settings */
+    .thm-bar {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .thm-chips {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      flex: 1;
+    }
+    .thm-chip {
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid #e2e8f0;
+      background: #fff;
+      color: #4a5568;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all .2s;
+    }
+    .thm-chip:hover, .thm-chip.on {
+      background: var(--navy-primary);
+      color: #fff;
+      border-color: var(--navy-primary);
+    }
+    .thm-search {
+      position: relative;
+      min-width: 220px;
+    }
+    .thm-search i {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #a0aec0;
+      font-size: 13px;
+    }
+    .thm-search input {
+      padding-left: 34px !important;
+      border-radius: 20px !important;
+      height: 36px;
+      border: 1px solid #e2e8f0;
+      font-size: 13px !important;
+      width: 100%;
+    }
+    .theme-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
+      max-height: 480px;
+      overflow-y: auto;
+      padding: 6px;
+    }
+    .theme-card {
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: pointer;
+      background: #fff;
+      transition: all .2s;
+    }
+    .theme-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+      border-color: var(--navy-accent);
+    }
+    .theme-card.previewing {
+      border-color: var(--navy-accent);
+      box-shadow: 0 0 0 2px var(--navy-accent);
+    }
+    .theme-card.active {
+      border-color: #22c55e;
+      box-shadow: 0 0 0 2px #22c55e;
+    }
+    .theme-swatch {
+      height: 60px;
+      display: flex;
+    }
+    .theme-swatch span {
+      flex: 1;
+      height: 100%;
+    }
+    .theme-body {
+      padding: 10px 12px;
+    }
+    .theme-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1a202c;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .theme-id {
+      font-size: 11px;
+      color: #718096;
+      margin-top: 3px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .theme-default-badge {
+      background: #3b82f6;
+      color: #fff;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: 3px;
+    }
+    .theme-preview-panel {
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 18px;
+      background: #f8fafc;
+      margin-top: 15px;
+    }
+    .tp-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .tp-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1a202c;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tp-chip {
+      background: #edf2f7;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #4a5568;
+    }
+    .tp-tag.applied {
+      background: #22c55e;
+      color: #fff;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .tp-mock {
+      display: flex;
+      height: 130px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+    .tp-side {
+      width: 44px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px 0;
+      gap: 10px;
+      color: rgba(255,255,255,0.7);
+      font-size: 11px;
+    }
+    .tp-side .tp-logo {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.3);
+      margin-bottom: 6px;
+    }
+    .tp-body2 {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .tp-nav {
+      height: 32px;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+    }
+    .tp-h {
+      width: 70px;
+      height: 8px;
+      border-radius: 4px;
+    }
+    .tp-av {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+    }
+    .tp-content {
+      flex: 1;
+      padding: 12px;
+    }
+    .tp-kpis {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .tp-kpi {
+      padding: 8px 10px;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+    }
+    .tp-kpi-n {
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.1;
+    }
+    .tp-kpi-l {
+      font-size: 9.5px;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      opacity: .85;
+      margin-top: 3px;
+    }
+
+    /* Top loading bar */
+    .top-loadbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      z-index: 9999;
+      background: rgba(0,0,0,0.05);
+      overflow: hidden;
+    }
+    .top-loadbar span {
+      display: block;
+      height: 100%;
+      width: 40%;
+      background: var(--navy-accent);
+      animation: loadbarAnim 1.2s infinite ease-in-out;
+    }
+    @keyframes loadbarAnim {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(350%); }
+    }
+
+    /* Dark Mode Core Styles */
+    body.dark-mode {
+      background: #12161c !important;
+      color: #e2e8f0 !important;
+    }
+    body.dark-mode .navbar {
+      background: #1a1f26 !important;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+      border: 1px solid #2d3748 !important;
+    }
+    body.dark-mode .nav-page-title {
+      color: #f1f5f9 !important;
+    }
+    body.dark-mode .nav-crumb, body.dark-mode .nav-welcome-hi {
+      color: #8292a2 !important;
+    }
+    body.dark-mode .nav-welcome strong {
+      color: #e2e8f0 !important;
+    }
+    body.dark-mode .nav-btn {
+      color: #cbd5e1 !important;
+    }
+    body.dark-mode .nav-btn:hover {
+      background: #28313e !important;
+    }
+    body.dark-mode .nav-dd-menu, body.dark-mode .thm-menu {
+      background: #1a1f26 !important;
+      border-color: #2d3748 !important;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
+      color: #e2e8f0 !important;
+    }
+    body.dark-mode .thm-row {
+      border-color: #2d3748 !important;
+    }
+    body.dark-mode .thm-lbl {
+      color: #e2e8f0 !important;
+    }
+    body.dark-mode .thm-sec-h {
+      color: #94a3b8 !important;
+    }
+    body.dark-mode .thm-reset {
+      background: #252d38 !important;
+      border-color: #3b4656 !important;
+      color: #cbd5e1 !important;
+    }
+    body.dark-mode .nav-dd-menu a, body.dark-mode .nav-dd-menu button {
+      color: #cbd5e1 !important;
+    }
+    body.dark-mode .nav-dd-menu a:hover, body.dark-mode .nav-dd-menu button:hover {
+      background: #28313e !important;
+      color: #fff !important;
+    }
+    body.dark-mode .nav-dd-head {
+      border-color: #2d3748 !important;
+    }
+    body.dark-mode .nav-dd-head .dd-title {
+      color: #f1f5f9 !important;
+    }
+    body.dark-mode .sidebar {
+      background: #161b22 !important;
+      border-right: 1px solid #2d3748 !important;
+    }
+    body.dark-mode .sidebar-menu button {
+      color: #cbd5e1 !important;
+    }
+    body.dark-mode .sidebar-menu button:hover {
+      background: #232b36 !important;
+      color: #fff !important;
+    }
+    body.dark-mode .data-section, body.dark-mode .lte-card, body.dark-mode .card,
+    body.dark-mode .pos-container, body.dark-mode .pos-cart-panel, body.dark-mode .pos-grid-panel,
+    body.dark-mode .about-card, body.dark-mode .modal {
+      background: #1a1f26 !important;
+      border-color: #2d3748 !important;
+      color: #e2e8f0 !important;
+    }
+    body.dark-mode .lte-card-header, body.dark-mode .section-header, body.dark-mode .modal-header {
+      border-color: #2d3748 !important;
+      color: #f1f5f9 !important;
+    }
+    body.dark-mode .lte-card-title, body.dark-mode h2, body.dark-mode h3, body.dark-mode h4 {
+      color: #f1f5f9 !important;
+    }
+    body.dark-mode input, body.dark-mode select, body.dark-mode textarea {
+      background: #242c37 !important;
+      border-color: #3b4656 !important;
+      color: #f1f5f9 !important;
+    }
+    body.dark-mode input:focus, body.dark-mode select:focus, body.dark-mode textarea:focus {
+      border-color: var(--navy-accent) !important;
+    }
+    body.dark-mode .searchable-dropdown-input {
+      background: #242c37 !important;
+      border-color: #3b4656 !important;
+      color: #f1f5f9 !important;
+    }
+    body.dark-mode .searchable-dropdown-list {
+      background: #1a1f26 !important;
+      border-color: #3b4656 !important;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5) !important;
+    }
+    body.dark-mode .searchable-dropdown-item {
+      color: #cbd5e1 !important;
+    }
+    body.dark-mode .searchable-dropdown-item:hover {
+      background: #28313e !important;
+      color: #fff !important;
+    }
+    body.dark-mode .dataTable, body.dark-mode table {
+      color: #e2e8f0 !important;
+    }
+    body.dark-mode table.dataTable tbody tr {
+      background-color: #1a1f26 !important;
+    }
+    body.dark-mode table.dataTable tbody tr:hover {
+      background-color: #242c37 !important;
+    }
+    body.dark-mode table.dataTable thead th {
+      background-color: #242c37 !important;
+      color: #f1f5f9 !important;
+      border-color: #3b4656 !important;
+    }
+    body.dark-mode .dataTables_wrapper .dataTables_info,
+    body.dark-mode .dataTables_wrapper .dataTables_paginate {
+      color: #cbd5e1 !important;
+    }
+    body.dark-mode .thm-chip {
+      background: #242c37 !important;
+      border-color: #3b4656 !important;
+      color: #cbd5e1 !important;
+    }
+    body.dark-mode .theme-card {
+      background: #242c37 !important;
+      border-color: #3b4656 !important;
+    }
+    body.dark-mode .theme-name {
+      color: #f1f5f9 !important;
+    }
+    body.dark-mode .theme-preview-panel {
+      background: #202731 !important;
+      border-color: #3b4656 !important;
+    }
+    body.dark-mode .tp-title {
+      color: #f1f5f9 !important;
+    }
   </style>
 </head>
 
@@ -3113,6 +3668,202 @@ seedDemoData();
   <script type="text/babel">
     const { useState, useEffect, useRef, useMemo, useCallback, useDeferredValue } = React;
 
+    // guarded storage — private mode / blocked storage must never throw mid-render
+    const ls = {
+      get: (k, d = null) => { try { const v = localStorage.getItem(k); return v == null ? d : v; } catch (e) { return d; } },
+      set: (k, v) => { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch (e) {} },
+      json: (k, d = null) => { try { return JSON.parse(localStorage.getItem(k)) || d; } catch (e) { return d; } },
+    };
+
+    // ============== UI Palette Registry (36 Curated Modern Palettes) ==============
+    // cols per theme: id | name | primary | secondary | bg | card | accent | onAccent
+    const UI_THEMES = [
+      // Section 1 — Classic enterprise
+      { id:'UI 1',  name:'Enterprise Navy',      primary:'#1E3A5F', secondary:'#4F6D8C', bg:'#F7F9FC', card:'#FFFFFF', accent:'#5B8DEF', onAccent:'#FFFFFF' },
+      { id:'UI 2',  name:'Graphite & Cyan',      primary:'#2C313C', secondary:'#49515F', bg:'#F5F7FA', card:'#FFFFFF', accent:'#00B8D9', onAccent:'#FFFFFF' },
+      { id:'UI 3',  name:'Forest Executive',     primary:'#234E52', secondary:'#52796F', bg:'#F8FAF8', card:'#FFFFFF', accent:'#84A98C', onAccent:'#FFFFFF' },
+      { id:'UI 4',  name:'Walnut & Sand',        primary:'#4E3D32', secondary:'#7B6855', bg:'#FAF7F2', card:'#FFFFFF', accent:'#C49A6C', onAccent:'#FFFFFF' },
+      { id:'UI 5',  name:'Emerald Corporate',    primary:'#0F766E', secondary:'#4CAF94', bg:'#F5FBFA', card:'#FFFFFF', accent:'#22C55E', onAccent:'#FFFFFF' },
+      { id:'UI 6',  name:'Mocha Executive',      primary:'#5B4636', secondary:'#8B7355', bg:'#FCFAF7', card:'#FFFFFF', accent:'#D4A373', onAccent:'#FFFFFF' },
+      { id:'UI 7',  name:'Charcoal & Soft Gold', primary:'#2B2F36', secondary:'#4A4F57', bg:'#F7F7F7', card:'#FFFFFF', accent:'#D4AF37', onAccent:'#222222' },
+      // Section 2 — Latest SaaS 2026
+      { id:'UIv1', name:'Zinc & Sky',           primary:'#18181B', secondary:'#3F3F46', bg:'#FAFAFA', card:'#FFFFFF', accent:'#0EA5E9', onAccent:'#FFFFFF' },
+      { id:'UIv2', name:'Ink & Violet',         primary:'#0F0F12', secondary:'#27272A', bg:'#FAFAFA', card:'#FFFFFF', accent:'#8B5CF6', onAccent:'#FFFFFF' },
+      { id:'UIv3', name:'Slate & Rose',         primary:'#1E293B', secondary:'#475569', bg:'#F8FAFC', card:'#FFFFFF', accent:'#F43F5E', onAccent:'#FFFFFF' },
+      { id:'UIv4', name:'Stone & Amber',        primary:'#292524', secondary:'#57534E', bg:'#FAFAF9', card:'#FFFFFF', accent:'#F59E0B', onAccent:'#222222' },
+      { id:'UIv5', name:'Mineral Teal',         primary:'#134E4A', secondary:'#5F7A78', bg:'#F4F7F6', card:'#FFFFFF', accent:'#2DD4BF', onAccent:'#134E4A' },
+      { id:'UIv6', name:'Paper & Copper',       primary:'#3F2E24', secondary:'#6B5344', bg:'#FBF8F4', card:'#FFFFFF', accent:'#C47B4A', onAccent:'#FFFFFF' },
+      { id:'UIv7', name:'Obsidian & Mint',      primary:'#111827', secondary:'#374151', bg:'#F9FAFB', card:'#FFFFFF', accent:'#34D399', onAccent:'#111827' },
+      { id:'UIv8', name:'Cloud & Indigo Soft',  primary:'#312E81', secondary:'#4C51BF', bg:'#F5F5FF', card:'#FFFFFF', accent:'#818CF8', onAccent:'#FFFFFF' },
+      // Section 3 — 2026 Trends
+      { id:'UIv9',  name:'Aurora Violet',       primary:'#1A1025', secondary:'#3B2A52', bg:'#FAF8FC', card:'#FFFFFF', accent:'#A78BFA', onAccent:'#1A1025' },
+      { id:'UIv10', name:'Midnight Neon',       primary:'#0A0A0F', secondary:'#1C1C28', bg:'#F7F7FB', card:'#FFFFFF', accent:'#22D3EE', onAccent:'#0A0A0F' },
+      { id:'UIv11', name:'Soft Coral SaaS',     primary:'#1F2937', secondary:'#4B5563', bg:'#FFF9F7', card:'#FFFFFF', accent:'#FB7185', onAccent:'#FFFFFF' },
+      { id:'UIv12', name:'Arctic Frost',        primary:'#0C4A6E', secondary:'#0369A1', bg:'#F0F9FF', card:'#FFFFFF', accent:'#38BDF8', onAccent:'#0C4A6E' },
+      { id:'UIv13', name:'Quiet Olive',         primary:'#1C1917', secondary:'#44403C', bg:'#FAFAF5', card:'#FFFFFF', accent:'#A3B18A', onAccent:'#1C1917' },
+      { id:'UIv14', name:'Ink & Lime',          primary:'#09090B', secondary:'#27272A', bg:'#FAFAFA', card:'#FFFFFF', accent:'#A3E635', onAccent:'#09090B' },
+      { id:'UIv15', name:'Rose Quartz',         primary:'#3F1D2E', secondary:'#6B3A4F', bg:'#FDF8FA', card:'#FFFFFF', accent:'#E879A9', onAccent:'#FFFFFF' },
+      { id:'UIv16', name:'Carbon Electric',     primary:'#111827', secondary:'#1F2937', bg:'#F8FAFC', card:'#FFFFFF', accent:'#6366F1', onAccent:'#FFFFFF' },
+      { id:'UIv17', name:'Warm Terracotta',     primary:'#292524', secondary:'#57534E', bg:'#FFFBF5', card:'#FFFFFF', accent:'#E07A5F', onAccent:'#FFFFFF' },
+      { id:'UIv18', name:'Ocean Deep',          primary:'#0B1D36', secondary:'#1B3A5F', bg:'#F4F8FC', card:'#FFFFFF', accent:'#14B8A6', onAccent:'#0B1D36' },
+      // Section 4 — Designer Picks 2026
+      { id:'UIv19', name:'Cloud Dancer',        primary:'#141414', secondary:'#2B2F36', bg:'#F0EEE9', card:'#FFFFFF', accent:'#BFD3E7', onAccent:'#141414' },
+      { id:'UIv20', name:'Soft Ember Glow',     primary:'#2B1538', secondary:'#5A4B8A', bg:'#EDE7E3', card:'#FFFFFF', accent:'#FF6A3D', onAccent:'#FFFFFF' },
+      { id:'UIv21', name:'Mood Mode Cyan',      primary:'#0B0D10', secondary:'#151A21', bg:'#F4F6F8', card:'#FFFFFF', accent:'#40E0FF', onAccent:'#0B0D10' },
+      { id:'UIv22', name:'Neon Lime Pop',       primary:'#070A0F', secondary:'#1A1F2E', bg:'#F7F8FA', card:'#FFFFFF', accent:'#B6FF3B', onAccent:'#070A0F' },
+      { id:'UIv23', name:'Laser Magenta',       primary:'#0F0A12', secondary:'#2A1A28', bg:'#FDF8FC', card:'#FFFFFF', accent:'#FF3BD4', onAccent:'#FFFFFF' },
+      { id:'UIv24', name:'Holo Lilac AI',       primary:'#07070A', secondary:'#1A1528', bg:'#F3F0FF', card:'#FFFFFF', accent:'#B9A7FF', onAccent:'#070A0F' },
+      { id:'UIv25', name:'Plasma Teal',         primary:'#0A1214', secondary:'#163038', bg:'#F0FFFC', card:'#FFFFFF', accent:'#00F5D4', onAccent:'#0A1214' },
+      { id:'UIv26', name:'Eco Digital',         primary:'#101417', secondary:'#316263', bg:'#F5F7F4', card:'#FFFFFF', accent:'#C36A4A', onAccent:'#FFFFFF' },
+      { id:'UIv27', name:'Warm Mahogany',       primary:'#221A18', secondary:'#7A2E2A', bg:'#F5EFE7', card:'#FFFFFF', accent:'#C9A46B', onAccent:'#221A18' },
+      { id:'UIv28', name:'Fiery Coral Ruby',    primary:'#1A0A0C', secondary:'#4A1520', bg:'#FFF8F7', card:'#FFFFFF', accent:'#FF5A4A', onAccent:'#FFFFFF' },
+      { id:'UIv29', name:'Signal Blue Tech',    primary:'#0A0F1A', secondary:'#152040', bg:'#F5F7FF', card:'#FFFFFF', accent:'#3B7BFF', onAccent:'#FFFFFF' },
+      { id:'UIv30', name:'Fig & Pear',          primary:'#2D1F24', secondary:'#5C3D45', bg:'#FBF7F2', card:'#FFFFFF', accent:'#A8C256', onAccent:'#2D1F24' },
+      // Section 5 — X / SaaS product picks
+      { id:'UIv31', name:'Fintech Blurple',     primary:'#0A2540', secondary:'#425466', bg:'#F6F9FC', card:'#FFFFFF', accent:'#635BFF', onAccent:'#FFFFFF' },
+      { id:'UIv32', name:'Violet Flow',         primary:'#1C1D22', secondary:'#44454D', bg:'#F7F8F8', card:'#FFFFFF', accent:'#5E6AD2', onAccent:'#FFFFFF' },
+      { id:'UIv33', name:'Mono Pro',            primary:'#000000', secondary:'#525252', bg:'#FAFAFA', card:'#FFFFFF', accent:'#171717', onAccent:'#FFFFFF' },
+      { id:'UIv34', name:'Warm Analytics',      primary:'#7C2D12', secondary:'#9A3412', bg:'#FFF7ED', card:'#FFFFFF', accent:'#F97316', onAccent:'#222222' },
+      // Section 6 — brand palettes
+      { id:'UIv35', name:'Ember & Teal',        primary:'#075056', secondary:'#233038', bg:'#FDF6E3', card:'#FFFFFF', accent:'#FF5B04', onAccent:'#233038' },
+      // Section 7 - trust & security
+      { id:'UItrust', name:'Trust & Security',  primary:'#0F172A', secondary:'#1E293B', bg:'#F8FAFC', card:'#FFFFFF', accent:'#2563EB', onAccent:'#FFFFFF' }
+    ];
+
+    const THEME_SECTIONS = [
+      ['all', 'All', 'fa-swatchbook'],
+      ['classic', 'Classic', 'fa-building-columns'],
+      ['saas', 'SaaS 2026', 'fa-cloud'],
+      ['trend', 'Trends', 'fa-arrow-trend-up'],
+      ['designer', 'Designer', 'fa-wand-magic-sparkles'],
+      ['product', 'Product', 'fa-rocket'],
+      ['brand', 'Brand', 'fa-fire'],
+      ['trust', 'Trust', 'fa-shield-halved']
+    ];
+    const themeSec = (id) => id === 'UItrust' ? 'trust' : id.indexOf('UI ') === 0 ? 'classic'
+      : ((n) => n <= 8 ? 'saas' : n <= 18 ? 'trend' : n <= 30 ? 'designer' : n <= 34 ? 'product' : 'brand')(+id.slice(3));
+
+    const themeVars = (t) => ({
+      '--navy-primary': t.primary,
+      '--navy-dark':    t.primary,
+      '--navy-light':   t.secondary,
+      '--navy-hover':   t.secondary,
+      '--navy-accent':  t.accent,
+      '--c-secondary':  t.secondary,
+      '--c-bg':         t.bg,
+      '--c-card':       t.card,
+      '--c-on-accent':  t.onAccent,
+      '--text-primary': '#1A1A1A',
+      '--text-muted':   '#6B7280'
+    });
+    const findTheme = (id) => UI_THEMES.find(t => t.id === id) || null;
+    const applyThemeVars = (v) => { const r = document.documentElement; Object.keys(v).forEach(k => r.style.setProperty(k, v[k])); };
+    const cacheThemeVars = (v) => ls.set('app_theme_vars', v ? JSON.stringify(v) : null);
+    const THEME_KEYS = ['--navy-primary','--navy-dark','--navy-light','--navy-hover','--navy-accent','--c-secondary','--c-bg','--c-card','--c-on-accent','--text-primary','--text-muted'];
+    const clearThemeVars = () => { const r = document.documentElement; THEME_KEYS.forEach(k => r.style.removeProperty(k)); };
+    const applySavedTheme = () => {
+      clearThemeVars();
+      const raw = ls.get('app_theme_vars');
+      if (raw) {
+        try {
+          const v = JSON.parse(raw);
+          if (v) { applyThemeVars(v); return true; }
+        } catch (e) {}
+      }
+      return false;
+    };
+    // Initialize theme immediately
+    try {
+      applySavedTheme();
+      if (ls.get('app_theme_mode') === 'dark') document.body.classList.add('dark-mode');
+    } catch (e) {}
+
+    function useClickAway(ref, onAway, active = true) {
+      const cb = useRef(onAway); cb.current = onAway;
+      useEffect(() => {
+        if (!active) return;
+        const h = (e) => { if (ref.current && !ref.current.contains(e.target)) cb.current(); };
+        document.addEventListener('mousedown', h);
+        return () => document.removeEventListener('mousedown', h);
+      }, [active]);
+    }
+
+    function HeaderThemeMenu({ themeMode, onThemeToggle }) {
+      const [open, setOpen] = useState(false);
+      const [pickedId, setPickedId] = useState(ls.get('app_theme_id') || '');
+      const [dirty, setDirty] = useState(false);
+      const ref = useRef(null);
+
+      useClickAway(ref, () => setOpen(false), open);
+
+      const preview = (t) => {
+        applyThemeVars(themeVars(t));
+        setPickedId(t.id);
+        setDirty(true);
+      };
+
+      const revert = () => {
+        applySavedTheme();
+        setPickedId(ls.get('app_theme_id') || '');
+        setDirty(false);
+      };
+
+      const apply = () => {
+        const t = findTheme(pickedId);
+        if (!t) return;
+        const v = themeVars(t);
+        applyThemeVars(v);
+        cacheThemeVars(v);
+        ls.set('app_theme_id', t.id);
+        setDirty(false);
+        Swal.fire({ icon: 'success', title: 'Theme applied!', text: t.name, timer: 1400, showConfirmButton: false });
+      };
+
+      const isDark = themeMode === 'dark';
+
+      return (
+        <div className={'thm-dd' + (open ? ' open' : '')} ref={ref}>
+          <button className="nav-btn" onClick={() => setOpen(!open)} title="Themes & Dark Mode" aria-label="Themes & Dark Mode">
+            <i className="fas fa-palette"></i>
+          </button>
+          <div className="thm-menu">
+            <div className="thm-row">
+              <span className="thm-lbl">
+                <i className={'fas fa-' + (isDark ? 'moon' : 'sun')}></i> Dark Mode
+              </span>
+              <label className="tgl">
+                <input type="checkbox" checked={isDark} onChange={onThemeToggle} />
+                <span className="tgl-track"></span>
+              </label>
+            </div>
+            <div className="thm-sec">
+              <div className="thm-sec-h">Color Palette (36 Themes)</div>
+              {open && (
+                <div className="thm-grid">
+                  {UI_THEMES.map((t) => (
+                    <div key={t.id} className={'thm-sw' + (pickedId === t.id ? ' on' : '')} title={t.name + ' (' + t.id + ')'} onClick={() => preview(t)}>
+                      <span style={{ background: t.primary }}></span>
+                      <span style={{ background: t.secondary }}></span>
+                      <span style={{ background: t.accent }}></span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="thm-hint">Live preview across the entire app — tap Apply to keep it.</div>
+            <div className="thm-foot">
+              <button className="thm-reset" onClick={revert} disabled={!dirty}>
+                <i className="fas fa-rotate-left"></i> Reset
+              </button>
+              <button className="thm-apply" onClick={apply} disabled={!dirty}>
+                <i className="fas fa-check"></i> Apply
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     // app-wide config mirror - lets non-component code (money(), datatable renders, exports) read settings synchronously
     const CFG = { currency: '$', currencyCode: 'USD', taxRate: 0, taxInclusive: false, invoicePrefix: 'INV-', lowStockDefault: 5, receiptHeader: '', receiptFooter: 'Thank you for your purchase!', business: { name: 'My Business', address: '', phone: '', email: '' }, logoUrl: '' };
     function applySettings(s) {
@@ -3234,37 +3985,45 @@ seedDemoData();
       return <div className={`searchable-dropdown-item ${selected ? 'selected' : ''}`} onClick={() => onSelect(option)}>{option.label}</div>;
     });
 
-    function SearchableDropdown({ options, value, onChange, placeholder = 'Select...', label, icon, required = false }) {
+    function SearchableDropdown({ options, value, onChange, placeholder = 'Select...', label, icon, required = false, disabled = false, onAdd, addLabel = 'Add' }) {
       const [isOpen, setIsOpen] = useState(false);
       const [search, setSearch] = useState('');
+      const [adding, setAdding] = useState(false);
       const dropdownRef = useRef(null);
-      const selectedLabel = options.find(o => o.value === value)?.label || '';
-      const optIdx = useMemo(() => options.map(o => ({ o, k: o.label.toLowerCase() })), [options]);
+      const selectedLabel = (options.find(o => o.value === value) || {}).label || '';
+      const optIdx = useMemo(() => options.map(o => ({ o, k: String(o.label).toLowerCase() })), [options]);
       const dq = useDeferredValue(search).toLowerCase();
-      const filtered = useMemo(() => optIdx.filter(x => x.k.includes(dq)).map(x => x.o), [optIdx, dq]);
+      const filtered = useMemo(() => optIdx.filter(x => x.k.indexOf(dq) !== -1).map(x => x.o), [optIdx, dq]);
+      const typed = search.trim(), exact = optIdx.some(x => x.k === typed.toLowerCase());
 
-      useEffect(() => {
-        const handleClickOutside = (e) => { if (dropdownRef.current && !dropdownRef.current.contains(e.target)) { setIsOpen(false); setSearch(''); } };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-      }, []);
+      useClickAway(dropdownRef, () => { setIsOpen(false); setSearch(''); }, isOpen);
 
-      const handleSelect = useCallback((option) => { onChange(option.value); setIsOpen(false); setSearch(''); }, [onChange]);
-      const handleInputChange = (e) => { setSearch(e.target.value); if (!isOpen) setIsOpen(true); };
-      const handleInputClick = () => { setIsOpen(!isOpen); if (!isOpen) setSearch(''); };
+      const pickOpt = useCallback((o) => { onChange(o.value); setIsOpen(false); setSearch(''); }, [onChange]);
+      const addNew = () => {
+        if (!typed || adding || !onAdd) return;
+        setAdding(true);
+        Promise.resolve(onAdd(typed)).then((v) => { if (v != null && v !== '') pickOpt({ value: v }); }).finally(() => setAdding(false));
+      };
 
       return (
         <div className="form-group">
           {label && <label>{icon && <i className={icon}></i>} {label}{required && ' *'}</label>}
           <div className="searchable-dropdown" ref={dropdownRef}>
-            <input type="text" className="searchable-dropdown-input" placeholder={placeholder}
-              value={isOpen ? search : selectedLabel} onChange={handleInputChange} onClick={handleInputClick} required={required && !value} />
-            <span className={`searchable-dropdown-arrow ${isOpen ? 'open' : ''}`}><i className="fas fa-chevron-down"></i></span>
-            {isOpen && (
+            <input type="text" className="searchable-dropdown-input" placeholder={placeholder} disabled={disabled}
+              value={isOpen ? search : selectedLabel} required={required && !value}
+              onChange={(e) => { setSearch(e.target.value); if (!isOpen) setIsOpen(true); }}
+              onClick={() => { if (disabled) return; setIsOpen(!isOpen); if (!isOpen) setSearch(''); }} />
+            <span className={'searchable-dropdown-arrow' + (isOpen ? ' open' : '')}><i className="fas fa-chevron-down"></i></span>
+            {isOpen && !disabled && (
               <div className="searchable-dropdown-list">
-                <div className={`searchable-dropdown-item ${!value ? 'selected' : ''}`} onClick={() => handleSelect({ value: '', label: '' })}>{placeholder}</div>
-                {filtered.length > 0 ? filtered.map((option, idx) => <DropdownItem key={idx} option={option} selected={value === option.value} onSelect={handleSelect} />)
+                <div className={'searchable-dropdown-item' + (!value ? ' selected' : '')} onClick={() => pickOpt({ value: '', label: '' })}>{placeholder}</div>
+                {filtered.length > 0
+                  ? filtered.map((o, idx) => <DropdownItem key={o.value || idx} option={o} selected={value === o.value} onSelect={pickOpt} />)
                   : <div className="searchable-dropdown-item no-results">No results found</div>}
+                {onAdd && (typed && !exact
+                  ? <div className={'searchable-dropdown-item sd-add' + (adding ? ' busy' : '')} onClick={addNew}>
+                      <i className={'fas ' + (adding ? 'fa-spinner fa-spin' : 'fa-plus')}></i> {addLabel} "{typed}"</div>
+                  : !typed && <div className="searchable-dropdown-item sd-add muted"><i className="fas fa-plus"></i> Type to add new</div>)}
               </div>
             )}
           </div>
@@ -3501,7 +4260,7 @@ seedDemoData();
       );
     }
 
-    function Navbar({ icon, title, userName, role, notifs = [], onLogout, setActiveMenu, toggleSidebar }) {
+    function Navbar({ icon, title, userName, role, notifs = [], onLogout, setActiveMenu, toggleSidebar, themeMode, onThemeToggle }) {
       return (
         <div className="navbar">
           <div className="navbar-start">
@@ -3513,6 +4272,7 @@ seedDemoData();
           </div>
           <div className="navbar-end">
             <span className="nav-welcome"><span className="nav-welcome-hi">Welcome</span><strong>{userName}</strong></span>
+            <HeaderThemeMenu themeMode={themeMode} onThemeToggle={onThemeToggle} />
             <NavDropdown trigger={<button className="nav-btn" title="Notifications"><i className="fas fa-bell"></i>{notifs.length > 0 && <span className="nav-badge">{notifs.length}</span>}</button>}>
               <div className="nav-dd-head"><div className="dd-title">{notifs.length} Notifications</div>{notifs[0] && <div className="dd-sub">{notifs[0].text}</div>}</div>
               {notifs.slice(0, 5).map((n, i) => <div className="nav-notif" key={i}><i className={`fas ${n.icon || 'fa-circle-info'}`}></i><span>{n.text}</span></div>)}
@@ -5883,9 +6643,29 @@ seedDemoData();
       const [newCat, setNewCat] = useState('');
       const [saving, setSaving] = useState(false);
       const [load, setLoad] = useState('');
+      const [tsec, setTsec] = useState('all');
+      const [tq, setTq] = useState('');
+      const [previewThemeId, setPreviewThemeId] = useState(() => ls.get('app_theme_id') || 'UI 1');
+      const [activeThemeId, setActiveThemeId] = useState(() => ls.get('app_theme_id') || 'UI 1');
 
       useEffect(() => { setForm(settings || {}); }, [settings]);
       const upd = (k, v) => setForm(f => Object.assign({}, f, { [k]: v }));
+
+      const pvTheme = findTheme(previewThemeId) || UI_THEMES[0];
+      const filteredThemes = useMemo(() => {
+        const q = tq.trim().toLowerCase();
+        return UI_THEMES.filter(t => (tsec === 'all' || themeSec(t.id) === tsec) && (!q || t.name.toLowerCase().includes(q) || t.id.toLowerCase().includes(q)));
+      }, [tsec, tq]);
+
+      const applyThemeFromSettings = () => {
+        const t = findTheme(previewThemeId) || UI_THEMES[0];
+        const v = themeVars(t);
+        applyThemeVars(v);
+        cacheThemeVars(v);
+        ls.set('app_theme_id', t.id);
+        setActiveThemeId(t.id);
+        Swal.fire({ icon: 'success', title: 'Theme applied!', text: t.name, timer: 1400, showConfirmButton: false });
+      };
 
       const save = async () => {
         setSaving(true);
@@ -5921,6 +6701,89 @@ seedDemoData();
             <h2><i className="fas fa-gear"></i> Settings</h2>
             <button className="btn btn-primary" onClick={save} disabled={saving}>{saving ? <><i className="fas fa-spinner fa-spin"></i> Saving...</> : <><i className="fas fa-save"></i> Save Settings</>}</button>
           </div>
+
+          <LteCard title="Appearance & Themes (36 Modern UI Palettes)" icon="fa-palette">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: 12, background: 'rgba(0,116,217,0.08)', borderRadius: 6, marginBottom: 16 }}>
+              <i className="fas fa-circle-info" style={{ color: 'var(--navy-accent)' }}></i>
+              <span>Tap any palette to preview live below, then click <strong>Set Now</strong> to apply across the entire application.</span>
+            </div>
+
+            <div className="thm-bar">
+              <div className="thm-chips">
+                {THEME_SECTIONS.map(([k, lbl, ic]) => (
+                  <button key={k} type="button" className={'thm-chip' + (tsec === k ? ' on' : '')} onClick={() => setTsec(k)}>
+                    <i className={'fas ' + ic}></i> {lbl}
+                  </button>
+                ))}
+              </div>
+              <div className="thm-search">
+                <i className="fas fa-magnifying-glass"></i>
+                <input type="text" value={tq} placeholder="Search palettes..." onChange={(e) => setTq(e.target.value)} />
+              </div>
+            </div>
+
+            <p style={{ fontSize: 12.5, color: '#718096', marginBottom: 12 }}><i className="fas fa-swatchbook"></i> Showing {filteredThemes.length} of {UI_THEMES.length} palettes</p>
+
+            <div className="theme-gallery">
+              {filteredThemes.map((t) => (
+                <div
+                  key={t.id}
+                  className={'theme-card' + (activeThemeId === t.id ? ' active' : '') + (previewThemeId === t.id ? ' previewing' : '')}
+                  onClick={() => { setPreviewThemeId(t.id); applyThemeVars(themeVars(t)); }}
+                  title={'Preview ' + t.name}
+                >
+                  <div className="theme-swatch">
+                    <span style={{background: t.primary}}></span>
+                    <span style={{background: t.secondary}}></span>
+                    <span style={{background: t.bg}}></span>
+                    <span style={{background: t.accent}}></span>
+                  </div>
+                  <div className="theme-body">
+                    <div className="theme-name">{t.name}</div>
+                    <div className="theme-id">
+                      {t.id}
+                      {activeThemeId === t.id && <span className="theme-default-badge" style={{ background: '#22c55e' }}>ACTIVE</span>}
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {!filteredThemes.length && <div style={{ padding: 20, textAlign: 'center', color: '#999', gridColumn: '1/-1' }}><i className="fas fa-circle-exclamation"></i> No palette matches that search.</div>}
+            </div>
+
+            <div className="theme-preview-panel">
+              <div className="tp-head" style={{ justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <span className="tp-title"><i className="fas fa-eye"></i> {pvTheme.name}</span>
+                  <span className="tp-chip">{pvTheme.id}</span>
+                  {activeThemeId === pvTheme.id && <span className="tp-tag applied"><i className="fas fa-check"></i> CURRENT</span>}
+                </div>
+                <button className="btn btn-primary" type="button" onClick={applyThemeFromSettings}><i className="fas fa-check"></i> Set Now ({pvTheme.name})</button>
+              </div>
+
+              <div className="tp-mock" style={{background: pvTheme.bg}}>
+                <div className="tp-side" style={{background: pvTheme.primary}}>
+                  <div className="tp-logo"></div>
+                  {['fa-gauge-high','fa-table-cells-large','fa-boxes-stacked','fa-gear'].map(ic => <i className={'fas ' + ic} key={ic}></i>)}
+                </div>
+                <div className="tp-body2">
+                  <div className="tp-nav" style={{background: pvTheme.card}}>
+                    <span className="tp-h" style={{background: pvTheme.secondary}}></span>
+                    <span className="tp-av" style={{background: pvTheme.accent}}></span>
+                  </div>
+                  <div className="tp-content">
+                    <div className="tp-kpis">
+                      {[['128','RECORDS',pvTheme.primary,'#fff'],['$9.4k','SALES',pvTheme.secondary,'#fff'],['+18%','PROFIT',pvTheme.accent,pvTheme.onAccent]].map(([n,l,bg,c],i) => (
+                        <div key={i} className="tp-kpi" style={{background: bg, color: c}}>
+                          <span className="tp-kpi-n">{n}</span>
+                          <span className="tp-kpi-l">{l}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </LteCard>
 
           <LteCard title="Business Info" icon="fa-store">
             <div className="form-grid">
@@ -5985,7 +6848,7 @@ seedDemoData();
       }
     }
 
-    function Dashboard({ user, role, onLogout }) {
+    function Dashboard({ user, role, onLogout, themeMode, onThemeToggle }) {
       const [activeMenu, setActiveMenu] = useState(role === 'Admin' ? 'dashboard' : 'records');
       const [collapsed, setCollapsed] = useState(() => localStorage.getItem('sb_collapsed') === '1');
       const toggleSidebar = () => setCollapsed(c => { localStorage.setItem('sb_collapsed', c ? '0' : '1'); return !c; });
@@ -6007,7 +6870,7 @@ seedDemoData();
           <div className="app-container">
             <Sidebar activeMenu={activeMenu} setActiveMenu={setActiveMenu} role={role} user={user} onLogout={onLogout} collapsed={collapsed} />
             <div className="main-content">
-              <Navbar icon={icons[activeMenu]} title={titles[activeMenu]} userName={user?.name} role={role} notifs={notifs} onLogout={onLogout} setActiveMenu={setActiveMenu} toggleSidebar={toggleSidebar} />
+              <Navbar icon={icons[activeMenu]} title={titles[activeMenu]} userName={user?.name} role={role} notifs={notifs} onLogout={onLogout} setActiveMenu={setActiveMenu} toggleSidebar={toggleSidebar} themeMode={themeMode} onThemeToggle={onThemeToggle} />
               <MainContent activeMenu={activeMenu} user={user} role={role} setActiveMenu={setActiveMenu} />
             </div>
           </div>
@@ -6020,6 +6883,19 @@ seedDemoData();
       const [currentUser, setCurrentUser] = useState(null);
       const [userRole, setUserRole] = useState(null);
       const [checkingSession, setCheckingSession] = useState(true);
+      const [themeMode, setThemeMode] = useState(() => ls.get('app_theme_mode') || 'light');
+
+      useEffect(() => {
+        applySavedTheme();
+        if (themeMode === 'dark') document.body.classList.add('dark-mode');
+        else document.body.classList.remove('dark-mode');
+      }, [themeMode]);
+
+      const handleThemeToggle = () => {
+        const next = themeMode === 'dark' ? 'light' : 'dark';
+        setThemeMode(next);
+        ls.set('app_theme_mode', next);
+      };
 
       useEffect(() => {
         const saved = localStorage.getItem('fb_user');
@@ -6040,7 +6916,7 @@ seedDemoData();
 
       if (checkingSession) return <div className="login-container"><div className="login-box"><i className="fas fa-spinner fa-spin" style={{ fontSize: '40px', color: 'var(--navy-primary)' }}></i></div></div>;
 
-      return <div>{!isLoggedIn ? <LoginPage onLogin={handleLogin} /> : <Dashboard user={currentUser} role={userRole} onLogout={handleLogout} />}</div>;
+      return <div>{!isLoggedIn ? <LoginPage onLogin={handleLogin} /> : <Dashboard user={currentUser} role={userRole} onLogout={handleLogout} themeMode={themeMode} onThemeToggle={handleThemeToggle} />}</div>;
     }
 
     class ErrorBoundary extends React.Component {
