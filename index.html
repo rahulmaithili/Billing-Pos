@@ -3651,6 +3651,101 @@
       justify-content: space-between;
       padding: 4px 0;
     }
+
+    /* Enterprise Settings Tabs */
+    .settings-nav-tabs {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    body.dark-mode .settings-nav-tabs {
+      border-color: #2d3748;
+    }
+    .settings-nav-tab {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 15px;
+      border-radius: 8px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      color: #64748b;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all .2s;
+    }
+    .settings-nav-tab:hover {
+      background: #edf2f7;
+      color: #1e293b;
+    }
+    .settings-nav-tab.active {
+      background: var(--navy-accent);
+      border-color: var(--navy-accent);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(0, 116, 217, 0.25);
+    }
+    body.dark-mode .settings-nav-tab {
+      background: #242c37;
+      border-color: #3b4656;
+      color: #cbd5e1;
+    }
+    body.dark-mode .settings-nav-tab.active {
+      background: var(--navy-accent);
+      border-color: var(--navy-accent);
+      color: #fff;
+    }
+    .pm-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    body.dark-mode .pm-card {
+      background: #242c37;
+      border-color: #3b4656;
+      color: #f1f5f9;
+    }
+    .pm-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .pm-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      background: #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #334155;
+      font-size: 16px;
+    }
+    body.dark-mode .pm-icon {
+      background: #1e2632;
+      color: #94a3b8;
+    }
+    .pm-title {
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .pm-sub {
+      font-size: 12px;
+      color: #64748b;
+    }
+    body.dark-mode .pm-sub {
+      color: #94a3b8;
+    }
   </style>
 </head>
 
@@ -4092,6 +4187,123 @@ seedDemoData();
         await db.ref('users/' + id).remove();
         await fbLogActivity('Delete User', user, name);
         return { success: true, message: 'User deleted' };
+      } catch (e) { return { success: false, message: e.message }; }
+    }
+
+    // payment methods CRUD at /payment_methods
+    async function fbGetPaymentMethods() {
+      try {
+        const snap = await db.ref('payment_methods').once('value');
+        const val = snap.val();
+        if (!val) {
+          const defaults = {
+            pm_cash: { name: 'Cash', code: 'Cash', icon: 'fa-money-bill-wave', details: 'Pay with cash at counter', active: true, requiresReceipt: false },
+            pm_card: { name: 'Credit / Debit Card', code: 'Card', icon: 'fa-credit-card', details: 'Visa, MasterCard, Amex', active: true, requiresReceipt: false },
+            pm_upi: { name: 'UPI / QR Scan', code: 'Online', icon: 'fa-qrcode', details: 'Scan store UPI QR code to pay', active: true, requiresReceipt: true },
+            pm_bank: { name: 'Bank Transfer', code: 'Bank', icon: 'fa-building-columns', details: 'Direct wire or NEFT transfer', active: true, requiresReceipt: true },
+            pm_credit: { name: 'Store Credit / Due', code: 'Credit', icon: 'fa-file-invoice', details: 'Customer tab ledger', active: true, requiresReceipt: false }
+          };
+          await db.ref('payment_methods').set(defaults);
+          return { success: true, data: Object.entries(defaults).map(([id, d]) => Object.assign({ id }, d)) };
+        }
+        return { success: true, data: Object.entries(val).map(([id, d]) => Object.assign({ id }, d)) };
+      } catch (e) { return { success: false, message: e.message, data: [] }; }
+    }
+
+    async function fbSavePaymentMethod(data, user) {
+      try {
+        const id = data.id || ('pm_' + Date.now());
+        const payload = {
+          name: data.name || 'New Payment Method',
+          code: data.code || data.name,
+          icon: data.icon || 'fa-money-bill',
+          details: data.details || '',
+          active: data.active !== false,
+          requiresReceipt: !!data.requiresReceipt
+        };
+        await db.ref('payment_methods/' + id).set(payload);
+        await fbLogActivity('Save Payment Method', user, payload.name);
+        return { success: true, message: 'Payment method saved', id };
+      } catch (e) { return { success: false, message: e.message }; }
+    }
+
+    async function fbDeletePaymentMethod(id, name, user) {
+      try {
+        await db.ref('payment_methods/' + id).remove();
+        await fbLogActivity('Delete Payment Method', user, name);
+        return { success: true, message: 'Payment method removed' };
+      } catch (e) { return { success: false, message: e.message }; }
+    }
+
+    // Seed Demo Drinks (specialty cafe/beverage catalog)
+    async function fbSeedDemoDrinks(user) {
+      try {
+        const drinks = [
+          { name: 'Classic Brown Sugar Boba Milk', sku: 'DRK-BOBA-01', price: 5.50, cost: 2.20, category: 'Boba & Tea', brand: 'House Special', unit: 'Cup', status: 'active', qty: 100 },
+          { name: 'Matcha Green Tea Latte', sku: 'DRK-TEA-02', price: 5.00, cost: 1.80, category: 'Boba & Tea', brand: 'Uji Matcha', unit: 'Cup', status: 'active', qty: 85 },
+          { name: 'Iced Caramel Macchiato', sku: 'DRK-COF-03', price: 4.80, cost: 1.50, category: 'Coffee', brand: 'Artisan Roast', unit: 'Cup', status: 'active', qty: 90 },
+          { name: 'Mango Passionfruit Smoothie', sku: 'DRK-SMO-04', price: 6.00, cost: 2.10, category: 'Smoothies', brand: 'Fresh Fruit', unit: 'Cup', status: 'active', qty: 70 },
+          { name: 'Strawberry Jasmine Fruit Tea', sku: 'DRK-TEA-05', price: 5.20, cost: 1.90, category: 'Fruit Tea', brand: 'Jasmine Pure', unit: 'Cup', status: 'active', qty: 80 },
+          { name: 'Taro Milk Tea with Pearls', sku: 'DRK-BOBA-06', price: 5.50, cost: 2.00, category: 'Boba & Tea', brand: 'House Special', unit: 'Cup', status: 'active', qty: 75 },
+          { name: 'Espresso Double Shot', sku: 'DRK-COF-07', price: 3.50, cost: 0.90, category: 'Coffee', brand: 'Italian Blend', unit: 'Cup', status: 'active', qty: 120 },
+          { name: 'Cold Brew Citrus Splash', sku: 'DRK-COF-08', price: 4.50, cost: 1.40, category: 'Coffee', brand: 'Slow Steep', unit: 'Cup', status: 'active', qty: 65 }
+        ];
+
+        const cats = ['Boba & Tea', 'Coffee', 'Smoothies', 'Fruit Tea'];
+        for (const c of cats) {
+          const snap = await db.ref('categories').orderByChild('name').equalTo(c).once('value');
+          if (!snap.exists()) {
+            await db.ref('categories').push({ name: c, createdAt: nowIso() });
+          }
+        }
+
+        let added = 0;
+        for (const d of drinks) {
+          const snap = await db.ref('products').orderByChild('name').equalTo(d.name).once('value');
+          if (!snap.exists()) {
+            const res = await fbAddProduct({
+              name: d.name,
+              sku: d.sku,
+              price: d.price,
+              cost: d.cost,
+              category: d.category,
+              brand: d.brand,
+              unit: d.unit,
+              reorderLevel: 10,
+              status: d.status
+            }, user);
+            if (res.success) {
+              await fbAddStockMovement({
+                productId: res.id,
+                type: 'in',
+                qty: d.qty,
+                reason: 'Opening stock (Demo Drinks Seeder)',
+                reference: 'DEMO-SEED',
+                unitCost: d.cost
+              }, d.name, user);
+              added++;
+            }
+          }
+        }
+        await fbLogActivity('Seed Demo Drinks', user, `Seeded ${added} demo drinks into catalog`);
+        return { success: true, message: `Successfully seeded ${added} delicious demo drinks!` };
+      } catch (e) { return { success: false, message: e.message }; }
+    }
+
+    // Database Backup & Restore
+    async function fbExportDatabase() {
+      try {
+        const snap = await db.ref().once('value');
+        return { success: true, data: snap.val() || {} };
+      } catch (e) { return { success: false, message: e.message }; }
+    }
+
+    async function fbRestoreDatabase(data, user) {
+      try {
+        if (!data || typeof data !== 'object') return { success: false, message: 'Invalid backup JSON data' };
+        await db.ref().set(data);
+        await fbLogActivity('Restore Database', user, 'Full database restore from backup JSON');
+        return { success: true, message: 'Database successfully restored!' };
       } catch (e) { return { success: false, message: e.message }; }
     }
   </script>
@@ -4745,17 +4957,25 @@ seedDemoData();
     }
 
     // app-wide config mirror - lets non-component code (money(), datatable renders, exports) read settings synchronously
-    const CFG = { currency: '$', currencyCode: 'USD', taxRate: 0, taxInclusive: false, invoicePrefix: 'INV-', lowStockDefault: 5, receiptHeader: '', receiptFooter: 'Thank you for your purchase!', business: { name: 'My Business', address: '', phone: '', email: '' }, logoUrl: '' };
+    const CFG = {
+      currency: '$', currencyCode: 'USD', currencyDecimals: 2, taxRate: 0, taxInclusive: false,
+      invoicePrefix: 'INV-', lowStockDefault: 5, receiptHeader: '', receiptFooter: 'Thank you for your purchase!',
+      receiptRollWidth: '80mm', dateFormat: 'DD/MM/YYYY',
+      business: { name: 'My Business', address: '', phone: '', email: '' }, logoUrl: ''
+    };
     function applySettings(s) {
       if (!s) return;
       CFG.currency = s.currencySymbol || CFG.currency;
       CFG.currencyCode = s.currencyCode || CFG.currencyCode;
+      CFG.currencyDecimals = s.currencyDecimals != null && s.currencyDecimals !== '' ? Number(s.currencyDecimals) : CFG.currencyDecimals;
       CFG.taxRate = Number(s.taxRate) || 0;
       CFG.taxInclusive = !!s.taxInclusive;
       CFG.invoicePrefix = s.invoicePrefix || CFG.invoicePrefix;
       CFG.lowStockDefault = (s.lowStockDefault != null && s.lowStockDefault !== '') ? Number(s.lowStockDefault) : CFG.lowStockDefault;
       CFG.receiptHeader = s.receiptHeader || '';
       CFG.receiptFooter = s.receiptFooter || CFG.receiptFooter;
+      CFG.receiptRollWidth = s.receiptRollWidth || CFG.receiptRollWidth;
+      CFG.dateFormat = s.dateFormat || CFG.dateFormat;
       CFG.logoUrl = s.logoUrl || '';
       CFG.business = { name: s.businessName || CFG.business.name, address: s.address || '', phone: s.phone || '', email: s.email || '' };
     }
@@ -4816,7 +5036,10 @@ seedDemoData();
       return { subtotal: round2(subtotal), discount: round2(discAmt), tax: round2(taxTotal), grand: round2(grand), lines };
     }
 
-    const money = (n) => CFG.currency + Number(n || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const money = (n) => {
+      const dp = CFG.currencyDecimals != null ? CFG.currencyDecimals : 2;
+      return CFG.currency + Number(n || 0).toLocaleString('en-US', { minimumFractionDigits: dp, maximumFractionDigits: dp });
+    };
     const round2 = (n) => Math.round((Number(n) || 0) * 100) / 100;
     const formatDateForDisplay = (iso) => new Date(iso).toLocaleString('en-US', { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' });
     const getTimeAgo = (iso) => {
@@ -7584,10 +7807,58 @@ seedDemoData();
       );
     }
 
-    // --- Settings (Admin) - business profile, currency, tax, receipt text, categories ---
+    // Payment Method Edit / Create Modal
+    function PaymentMethodModal({ method, onClose, onSave }) {
+      const [formData, setFormData] = useState({
+        name: method ? method.name : '',
+        code: method ? method.code : '',
+        icon: method ? (method.icon || 'fa-credit-card') : 'fa-credit-card',
+        details: method ? (method.details || '') : '',
+        active: method ? method.active !== false : true,
+        requiresReceipt: method ? !!method.requiresReceipt : false
+      });
+      const [saving, setSaving] = useState(false);
+
+      const submit = async (e) => {
+        e.preventDefault();
+        setSaving(true);
+        await onSave(Object.assign({}, method || {}, formData));
+        setSaving(false);
+      };
+
+      return (
+        <div className="modal-overlay" onClick={onClose}>
+          <div className="modal" style={{ maxWidth: '480px' }} onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3><i className="fas fa-credit-card"></i> {method ? 'Edit Payment Method' : 'Add Payment Method'}</h3>
+              <button className="close-btn" onClick={onClose}><i className="fas fa-times"></i></button>
+            </div>
+            <div className="modal-body">
+              <form onSubmit={submit}>
+                <div className="form-group"><label>Method Name *</label><input type="text" required value={formData.name} onChange={e => setFormData(p => ({ ...p, name: e.target.value }))} placeholder="e.g. UPI / Google Pay" /></div>
+                <div className="form-group"><label>Code / Internal Type</label><input type="text" value={formData.code} onChange={e => setFormData(p => ({ ...p, code: e.target.value }))} placeholder="e.g. Online, Cash, Card, Bank" /></div>
+                <div className="form-group"><label>FontAwesome Icon</label><input type="text" value={formData.icon} onChange={e => setFormData(p => ({ ...p, icon: e.target.value }))} placeholder="e.g. fa-qrcode, fa-credit-card" /></div>
+                <div className="form-group"><label>Instructions / Account Details</label><textarea rows="2" value={formData.details} onChange={e => setFormData(p => ({ ...p, details: e.target.value }))} placeholder="e.g. UPI ID: shop@upi or Bank details"></textarea></div>
+                <div className="form-grid">
+                  <div className="form-group"><label><i className="fas fa-toggle-on"></i> Active</label><div><input type="checkbox" className="toggle" checked={formData.active} onChange={e => setFormData(p => ({ ...p, active: e.target.checked }))} /></div></div>
+                  <div className="form-group"><label><i className="fas fa-receipt"></i> Require Receipt Upload</label><div><input type="checkbox" className="toggle" checked={formData.requiresReceipt} onChange={e => setFormData(p => ({ ...p, requiresReceipt: e.target.checked }))} /></div></div>
+                </div>
+                <div className="form-actions">
+                  <button type="submit" className="btn btn-primary" disabled={saving}>{saving ? <><i className="fas fa-spinner fa-spin"></i> Saving...</> : <><i className="fas fa-save"></i> Save Method</>}</button>
+                  <button type="button" className="btn btn-secondary" onClick={onClose}><i className="fas fa-times"></i> Cancel</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // --- Settings (Admin) - Full Enterprise Setup & Settings Control Center ---
     function SettingsView({ user, role }) {
       const { settings, categories, refreshConfig } = useConfig();
       const [form, setForm] = useState(settings || {});
+      const [activeTab, setActiveTab] = useState('shop');
       const [newCat, setNewCat] = useState('');
       const [saving, setSaving] = useState(false);
       const [load, setLoad] = useState('');
@@ -7596,6 +7867,21 @@ seedDemoData();
       const [previewThemeId, setPreviewThemeId] = useState(() => ls.get('app_theme_id') || 'UI 1');
       const [activeThemeId, setActiveThemeId] = useState(() => ls.get('app_theme_id') || 'UI 1');
 
+      // Payment methods state
+      const [payMethods, setPayMethods] = useState([]);
+      const [loadingPM, setLoadingPM] = useState(false);
+      const [editingPM, setEditingPM] = useState(null);
+      const [showPMModal, setShowPMModal] = useState(false);
+      const backupInputRef = useRef(null);
+
+      const reloadPM = useCallback(async () => {
+        setLoadingPM(true);
+        const res = await fbGetPaymentMethods();
+        if (res.success) setPayMethods(res.data);
+        setLoadingPM(false);
+      }, []);
+
+      useEffect(() => { reloadPM(); }, [reloadPM]);
       useEffect(() => { setForm(settings || {}); }, [settings]);
       const upd = (k, v) => setForm(f => Object.assign({}, f, { [k]: v }));
 
@@ -7618,16 +7904,144 @@ seedDemoData();
       const save = async () => {
         setSaving(true);
         const payload = {
-          businessName: form.businessName || '', address: form.address || '', phone: form.phone || '', email: form.email || '', logoUrl: form.logoUrl || '',
-          currencySymbol: form.currencySymbol || '$', currencyCode: form.currencyCode || 'USD',
-          taxRate: Number(form.taxRate) || 0, taxInclusive: !!form.taxInclusive,
-          invoicePrefix: form.invoicePrefix || 'INV-', lowStockDefault: Number(form.lowStockDefault) || 0,
-          receiptHeader: form.receiptHeader || '', receiptFooter: form.receiptFooter || ''
+          // Shop
+          businessName: form.businessName || '', phone: form.phone || '', email: form.email || '', address: form.address || '', logoUrl: form.logoUrl || '',
+          // Storefront
+          storeHeadline: form.storeHeadline || '', storeAbout: form.storeAbout || '', heroBannerUrl: form.heroBannerUrl || '', announcement: form.announcement || '',
+          // Opening hours
+          isStoreOpen: form.isStoreOpen !== false, openingTime: form.openingTime || '08:00', closingTime: form.closingTime || '22:00',
+          lastOrderMinutes: Number(form.lastOrderMinutes) || 30, weeklySchedule: form.weeklySchedule || 'Mon-Sun: 8:00 AM - 10:00 PM',
+          // Ordering & pickup
+          isPaused: !!form.isPaused, pauseReason: form.pauseReason || '', defaultPrepTime: Number(form.defaultPrepTime) || 10,
+          deliveryEnabled: form.deliveryEnabled !== false, deliveryFee: Number(form.deliveryFee) || 0, minOrderAmount: Number(form.minOrderAmount) || 0,
+          // Drink options
+          sugarLevels: form.sugarLevels || '100% (Regular), 70% (Less Sweet), 50% (Half Sweet), 30% (Slight Sweet), 0% (No Sugar)',
+          iceLevels: form.iceLevels || 'Regular Ice, Less Ice, No Ice, Warm / Hot',
+          availableAddons: form.availableAddons || 'Tapioca Pearls, Coconut Jelly, Grass Jelly, Popping Boba, Cheese Foam',
+          // Currency
+          currencySymbol: form.currencySymbol || '$', currencyCode: form.currencyCode || 'USD', currencyDecimals: Number(form.currencyDecimals) || 2,
+          taxRate: Number(form.taxRate) || 0, taxInclusive: !!form.taxInclusive, lowStockDefault: Number(form.lowStockDefault) || 5,
+          // Payments & receipts
+          paymentInstructions: form.paymentInstructions || '', requireReceiptUpload: !!form.requireReceiptUpload, invoicePrefix: form.invoicePrefix || 'INV-',
+          receiptHeader: form.receiptHeader || '', receiptFooter: form.receiptFooter || '', receiptRollWidth: form.receiptRollWidth || '80mm', dateFormat: form.dateFormat || 'DD/MM/YYYY',
+          // Notifications
+          notifyAdminEmail: form.notifyAdminEmail || '', orderEmailAlerts: form.orderEmailAlerts !== false, whatsappTemplate: form.whatsappTemplate || '',
+          // Backup & maintenance
+          nightlyBackupEnabled: form.nightlyBackupEnabled !== false
         };
         const r = await fbSaveSettings(payload, user);
         setSaving(false);
-        if (r.success) { applySettings(payload); refreshConfig(); Swal.fire({ icon: 'success', title: 'Saved', text: 'Settings updated', timer: 1600, showConfirmButton: false }); }
+        if (r.success) { applySettings(payload); refreshConfig(); Swal.fire({ icon: 'success', title: 'Settings Saved!', text: 'All settings updated successfully', timer: 1600, showConfirmButton: false }); }
         else Swal.fire({ icon: 'error', title: 'Error', text: r.message });
+      };
+
+      const handleSeedDrinks = async () => {
+        const confirm = await Swal.fire({
+          icon: 'question',
+          title: 'Seed Demo Drinks?',
+          text: 'This will add 8 specialty beverages (Boba, Coffee, Smoothies, Fruit Teas) with inventory stock to your catalog.',
+          showCancelButton: true,
+          confirmButtonText: 'Yes, Seed Drinks!'
+        });
+        if (!confirm.isConfirmed) return;
+        setLoad('Seeding demo drinks...');
+        const res = await fbSeedDemoDrinks(user);
+        setLoad('');
+        if (res.success) {
+          refreshConfig();
+          Swal.fire({ icon: 'success', title: 'Demo Drinks Seeded!', text: res.message });
+        } else {
+          Swal.fire({ icon: 'error', title: 'Error', text: res.message });
+        }
+      };
+
+      const handleSavePM = async (pm) => {
+        setLoad('Saving payment method...');
+        const res = await fbSavePaymentMethod(pm, user);
+        setLoad('');
+        if (res.success) {
+          setShowPMModal(false);
+          setEditingPM(null);
+          reloadPM();
+          Swal.fire({ icon: 'success', title: 'Saved', text: res.message, timer: 1500, showConfirmButton: false });
+        } else {
+          Swal.fire({ icon: 'error', title: 'Error', text: res.message });
+        }
+      };
+
+      const handleDeletePM = async (pm) => {
+        const confirm = await Swal.fire({
+          icon: 'warning',
+          title: 'Delete ' + pm.name + '?',
+          showCancelButton: true,
+          confirmButtonColor: '#ea4335',
+          confirmButtonText: 'Delete'
+        });
+        if (!confirm.isConfirmed) return;
+        setLoad('Deleting...');
+        const res = await fbDeletePaymentMethod(pm.id, pm.name, user);
+        setLoad('');
+        if (res.success) {
+          reloadPM();
+          Swal.fire({ icon: 'success', title: 'Deleted', text: res.message, timer: 1500, showConfirmButton: false });
+        } else {
+          Swal.fire({ icon: 'error', title: 'Error', text: res.message });
+        }
+      };
+
+      const handleTogglePM = async (pm, active) => {
+        await fbSavePaymentMethod(Object.assign({}, pm, { active }), user);
+        reloadPM();
+      };
+
+      const handleExportBackup = async () => {
+        setLoad('Exporting database backup...');
+        const res = await fbExportDatabase();
+        setLoad('');
+        if (res.success) {
+          const blob = new Blob([JSON.stringify(res.data, null, 2)], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `pos_backup_${new Date().toISOString().slice(0, 10)}.json`;
+          a.click();
+          URL.revokeObjectURL(url);
+          Swal.fire({ icon: 'success', title: 'Backup Downloaded', text: 'Database exported as JSON.', timer: 1800, showConfirmButton: false });
+        } else {
+          Swal.fire({ icon: 'error', title: 'Backup Failed', text: res.message });
+        }
+      };
+
+      const handleRestoreBackup = (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = async (evt) => {
+          try {
+            const data = JSON.parse(evt.target.result);
+            const confirm = await Swal.fire({
+              icon: 'warning',
+              title: 'Restore Database?',
+              text: 'This will replace existing database data with the backup file!',
+              showCancelButton: true,
+              confirmButtonColor: '#ea4335',
+              confirmButtonText: 'Yes, Restore Now'
+            });
+            if (!confirm.isConfirmed) return;
+            setLoad('Restoring database...');
+            const res = await fbRestoreDatabase(data, user);
+            setLoad('');
+            if (res.success) {
+              refreshConfig();
+              Swal.fire({ icon: 'success', title: 'Database Restored!', text: res.message });
+            } else {
+              Swal.fire({ icon: 'error', title: 'Restore Failed', text: res.message });
+            }
+          } catch (err) {
+            Swal.fire({ icon: 'error', title: 'Invalid File', text: 'Could not parse JSON backup file.' });
+          }
+        };
+        reader.readAsText(file);
       };
 
       const addCat = async () => {
@@ -7642,136 +8056,395 @@ seedDemoData();
         if (r.success) refreshConfig(); else Swal.fire({ icon: 'error', title: 'Error', text: r.message });
       });
 
+      const SETTINGS_TABS = [
+        { id: 'shop', label: 'Shop', icon: 'fa-store' },
+        { id: 'storefront', label: 'Storefront', icon: 'fa-shop' },
+        { id: 'hours', label: 'Opening hours', icon: 'fa-clock' },
+        { id: 'ordering', label: 'Ordering & pickup', icon: 'fa-box-open' },
+        { id: 'drinks', label: 'Drink options', icon: 'fa-mug-hot' },
+        { id: 'paymethods', label: 'Payment Methods', icon: 'fa-credit-card' },
+        { id: 'currency', label: 'Currency', icon: 'fa-coins' },
+        { id: 'receipts', label: 'Payments & receipts', icon: 'fa-receipt' },
+        { id: 'notifications', label: 'Notifications', icon: 'fa-bell' },
+        { id: 'backup', label: 'Backup & maintenance', icon: 'fa-shield-halved' },
+        { id: 'themes', label: 'Appearance', icon: 'fa-palette' },
+        { id: 'categories', label: 'Categories', icon: 'fa-tags' }
+      ];
+
       return (
         <div className="data-section">
           {load && <TopLoadingBar />}
           <div className="section-header">
-            <h2><i className="fas fa-gear"></i> Settings</h2>
+            <h2><i className="fas fa-gear"></i> Settings &amp; Setup</h2>
             <button className="btn btn-primary" onClick={save} disabled={saving}>{saving ? <><i className="fas fa-spinner fa-spin"></i> Saving...</> : <><i className="fas fa-save"></i> Save Settings</>}</button>
           </div>
 
-          <LteCard title="Appearance & Themes (36 Modern UI Palettes)" icon="fa-palette">
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: 12, background: 'rgba(0,116,217,0.08)', borderRadius: 6, marginBottom: 16 }}>
-              <i className="fas fa-circle-info" style={{ color: 'var(--navy-accent)' }}></i>
-              <span>Tap any palette to preview live below, then click <strong>Set Now</strong> to apply across the entire application.</span>
-            </div>
+          {/* Navigation Tabs */}
+          <div className="settings-nav-tabs" role="tablist">
+            {SETTINGS_TABS.map(tab => (
+              <button
+                key={tab.id}
+                type="button"
+                className={'settings-nav-tab' + (activeTab === tab.id ? ' active' : '')}
+                onClick={() => setActiveTab(tab.id)}
+              >
+                <i className={'fas ' + tab.icon}></i>
+                <span>{tab.label}</span>
+              </button>
+            ))}
+          </div>
 
-            <div className="thm-bar">
-              <div className="thm-chips">
-                {THEME_SECTIONS.map(([k, lbl, ic]) => (
-                  <button key={k} type="button" className={'thm-chip' + (tsec === k ? ' on' : '')} onClick={() => setTsec(k)}>
-                    <i className={'fas ' + ic}></i> {lbl}
+          {/* 1. Shop Tab */}
+          {activeTab === 'shop' && (
+            <LteCard title="Shop (Name, contact and logo)" icon="fa-store">
+              <div className="form-grid">
+                <div className="form-group"><label>Shop / Business Name *</label><input type="text" value={form.businessName || ''} onChange={e => upd('businessName', e.target.value)} placeholder="e.g. Boba & Co. Cafe" /></div>
+                <div className="form-group"><label>Contact Phone</label><input type="text" value={form.phone || ''} onChange={e => upd('phone', e.target.value)} placeholder="+1 234 567 8900" /></div>
+                <div className="form-group"><label>Email Address</label><input type="email" value={form.email || ''} onChange={e => upd('email', e.target.value)} placeholder="shop@domain.com" /></div>
+                <div className="form-group"><label>Logo Image URL</label><input type="text" value={form.logoUrl || ''} onChange={e => upd('logoUrl', e.target.value)} placeholder="https://... logo.png" /></div>
+              </div>
+              <div className="form-group"><label>Physical Address</label><textarea rows="2" value={form.address || ''} onChange={e => upd('address', e.target.value)} placeholder="Store location, street, city"></textarea></div>
+              {form.logoUrl && (
+                <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <img src={form.logoUrl} alt="Logo preview" style={{ width: 48, height: 48, borderRadius: '50%', objectFit: 'cover', border: '1px solid #cbd5e1' }} onError={e => e.target.style.display = 'none'} />
+                  <span style={{ fontSize: 12, color: '#64748b' }}>Logo Preview</span>
+                </div>
+              )}
+            </LteCard>
+          )}
+
+          {/* 2. Storefront Tab */}
+          {activeTab === 'storefront' && (
+            <LteCard title="Storefront (Headline, about text, banner)" icon="fa-shop">
+              <div className="form-group"><label>Storefront Headline</label><input type="text" value={form.storeHeadline || ''} onChange={e => upd('storeHeadline', e.target.value)} placeholder="e.g. Specialty Handcrafted Boba Drinks & Artisanal Coffee" /></div>
+              <div className="form-group"><label>About Text</label><textarea rows="3" value={form.storeAbout || ''} onChange={e => upd('storeAbout', e.target.value)} placeholder="Share your store story and customer promise..."></textarea></div>
+              <div className="form-group"><label>Hero Banner Image URL</label><input type="text" value={form.heroBannerUrl || ''} onChange={e => upd('heroBannerUrl', e.target.value)} placeholder="https://... banner.jpg" /></div>
+              <div className="form-group"><label>Announcement / Top Banner Bar</label><input type="text" value={form.announcement || ''} onChange={e => upd('announcement', e.target.value)} placeholder="e.g. Happy Hour Special: Buy 1 Get 1 Free on all Fruit Teas between 3-5 PM!" /></div>
+              {form.heroBannerUrl && (
+                <div style={{ marginTop: 12 }}>
+                  <img src={form.heroBannerUrl} alt="Banner preview" style={{ width: '100%', maxHeight: 160, objectFit: 'cover', borderRadius: 8, border: '1px solid #e2e8f0' }} onError={e => e.target.style.display = 'none'} />
+                </div>
+              )}
+            </LteCard>
+          )}
+
+          {/* 3. Opening hours Tab */}
+          {activeTab === 'hours' && (
+            <LteCard title="Opening hours (Weekly hours, last order)" icon="fa-clock">
+              <div className="form-grid">
+                <div className="form-group">
+                  <label><i className="fas fa-door-open"></i> Store Live Status</label>
+                  <div>
+                    <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+                      <input type="checkbox" className="toggle" checked={form.isStoreOpen !== false} onChange={e => upd('isStoreOpen', e.target.checked)} />
+                      <span>{form.isStoreOpen !== false ? <strong style={{ color: '#22c55e' }}>Currently OPEN</strong> : <strong style={{ color: '#ef4444' }}>Currently CLOSED</strong>}</span>
+                    </label>
+                  </div>
+                </div>
+                <div className="form-group"><label>Last Order Cutoff (Minutes before close)</label><input type="number" min="0" step="5" value={form.lastOrderMinutes ?? 30} onChange={e => upd('lastOrderMinutes', e.target.value)} placeholder="30" /></div>
+                <div className="form-group"><label>Daily Opening Time</label><input type="time" value={form.openingTime || '08:00'} onChange={e => upd('openingTime', e.target.value)} /></div>
+                <div className="form-group"><label>Daily Closing Time</label><input type="time" value={form.closingTime || '22:00'} onChange={e => upd('closingTime', e.target.value)} /></div>
+              </div>
+              <div className="form-group"><label>Weekly Schedule Summary</label><textarea rows="2" value={form.weeklySchedule || ''} onChange={e => upd('weeklySchedule', e.target.value)} placeholder="e.g. Mon - Fri: 8:00 AM - 10:00 PM&#10;Sat - Sun: 9:00 AM - 11:00 PM"></textarea></div>
+            </LteCard>
+          )}
+
+          {/* 4. Ordering & pickup Tab */}
+          {activeTab === 'ordering' && (
+            <LteCard title="Ordering & pickup (Pause, prep time, delivery)" icon="fa-box-open">
+              <div className="form-grid">
+                <div className="form-group">
+                  <label><i className="fas fa-pause"></i> Temporary Store Pause</label>
+                  <div>
+                    <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+                      <input type="checkbox" className="toggle" checked={!!form.isPaused} onChange={e => upd('isPaused', e.target.checked)} />
+                      <span>{form.isPaused ? <strong style={{ color: '#ef4444' }}>Orders PAUSED</strong> : <span style={{ color: '#64748b' }}>Normal Operations</span>}</span>
+                    </label>
+                  </div>
+                </div>
+                <div className="form-group"><label>Default Preparation Time (mins)</label><input type="number" min="1" step="1" value={form.defaultPrepTime ?? 10} onChange={e => upd('defaultPrepTime', e.target.value)} placeholder="10" /></div>
+                <div className="form-group"><label><i className="fas fa-truck"></i> Enable Delivery</label><div><input type="checkbox" className="toggle" checked={form.deliveryEnabled !== false} onChange={e => upd('deliveryEnabled', e.target.checked)} /></div></div>
+                <div className="form-group"><label>Standard Delivery Fee</label><input type="number" min="0" step="0.01" value={form.deliveryFee ?? 0} onChange={e => upd('deliveryFee', e.target.value)} placeholder="0.00" /></div>
+                <div className="form-group"><label>Minimum Order Amount</label><input type="number" min="0" step="0.01" value={form.minOrderAmount ?? 0} onChange={e => upd('minOrderAmount', e.target.value)} placeholder="0.00" /></div>
+              </div>
+              {form.isPaused && (
+                <div className="form-group"><label>Pause Notice to Customers</label><input type="text" value={form.pauseReason || ''} onChange={e => upd('pauseReason', e.target.value)} placeholder="e.g. Restocking fresh boba, back in 15 minutes!" /></div>
+              )}
+            </LteCard>
+          )}
+
+          {/* 5. Drink options & Demo Drinks Tab */}
+          {activeTab === 'drinks' && (
+            <div>
+              <LteCard title="Drink options (Sugar and ice levels)" icon="fa-mug-hot">
+                <div className="form-group">
+                  <label><i className="fas fa-cubes-stacked"></i> Configured Sugar Levels (comma-separated)</label>
+                  <input type="text" value={form.sugarLevels || ''} onChange={e => upd('sugarLevels', e.target.value)} placeholder="100% (Regular), 70% (Less Sweet), 50% (Half Sweet), 30% (Slight Sweet), 0% (No Sugar)" />
+                  <small style={{ color: '#64748b' }}>Used for customizing beverage sweetness during order and till entry.</small>
+                </div>
+                <div className="form-group" style={{ marginTop: 14 }}>
+                  <label><i className="fas fa-snowflake"></i> Configured Ice Levels (comma-separated)</label>
+                  <input type="text" value={form.iceLevels || ''} onChange={e => upd('iceLevels', e.target.value)} placeholder="Regular Ice, Less Ice, No Ice, Warm / Hot" />
+                  <small style={{ color: '#64748b' }}>Used for specifying temperature and ice preference.</small>
+                </div>
+                <div className="form-group" style={{ marginTop: 14 }}>
+                  <label><i className="fas fa-circle-plus"></i> Available Add-ons &amp; Toppings (comma-separated)</label>
+                  <input type="text" value={form.availableAddons || ''} onChange={e => upd('availableAddons', e.target.value)} placeholder="Tapioca Pearls, Coconut Jelly, Grass Jelly, Popping Boba, Cheese Foam" />
+                  <small style={{ color: '#64748b' }}>Extra beverage add-ons offered to customers.</small>
+                </div>
+              </LteCard>
+
+              <LteCard title="Demo Drinks Seeder" icon="fa-wand-magic-sparkles">
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 14 }}>
+                  <div>
+                    <h4 style={{ margin: '0 0 6px 0', fontSize: 15 }}>Seed Specialty Cafe &amp; Drink Catalog</h4>
+                    <p style={{ margin: 0, color: '#64748b', fontSize: 13 }}>
+                      Instantly populate 8 ready-to-sell specialty drinks (Brown Sugar Boba, Matcha Latte, Macchiato, Smoothies, Fruit Teas) with SKUs, prices, costs, and warehouse stock.
+                    </p>
+                  </div>
+                  <button type="button" className="btn btn-success" onClick={handleSeedDrinks}>
+                    <i className="fas fa-wand-magic-sparkles"></i> Seed 8 Demo Drinks
                   </button>
+                </div>
+              </LteCard>
+            </div>
+          )}
+
+          {/* 6. Payment Methods Tab */}
+          {activeTab === 'paymethods' && (
+            <LteCard title="Payment Methods (Setup, QR and receipt rules)" icon="fa-credit-card">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                <p style={{ margin: 0, color: '#64748b', fontSize: 13 }}>Configure all supported payment methods (Cash, Cards, UPI QR, Bank, Due/Credit).</p>
+                <button type="button" className="btn btn-success btn-sm" onClick={() => { setEditingPM(null); setShowPMModal(true); }}>
+                  <i className="fas fa-plus"></i> Add Method
+                </button>
+              </div>
+
+              {loadingPM ? <TableSkeleton rows={4} columns={3} /> : (
+                <div>
+                  {payMethods.map(pm => (
+                    <div className="pm-card" key={pm.id}>
+                      <div className="pm-info">
+                        <div className="pm-icon"><i className={'fas ' + (pm.icon || 'fa-credit-card')}></i></div>
+                        <div>
+                          <div className="pm-title">
+                            {pm.name}
+                            {pm.active ? <span className="status-badge status-active" style={{ marginLeft: 8 }}>Active</span> : <span className="status-badge status-inactive" style={{ marginLeft: 8 }}>Disabled</span>}
+                            {pm.requiresReceipt && <span className="status-badge status-inactive" style={{ marginLeft: 6, background: '#fef3c7', color: '#92400e' }}>Receipt Required</span>}
+                          </div>
+                          <div className="pm-sub">{pm.details || 'No specific details configured'} · Code: <code>{pm.code || pm.name}</code></div>
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <input type="checkbox" className="toggle" checked={pm.active !== false} onChange={e => handleTogglePM(pm, e.target.checked)} title="Toggle active status" />
+                        <button type="button" className="action-icon edit-icon" onClick={() => { setEditingPM(pm); setShowPMModal(true); }} title="Edit"><i className="fas fa-edit"></i></button>
+                        <button type="button" className="action-icon delete-icon" onClick={() => handleDeletePM(pm)} title="Delete"><i className="fas fa-trash"></i></button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </LteCard>
+          )}
+
+          {/* 7. Currency Tab */}
+          {activeTab === 'currency' && (
+            <LteCard title="Currency (Symbol and decimals)" icon="fa-coins">
+              <div className="form-grid">
+                <div className="form-group"><label>Currency Symbol</label><input type="text" value={form.currencySymbol || ''} onChange={e => upd('currencySymbol', e.target.value)} placeholder="$, Rs, ₹, £, €..." /></div>
+                <div className="form-group"><label>Currency Code</label><input type="text" value={form.currencyCode || ''} onChange={e => upd('currencyCode', e.target.value)} placeholder="USD, PKR, INR, EUR..." /></div>
+                <div className="form-group">
+                  <label>Currency Decimals</label>
+                  <select value={form.currencyDecimals ?? 2} onChange={e => upd('currencyDecimals', Number(e.target.value))}>
+                    <option value={2}>2 Decimals (Standard: $10.50)</option>
+                    <option value={0}>0 Decimals (Whole numbers: 100 NT$, Rs 500)</option>
+                  </select>
+                </div>
+                <div className="form-group"><label>Default Tax Rate (%)</label><input type="number" step="0.01" min="0" value={form.taxRate ?? ''} onChange={e => upd('taxRate', e.target.value)} placeholder="0" /></div>
+                <div className="form-group"><label>Low Stock Default Threshold</label><input type="number" step="1" min="0" value={form.lowStockDefault ?? 5} onChange={e => upd('lowStockDefault', e.target.value)} /></div>
+                <div className="form-group"><label><i className="fas fa-toggle-on"></i> Prices Include Tax</label><div><input type="checkbox" className="toggle" checked={!!form.taxInclusive} onChange={e => upd('taxInclusive', e.target.checked)} /></div></div>
+              </div>
+            </LteCard>
+          )}
+
+          {/* 8. Payments & receipts Tab */}
+          {activeTab === 'receipts' && (
+            <LteCard title="Payments & receipts (Receipt roll, letterhead, dates)" icon="fa-receipt">
+              <div className="form-grid">
+                <div className="form-group">
+                  <label>Thermal Receipt Roll Width</label>
+                  <select value={form.receiptRollWidth || '80mm'} onChange={e => upd('receiptRollWidth', e.target.value)}>
+                    <option value="80mm">80mm (Standard POS Thermal Printer)</option>
+                    <option value="58mm">58mm (Compact Mobile POS Printer)</option>
+                  </select>
+                </div>
+                <div className="form-group"><label>Invoice Prefix</label><input type="text" value={form.invoicePrefix || ''} onChange={e => upd('invoicePrefix', e.target.value)} placeholder="INV-" /></div>
+                <div className="form-group">
+                  <label>Display Date Format</label>
+                  <select value={form.dateFormat || 'DD/MM/YYYY'} onChange={e => upd('dateFormat', e.target.value)}>
+                    <option value="DD/MM/YYYY">DD/MM/YYYY (e.g. 25/12/2026)</option>
+                    <option value="MM/DD/YYYY">MM/DD/YYYY (e.g. 12/25/2026)</option>
+                    <option value="YYYY-MM-DD">YYYY-MM-DD (e.g. 2026-12-25)</option>
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label><i className="fas fa-receipt"></i> Require Receipt Upload for Online / Bank</label>
+                  <div><input type="checkbox" className="toggle" checked={!!form.requireReceiptUpload} onChange={e => upd('requireReceiptUpload', e.target.checked)} /></div>
+                </div>
+              </div>
+              <div className="form-group"><label>Payment Instructions (Shown to customers)</label><textarea rows="2" value={form.paymentInstructions || ''} onChange={e => upd('paymentInstructions', e.target.value)} placeholder="e.g. Please share payment screenshot on WhatsApp or upload above."></textarea></div>
+              <div className="form-group"><label>Receipt Header / Letterhead</label><textarea rows="2" value={form.receiptHeader || ''} onChange={e => upd('receiptHeader', e.target.value)} placeholder="Shown on top of receipt below shop title"></textarea></div>
+              <div className="form-group"><label>Receipt Footer Note</label><textarea rows="2" value={form.receiptFooter || ''} onChange={e => upd('receiptFooter', e.target.value)} placeholder="e.g. Thank you for your visit! Please visit us again."></textarea></div>
+            </LteCard>
+          )}
+
+          {/* 9. Notifications Tab */}
+          {activeTab === 'notifications' && (
+            <LteCard title="Notifications (Shop + customer emails)" icon="fa-bell">
+              <div className="form-grid">
+                <div className="form-group"><label>Shop Admin Notification Email</label><input type="email" value={form.notifyAdminEmail || ''} onChange={e => upd('notifyAdminEmail', e.target.value)} placeholder="orders@yourshop.com" /></div>
+                <div className="form-group"><label><i className="fas fa-envelope"></i> Send Customer Email Confirmations</label><div><input type="checkbox" className="toggle" checked={form.orderEmailAlerts !== false} onChange={e => upd('orderEmailAlerts', e.target.checked)} /></div></div>
+              </div>
+              <div className="form-group" style={{ marginTop: 14 }}>
+                <label><i className="fab fa-whatsapp"></i> WhatsApp Order Ready Message Template</label>
+                <textarea rows="3" value={form.whatsappTemplate || ''} onChange={e => upd('whatsappTemplate', e.target.value)} placeholder="Hi {customer}, your order #{invoice} of {amount} is ready for pickup!"></textarea>
+                <small style={{ color: '#64748b' }}>Available tokens: <code>{'{customer}'}</code>, <code>{'{invoice}'}</code>, <code>{'{amount}'}</code></small>
+              </div>
+            </LteCard>
+          )}
+
+          {/* 10. Backup & maintenance Tab */}
+          {activeTab === 'backup' && (
+            <LteCard title="Backup & maintenance (Nightly backup, safety tools)" icon="fa-shield-halved">
+              <div className="form-group" style={{ marginBottom: 18 }}>
+                <label><i className="fas fa-cloud-arrow-up"></i> Nightly Automatic Database Backup</label>
+                <div>
+                  <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+                    <input type="checkbox" className="toggle" checked={form.nightlyBackupEnabled !== false} onChange={e => upd('nightlyBackupEnabled', e.target.checked)} />
+                    <span>{form.nightlyBackupEnabled !== false ? 'Enabled (Automated cloud snapshot schedule)' : 'Disabled'}</span>
+                  </label>
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16 }}>
+                <div style={{ padding: 16, border: '1px solid #e2e8f0', borderRadius: 8, background: '#f8fafc' }}>
+                  <h4 style={{ margin: '0 0 6px 0', fontSize: 15 }}><i className="fas fa-download"></i> Export Database (JSON)</h4>
+                  <p style={{ fontSize: 12.5, color: '#64748b', margin: '0 0 12px 0' }}>Download a complete real-time JSON backup of all products, sales, inventory logs, and settings.</p>
+                  <button type="button" className="btn btn-primary" onClick={handleExportBackup}><i className="fas fa-file-export"></i> Download Backup JSON</button>
+                </div>
+
+                <div style={{ padding: 16, border: '1px solid #e2e8f0', borderRadius: 8, background: '#f8fafc' }}>
+                  <h4 style={{ margin: '0 0 6px 0', fontSize: 15 }}><i className="fas fa-upload"></i> Restore Database (JSON)</h4>
+                  <p style={{ fontSize: 12.5, color: '#64748b', margin: '0 0 12px 0' }}>Upload a previous JSON backup file to completely restore your store data.</p>
+                  <input ref={backupInputRef} type="file" accept=".json,application/json" style={{ display: 'none' }} onChange={handleRestoreBackup} />
+                  <button type="button" className="btn btn-secondary" onClick={() => backupInputRef.current && backupInputRef.current.click()}><i className="fas fa-file-import"></i> Upload &amp; Restore</button>
+                </div>
+              </div>
+            </LteCard>
+          )}
+
+          {/* 11. Appearance & Themes Tab */}
+          {activeTab === 'themes' && (
+            <LteCard title="Appearance & Themes (36 Modern UI Palettes)" icon="fa-palette">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: 12, background: 'rgba(0,116,217,0.08)', borderRadius: 6, marginBottom: 16 }}>
+                <i className="fas fa-circle-info" style={{ color: 'var(--navy-accent)' }}></i>
+                <span>Tap any palette to preview live below, then click <strong>Set Now</strong> to apply across the entire application.</span>
+              </div>
+
+              <div className="thm-bar">
+                <div className="thm-chips">
+                  {THEME_SECTIONS.map(([k, lbl, ic]) => (
+                    <button key={k} type="button" className={'thm-chip' + (tsec === k ? ' on' : '')} onClick={() => setTsec(k)}>
+                      <i className={'fas ' + ic}></i> {lbl}
+                    </button>
+                  ))}
+                </div>
+                <div className="thm-search">
+                  <i className="fas fa-magnifying-glass"></i>
+                  <input type="text" value={tq} placeholder="Search palettes..." onChange={(e) => setTq(e.target.value)} />
+                </div>
+              </div>
+
+              <p style={{ fontSize: 12.5, color: '#718096', marginBottom: 12 }}><i className="fas fa-swatchbook"></i> Showing {filteredThemes.length} of {UI_THEMES.length} palettes</p>
+
+              <div className="theme-gallery">
+                {filteredThemes.map((t) => (
+                  <div
+                    key={t.id}
+                    className={'theme-card' + (activeThemeId === t.id ? ' active' : '') + (previewThemeId === t.id ? ' previewing' : '')}
+                    onClick={() => { setPreviewThemeId(t.id); applyThemeVars(themeVars(t)); }}
+                    title={'Preview ' + t.name}
+                  >
+                    <div className="theme-swatch">
+                      <span style={{background: t.primary}}></span>
+                      <span style={{background: t.secondary}}></span>
+                      <span style={{background: t.bg}}></span>
+                      <span style={{background: t.accent}}></span>
+                    </div>
+                    <div className="theme-body">
+                      <div className="theme-name">{t.name}</div>
+                      <div className="theme-id">
+                        {t.id}
+                        {activeThemeId === t.id && <span className="theme-default-badge" style={{ background: '#22c55e' }}>ACTIVE</span>}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                {!filteredThemes.length && <div style={{ padding: 20, textAlign: 'center', color: '#999', gridColumn: '1/-1' }}><i className="fas fa-circle-exclamation"></i> No palette matches that search.</div>}
+              </div>
+
+              <div className="theme-preview-panel">
+                <div className="tp-head" style={{ justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <span className="tp-title"><i className="fas fa-eye"></i> {pvTheme.name}</span>
+                    <span className="tp-chip">{pvTheme.id}</span>
+                    {activeThemeId === pvTheme.id && <span className="tp-tag applied"><i className="fas fa-check"></i> CURRENT</span>}
+                  </div>
+                  <button className="btn btn-primary" type="button" onClick={applyThemeFromSettings}><i className="fas fa-check"></i> Set Now ({pvTheme.name})</button>
+                </div>
+
+                <div className="tp-mock" style={{background: pvTheme.bg}}>
+                  <div className="tp-side" style={{background: pvTheme.primary}}>
+                    <div className="tp-logo"></div>
+                    {['fa-gauge-high','fa-table-cells-large','fa-boxes-stacked','fa-gear'].map(ic => <i className={'fas ' + ic} key={ic}></i>)}
+                  </div>
+                  <div className="tp-body2">
+                    <div className="tp-nav" style={{background: pvTheme.card}}>
+                      <span className="tp-h" style={{background: pvTheme.secondary}}></span>
+                      <span className="tp-av" style={{background: pvTheme.accent}}></span>
+                    </div>
+                    <div className="tp-content">
+                      <div className="tp-kpis">
+                        {[['128','RECORDS',pvTheme.primary,'#fff'],['$9.4k','SALES',pvTheme.secondary,'#fff'],['+18%','PROFIT',pvTheme.accent,pvTheme.onAccent]].map(([n,l,bg,c],i) => (
+                          <div key={i} className="tp-kpi" style={{background: bg, color: c}}>
+                            <span className="tp-kpi-n">{n}</span>
+                            <span className="tp-kpi-l">{l}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </LteCard>
+          )}
+
+          {/* 12. Categories Tab */}
+          {activeTab === 'categories' && (
+            <LteCard title="Product Categories (Taxonomy)" icon="fa-tags">
+              <div className="pos-scan-box" style={{ marginBottom: 14 }}>
+                <div className="form-group" style={{ flex: 1, marginBottom: 0 }}><label>New Category</label><input type="text" value={newCat} onChange={(e) => setNewCat(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addCat(); } }} placeholder="e.g. Beverages" /></div>
+                <button className="btn btn-success" onClick={addCat}><i className="fas fa-plus"></i> Add</button>
+              </div>
+              <div className="cat-chip-wrap">
+                {categories.length === 0 ? <p style={{ color: '#999' }}>No categories yet.</p> : categories.map(c => (
+                  <span className="cat-chip" key={c.id}><i className="fas fa-tag"></i> {c.name}<button onClick={() => delCat(c)} title="Delete"><i className="fas fa-times"></i></button></span>
                 ))}
               </div>
-              <div className="thm-search">
-                <i className="fas fa-magnifying-glass"></i>
-                <input type="text" value={tq} placeholder="Search palettes..." onChange={(e) => setTq(e.target.value)} />
-              </div>
-            </div>
+            </LteCard>
+          )}
 
-            <p style={{ fontSize: 12.5, color: '#718096', marginBottom: 12 }}><i className="fas fa-swatchbook"></i> Showing {filteredThemes.length} of {UI_THEMES.length} palettes</p>
-
-            <div className="theme-gallery">
-              {filteredThemes.map((t) => (
-                <div
-                  key={t.id}
-                  className={'theme-card' + (activeThemeId === t.id ? ' active' : '') + (previewThemeId === t.id ? ' previewing' : '')}
-                  onClick={() => { setPreviewThemeId(t.id); applyThemeVars(themeVars(t)); }}
-                  title={'Preview ' + t.name}
-                >
-                  <div className="theme-swatch">
-                    <span style={{background: t.primary}}></span>
-                    <span style={{background: t.secondary}}></span>
-                    <span style={{background: t.bg}}></span>
-                    <span style={{background: t.accent}}></span>
-                  </div>
-                  <div className="theme-body">
-                    <div className="theme-name">{t.name}</div>
-                    <div className="theme-id">
-                      {t.id}
-                      {activeThemeId === t.id && <span className="theme-default-badge" style={{ background: '#22c55e' }}>ACTIVE</span>}
-                    </div>
-                  </div>
-                </div>
-              ))}
-              {!filteredThemes.length && <div style={{ padding: 20, textAlign: 'center', color: '#999', gridColumn: '1/-1' }}><i className="fas fa-circle-exclamation"></i> No palette matches that search.</div>}
-            </div>
-
-            <div className="theme-preview-panel">
-              <div className="tp-head" style={{ justifyContent: 'space-between' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <span className="tp-title"><i className="fas fa-eye"></i> {pvTheme.name}</span>
-                  <span className="tp-chip">{pvTheme.id}</span>
-                  {activeThemeId === pvTheme.id && <span className="tp-tag applied"><i className="fas fa-check"></i> CURRENT</span>}
-                </div>
-                <button className="btn btn-primary" type="button" onClick={applyThemeFromSettings}><i className="fas fa-check"></i> Set Now ({pvTheme.name})</button>
-              </div>
-
-              <div className="tp-mock" style={{background: pvTheme.bg}}>
-                <div className="tp-side" style={{background: pvTheme.primary}}>
-                  <div className="tp-logo"></div>
-                  {['fa-gauge-high','fa-table-cells-large','fa-boxes-stacked','fa-gear'].map(ic => <i className={'fas ' + ic} key={ic}></i>)}
-                </div>
-                <div className="tp-body2">
-                  <div className="tp-nav" style={{background: pvTheme.card}}>
-                    <span className="tp-h" style={{background: pvTheme.secondary}}></span>
-                    <span className="tp-av" style={{background: pvTheme.accent}}></span>
-                  </div>
-                  <div className="tp-content">
-                    <div className="tp-kpis">
-                      {[['128','RECORDS',pvTheme.primary,'#fff'],['$9.4k','SALES',pvTheme.secondary,'#fff'],['+18%','PROFIT',pvTheme.accent,pvTheme.onAccent]].map(([n,l,bg,c],i) => (
-                        <div key={i} className="tp-kpi" style={{background: bg, color: c}}>
-                          <span className="tp-kpi-n">{n}</span>
-                          <span className="tp-kpi-l">{l}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </LteCard>
-
-          <LteCard title="Business Info" icon="fa-store">
-            <div className="form-grid">
-              <div className="form-group"><label>Business Name</label><input type="text" value={form.businessName || ''} onChange={(e) => upd('businessName', e.target.value)} /></div>
-              <div className="form-group"><label>Phone</label><input type="text" value={form.phone || ''} onChange={(e) => upd('phone', e.target.value)} /></div>
-              <div className="form-group"><label>Email</label><input type="email" value={form.email || ''} onChange={(e) => upd('email', e.target.value)} /></div>
-              <div className="form-group"><label>Logo URL</label><input type="text" value={form.logoUrl || ''} onChange={(e) => upd('logoUrl', e.target.value)} placeholder="https://..." /></div>
-            </div>
-            <div className="form-group"><label>Address</label><textarea rows="2" value={form.address || ''} onChange={(e) => upd('address', e.target.value)}></textarea></div>
-          </LteCard>
-
-          <LteCard title="Currency & Tax" icon="fa-coins">
-            <div className="form-grid">
-              <div className="form-group"><label>Currency Symbol</label><input type="text" value={form.currencySymbol || ''} onChange={(e) => upd('currencySymbol', e.target.value)} placeholder="$, Rs, ₹, £..." /></div>
-              <div className="form-group"><label>Currency Code</label><input type="text" value={form.currencyCode || ''} onChange={(e) => upd('currencyCode', e.target.value)} placeholder="USD, PKR, INR..." /></div>
-              <div className="form-group"><label>Default Tax Rate (%)</label><input type="number" step="0.01" min="0" value={form.taxRate ?? ''} onChange={(e) => upd('taxRate', e.target.value)} /></div>
-              <div className="form-group"><label>Low Stock Default</label><input type="number" step="1" min="0" value={form.lowStockDefault ?? ''} onChange={(e) => upd('lowStockDefault', e.target.value)} /></div>
-              <div className="form-group"><label><i className="fas fa-toggle-on"></i> Prices Include Tax</label><div><input type="checkbox" className="toggle" checked={!!form.taxInclusive} onChange={(e) => upd('taxInclusive', e.target.checked)} /></div></div>
-            </div>
-          </LteCard>
-
-          <LteCard title="Receipt / Invoice" icon="fa-receipt">
-            <div className="form-grid">
-              <div className="form-group"><label>Invoice Prefix</label><input type="text" value={form.invoicePrefix || ''} onChange={(e) => upd('invoicePrefix', e.target.value)} placeholder="INV-" /></div>
-            </div>
-            <div className="form-group"><label>Receipt Header</label><textarea rows="2" value={form.receiptHeader || ''} onChange={(e) => upd('receiptHeader', e.target.value)} placeholder="Shown above receipt items"></textarea></div>
-            <div className="form-group"><label>Receipt Footer</label><textarea rows="2" value={form.receiptFooter || ''} onChange={(e) => upd('receiptFooter', e.target.value)} placeholder="Thank you message"></textarea></div>
-          </LteCard>
-
-          <LteCard title="Product Categories" icon="fa-tags">
-            <div className="pos-scan-box" style={{ marginBottom: 14 }}>
-              <div className="form-group" style={{ flex: 1, marginBottom: 0 }}><label>New Category</label><input type="text" value={newCat} onChange={(e) => setNewCat(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addCat(); } }} placeholder="e.g. Beverages" /></div>
-              <button className="btn btn-success" onClick={addCat}><i className="fas fa-plus"></i> Add</button>
-            </div>
-            <div className="cat-chip-wrap">
-              {categories.length === 0 ? <p style={{ color: '#999' }}>No categories yet.</p> : categories.map(c => (
-                <span className="cat-chip" key={c.id}><i className="fas fa-tag"></i> {c.name}<button onClick={() => delCat(c)} title="Delete"><i className="fas fa-times"></i></button></span>
-              ))}
-            </div>
-          </LteCard>
+          {showPMModal && <PaymentMethodModal method={editingPM} onClose={() => { setShowPMModal(false); setEditingPM(null); }} onSave={handleSavePM} />}
         </div>
       );
     }
