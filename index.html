@@ -3746,6 +3746,258 @@
     body.dark-mode .pm-sub {
       color: #94a3b8;
     }
+
+    /* --- Dynamic UPI QR & Split Payment Styles --- */
+    .pos-pay-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+    .pos-pay-tab {
+      flex: 1 1 calc(33.33% - 6px);
+      min-width: 80px;
+      padding: 8px 6px;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      background: #f8fafc;
+      color: #334155;
+      font-size: 12px;
+      font-weight: 600;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .pos-pay-tab i {
+      font-size: 14px;
+    }
+    .pos-pay-tab:hover {
+      background: #e2e8f0;
+      border-color: #94a3b8;
+    }
+    .pos-pay-tab.active {
+      background: var(--navy-primary);
+      color: #ffffff;
+      border-color: var(--navy-primary);
+      box-shadow: 0 2px 8px rgba(0, 31, 63, 0.25);
+    }
+    body.dark-mode .pos-pay-tab {
+      background: #1e2632;
+      border-color: #334155;
+      color: #cbd5e1;
+    }
+    body.dark-mode .pos-pay-tab.active {
+      background: var(--navy-accent);
+      color: #ffffff;
+      border-color: var(--navy-accent);
+    }
+
+    .dynamic-qr-card {
+      margin: 10px 0;
+      padding: 12px;
+      background: #ffffff;
+      border: 2px dashed #0284c7;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.08);
+      animation: fadeIn 0.3s ease;
+    }
+    body.dark-mode .dynamic-qr-card {
+      background: #0f172a;
+      border-color: #0284c7;
+    }
+    .dynamic-qr-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #0369a1;
+      background: #e0f2fe;
+      padding: 4px 10px;
+      border-radius: 12px;
+      margin-bottom: 8px;
+    }
+    body.dark-mode .dynamic-qr-badge {
+      background: #1e293b;
+      color: #38bdf8;
+    }
+    .dynamic-qr-canvas-container {
+      display: inline-block;
+      padding: 8px;
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+    .dynamic-qr-amount-pill {
+      margin-top: 8px;
+      font-size: 13px;
+      color: #0f172a;
+    }
+    body.dark-mode .dynamic-qr-amount-pill {
+      color: #f1f5f9;
+    }
+    .dynamic-qr-amount-pill strong {
+      font-size: 17px;
+      color: #0284c7;
+      font-weight: 800;
+    }
+    .dynamic-qr-apps {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+    .upi-tag {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: #f1f5f9;
+      color: #475569;
+      border: 1px solid #e2e8f0;
+    }
+    body.dark-mode .upi-tag {
+      background: #1e293b;
+      color: #94a3b8;
+      border-color: #334155;
+    }
+    .dynamic-qr-info {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 11px;
+      color: #64748b;
+      margin-top: 8px;
+    }
+    body.dark-mode .dynamic-qr-info {
+      color: #94a3b8;
+    }
+    .btn-copy-upi {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      cursor: pointer;
+      color: inherit;
+    }
+    body.dark-mode .btn-copy-upi {
+      background: #1e293b;
+      border-color: #475569;
+    }
+    .btn-open-upi {
+      display: inline-block;
+      margin-top: 6px;
+      font-size: 11px;
+      color: #0284c7;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .split-payment-box {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 12px;
+      animation: fadeIn 0.3s ease;
+    }
+    body.dark-mode .split-payment-box {
+      background: #1e2632;
+      border-color: #334155;
+    }
+    .split-inputs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .split-presets {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .split-preset-btn {
+      flex: 1;
+      padding: 4px 6px;
+      font-size: 11px;
+      border-radius: 4px;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      color: #334155;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .split-preset-btn:hover {
+      background: #f1f5f9;
+      border-color: #94a3b8;
+    }
+    body.dark-mode .split-preset-btn {
+      background: #0f172a;
+      border-color: #475569;
+      color: #cbd5e1;
+    }
+    .split-balance-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .split-balance-bar.match {
+      background: #dcfce7;
+      color: #166534;
+      border: 1px solid #86efac;
+    }
+    .split-balance-bar.diff {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fca5a5;
+    }
+    body.dark-mode .split-balance-bar.match {
+      background: #14532d;
+      color: #86efac;
+      border-color: #166534;
+    }
+    body.dark-mode .split-balance-bar.diff {
+      background: #7f1d1d;
+      color: #fca5a5;
+      border-color: #991b1b;
+    }
+    .tender-chips {
+      display: flex;
+      gap: 4px;
+      margin-top: 4px;
+      flex-wrap: wrap;
+    }
+    .tender-chip {
+      padding: 2px 7px;
+      font-size: 11px;
+      border-radius: 4px;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      color: #334155;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    body.dark-mode .tender-chip {
+      background: #1e293b;
+      border-color: #475569;
+      color: #cbd5e1;
+    }
   </style>
 </head>
 
@@ -4749,9 +5001,19 @@ seedDemoData();
       const todayReturns = useMemo(() => returns.filter(r => (r.createdAt || '').slice(0, 10) === today), [returns, today]);
 
       const summary = useMemo(() => {
-        const cash = todaySales.filter(s => (s.paymentMethod || '').toLowerCase() === 'cash').reduce((a, s) => a + Number(s.total || 0), 0);
+        const cash = todaySales.reduce((a, s) => {
+          const m = (s.paymentMethod || '').toLowerCase();
+          if (m === 'cash') return a + Number(s.total || 0);
+          if (m.includes('split')) return a + Number(s.splitCash || 0);
+          return a;
+        }, 0);
         const card = todaySales.filter(s => (s.paymentMethod || '').toLowerCase() === 'card').reduce((a, s) => a + Number(s.total || 0), 0);
-        const upi = todaySales.filter(s => ['online', 'upi'].includes((s.paymentMethod || '').toLowerCase())).reduce((a, s) => a + Number(s.total || 0), 0);
+        const upi = todaySales.reduce((a, s) => {
+          const m = (s.paymentMethod || '').toLowerCase();
+          if (['online', 'upi'].includes(m)) return a + Number(s.total || 0);
+          if (m.includes('split')) return a + Number(s.splitOnline || 0);
+          return a;
+        }, 0);
         const credit = todaySales.filter(s => s.status === 'credit' || (s.paymentMethod || '').toLowerCase() === 'credit').reduce((a, s) => a + Number(s.total || 0), 0);
         const refund = todayReturns.reduce((a, r) => a + Number(r.totalRefund || 0), 0);
         const totalGross = todaySales.reduce((a, s) => a + Number(s.total || 0), 0);
@@ -4961,6 +5223,7 @@ seedDemoData();
       currency: '$', currencyCode: 'USD', currencyDecimals: 2, taxRate: 0, taxInclusive: false,
       invoicePrefix: 'INV-', lowStockDefault: 5, receiptHeader: '', receiptFooter: 'Thank you for your purchase!',
       receiptRollWidth: '80mm', dateFormat: 'DD/MM/YYYY',
+      upiId: 'shop@upi', upiPayeeName: 'Store',
       business: { name: 'My Business', address: '', phone: '', email: '' }, logoUrl: ''
     };
     function applySettings(s) {
@@ -4977,6 +5240,8 @@ seedDemoData();
       CFG.receiptRollWidth = s.receiptRollWidth || CFG.receiptRollWidth;
       CFG.dateFormat = s.dateFormat || CFG.dateFormat;
       CFG.logoUrl = s.logoUrl || '';
+      CFG.upiId = s.upiId || CFG.upiId;
+      CFG.upiPayeeName = s.upiPayeeName || s.businessName || CFG.upiPayeeName;
       CFG.business = { name: s.businessName || CFG.business.name, address: s.address || '', phone: s.phone || '', email: s.email || '' };
     }
     // settings + categories flow down through here; refreshConfig re-pulls after an edit
@@ -5010,7 +5275,14 @@ seedDemoData();
       return Math.max(0, rl * 2 - qtyOnHand);
     }
 
-    const PAYMENT_OPTS = [{ value: 'Cash', label: 'Cash' }, { value: 'Card', label: 'Card' }, { value: 'Mobile', label: 'Mobile / Wallet' }, { value: 'Bank', label: 'Bank Transfer' }, { value: 'Credit', label: 'Credit (unpaid)' }];
+    const PAYMENT_OPTS = [
+      { value: 'Cash', label: '💵 Cash' },
+      { value: 'Online', label: '📱 UPI / Online QR' },
+      { value: 'Split', label: '⚡ Split (Cash + Online)' },
+      { value: 'Card', label: '💳 Card' },
+      { value: 'Bank', label: '🏦 Bank Transfer' },
+      { value: 'Credit', label: '📝 Credit (unpaid)' }
+    ];
     const DISCOUNT_TYPE_OPTS = [{ value: 'flat', label: 'Amount' }, { value: 'percent', label: 'Percent %' }];
     const REASON_IN_OPTS = ['Purchase', 'Return', 'Adjustment', 'Opening Stock', 'Production', 'Transfer In'].map(r => ({ value: r, label: r }));
     const REASON_OUT_OPTS = ['Sale', 'Damage', 'Loss / Theft', 'Adjustment', 'Expired', 'Transfer Out'].map(r => ({ value: r, label: r }));
@@ -6523,7 +6795,17 @@ seedDemoData();
             {Number(sale.discount) > 0 ? <div className="ts-row"><span>Discount</span><span>- {money(sale.discount)}</span></div> : null}
             {Number(sale.tax) > 0 ? <div className="ts-row"><span>Tax{CFG.taxInclusive ? ' (incl)' : ''}</span><span>{money(sale.tax)}</span></div> : null}
             <div className="ts-row ts-total"><span>Total</span><span>{money(sale.total)}</span></div>
-            {sale.paymentMethod ? <div className="ts-row"><span>Paid ({sale.paymentMethod})</span><span>{money(sale.amountTendered != null ? sale.amountTendered : sale.total)}</span></div> : null}
+            {sale.paymentMethod === 'Split' || (sale.splitCash != null && sale.splitOnline != null) ? (
+              <React.Fragment>
+                <div className="ts-row"><span>Paid (Split - Cash)</span><span>{money(sale.splitCash || 0)}</span></div>
+                <div className="ts-row"><span>Paid (Split - Online/UPI)</span><span>{money(sale.splitOnline || 0)}</span></div>
+                {Number(sale.amountTendered) > Number(sale.splitCash) && Number(sale.changeDue) > 0 ? (
+                  <div className="ts-row"><span>Cash Tendered</span><span>{money(sale.amountTendered)}</span></div>
+                ) : null}
+              </React.Fragment>
+            ) : (
+              sale.paymentMethod ? <div className="ts-row"><span>Paid ({sale.paymentMethod})</span><span>{money(sale.amountTendered != null ? sale.amountTendered : sale.total)}</span></div> : null
+            )}
             {Number(sale.changeDue) > 0 ? <div className="ts-row"><span>Change</span><span>{money(sale.changeDue)}</span></div> : null}
             {sale.status === 'credit' ? <div className="ts-row"><span>Status</span><span>CREDIT / UNPAID</span></div> : null}
           </div>
@@ -6558,6 +6840,74 @@ seedDemoData();
       );
     }
 
+    // --- Dynamic Real-time UPI QR Component ---
+    function DynamicUpiQr({ amount, upiId, payeeName, invoiceNote, onEditUpi }) {
+      const canvasRef = useRef(null);
+      const [copied, setCopied] = useState(false);
+      const validAmount = Math.max(0, Number(amount) || 0);
+      const finalUpiId = upiId || CFG.upiId || 'shop@upi';
+      const finalPayee = payeeName || CFG.upiPayeeName || CFG.business?.name || 'Store';
+      const note = invoiceNote || 'Bill Payment';
+      // Standard UPI specification URL
+      const upiUri = `upi://pay?pa=${encodeURIComponent(finalUpiId)}&pn=${encodeURIComponent(finalPayee)}&am=${validAmount.toFixed(2)}&cu=INR&tn=${encodeURIComponent(note)}`;
+
+      useEffect(() => {
+        if (canvasRef.current && validAmount > 0) {
+          QRCode.toCanvas(canvasRef.current, upiUri, {
+            width: 190,
+            margin: 1,
+            color: { dark: '#001529', light: '#ffffff' }
+          }, (err) => {
+            if (err) console.error('Dynamic QR Error:', err);
+          });
+        }
+      }, [upiUri, validAmount]);
+
+      const handleCopy = () => {
+        try {
+          navigator.clipboard.writeText(upiUri);
+          setCopied(true);
+          setTimeout(() => setCopied(false), 2000);
+        } catch (e) { }
+      };
+
+      if (validAmount <= 0) return null;
+
+      return (
+        <div className="dynamic-qr-card">
+          <div className="dynamic-qr-badge">
+            <i className="fas fa-bolt" style={{ color: '#f59e0b' }}></i> Dynamic Real-Time UPI QR
+          </div>
+          <div className="dynamic-qr-canvas-container">
+            <canvas ref={canvasRef} style={{ width: 190, height: 190, display: 'block', margin: '0 auto', borderRadius: 8 }} />
+          </div>
+          <div className="dynamic-qr-amount-pill">
+            Scan &amp; Pay Exact: <strong>{money(validAmount)}</strong>
+          </div>
+          <div className="dynamic-qr-apps">
+            <span className="upi-tag"><i className="fab fa-google-pay"></i> GPay</span>
+            <span className="upi-tag"><i className="fas fa-mobile-screen"></i> PhonePe</span>
+            <span className="upi-tag"><i className="fas fa-wallet"></i> Paytm</span>
+            <span className="upi-tag"><i className="fas fa-building-columns"></i> BHIM</span>
+          </div>
+          <div className="dynamic-qr-info">
+            <span>UPI ID: <strong>{finalUpiId}</strong></span>
+            {onEditUpi && (
+              <button type="button" className="btn-copy-upi" onClick={onEditUpi} title="Edit UPI ID for Store">
+                <i className="fas fa-pencil"></i> Edit
+              </button>
+            )}
+            <button type="button" className="btn-copy-upi" onClick={handleCopy} title="Copy UPI Link">
+              <i className={copied ? "fas fa-check" : "fas fa-copy"}></i> {copied ? 'Copied' : 'Copy Link'}
+            </button>
+          </div>
+          <a href={upiUri} className="btn-open-upi" target="_blank" rel="noreferrer">
+            <i className="fas fa-arrow-up-right-from-square"></i> Open in UPI App
+          </a>
+        </div>
+      );
+    }
+
     // --- POS / QR Sales View ---
     function POSView({ user, role }) {
       const [cart, setCart] = useState([]);
@@ -6571,6 +6921,10 @@ seedDemoData();
       const [discountValue, setDiscountValue] = useState('');
       const [paymentMethod, setPaymentMethod] = useState('Cash');
       const [tendered, setTendered] = useState('');
+      const [splitCash, setSplitCash] = useState('');
+      const [splitOnline, setSplitOnline] = useState('');
+      const [customUpiId, setCustomUpiId] = useState(() => localStorage.getItem('pos_custom_upi') || '');
+      const [onlineVerified, setOnlineVerified] = useState(false);
       const [held, setHeld] = useState(() => { try { return JSON.parse(localStorage.getItem('pos_held') || '[]'); } catch (e) { return []; } });
       const scanRef = useRef(null);
 
@@ -6583,11 +6937,70 @@ seedDemoData();
       const customerOpts = useMemo(() => customers.map(c => ({ value: c.id, label: c.name + (c.phone ? ' · ' + c.phone : '') })), [customers]);
       const { loading: loadingMovements, data: movementsData } = useFetch(() => fbGetStockMovements(), [reloadKey]);
       const movements = useMemo(() => (movementsData && movementsData.success ? movementsData.data : []), [movementsData]);
-      // gate scanning until both loads land - scanning against a still-empty movements array
-      // would make computeQtyOnHand read 0 and falsely reject the very first scan as out-of-stock
       const catalogReady = !loadingProducts && !loadingMovements;
 
       useEffect(() => { if (catalogReady && !completedSale && !showCamera && scanRef.current) scanRef.current.focus(); }, [catalogReady, completedSale, showCamera, cart]);
+
+      const totals = useMemo(() => computeSaleTotals(cart, prodById, { type: discountType, value: discountValue }), [cart, prodById, discountType, discountValue]);
+      const itemCount = useMemo(() => cart.reduce((s, l) => s + l.qty, 0), [cart]);
+
+      // Initialize split values when switching to Split or when cart grand total changes
+      useEffect(() => {
+        if (paymentMethod === 'Split') {
+          if (!splitCash && !splitOnline && totals.grand > 0) {
+            const half = round2(totals.grand / 2);
+            setSplitCash(String(half));
+            setSplitOnline(String(round2(totals.grand - half)));
+          }
+        }
+      }, [paymentMethod, totals.grand]);
+
+      const handleSplitCashChange = (val) => {
+        setSplitCash(val);
+        const c = Number(val) || 0;
+        const rem = Math.max(0, totals.grand - c);
+        setSplitOnline(rem > 0 ? String(round2(rem)) : '0');
+      };
+
+      const handleSplitOnlineChange = (val) => {
+        setSplitOnline(val);
+        const o = Number(val) || 0;
+        const rem = Math.max(0, totals.grand - o);
+        setSplitCash(rem > 0 ? String(round2(rem)) : '0');
+      };
+
+      const setSplitPreset = (percentCash) => {
+        const c = round2((totals.grand * percentCash) / 100);
+        const o = round2(totals.grand - c);
+        setSplitCash(String(c));
+        setSplitOnline(String(o));
+      };
+
+      const promptEditUpi = async () => {
+        const { value } = await Swal.fire({
+          title: 'Store UPI ID for Dynamic QR',
+          input: 'text',
+          inputLabel: 'Enter your shop UPI VPA (e.g. 9876543210@paytm, merchant@okaxis)',
+          inputValue: customUpiId || CFG.upiId || 'shop@upi',
+          showCancelButton: true
+        });
+        if (value && value.trim()) {
+          const clean = value.trim();
+          setCustomUpiId(clean);
+          localStorage.setItem('pos_custom_upi', clean);
+          CFG.upiId = clean;
+        }
+      };
+
+      const changeDue = useMemo(() => {
+        if (paymentMethod === 'Cash') {
+          return Math.max(0, (Number(tendered) || 0) - totals.grand);
+        }
+        if (paymentMethod === 'Split') {
+          return Math.max(0, (Number(tendered) || 0) - (Number(splitCash) || 0));
+        }
+        return 0;
+      }, [paymentMethod, tendered, totals.grand, splitCash]);
 
       const capacityCheck = useCallback((productId, name, nextQty) => {
         const onHand = computeQtyOnHand(productId, movements);
@@ -6612,9 +7025,9 @@ seedDemoData();
         const code = String(rawCode || '').trim();
         if (!code) return;
         if (!catalogReady) { Swal.fire({ icon: 'warning', title: 'Still Loading', text: 'Catalog is still loading, try again in a moment.' }); return; }
-        const local = codeIndex.get(code.toLowerCase()); // instant - no network round-trip per scan
+        const local = codeIndex.get(code.toLowerCase());
         if (local) { addToCart(local, 1); return; }
-        const res = await fbFindProductByCode(code); // miss: product may be newer than our cached catalog
+        const res = await fbFindProductByCode(code);
         if (!res.success) { Swal.fire({ icon: 'error', title: 'Not Found', text: res.message || `No product matches "${code}"` }); return; }
         addToCart(res.data, 1);
       }, [addToCart, catalogReady, codeIndex]);
@@ -6641,14 +7054,19 @@ seedDemoData();
 
       const removeLine = (productId) => setCart(prev => prev.filter(l => l.productId !== productId));
 
-      const totals = useMemo(() => computeSaleTotals(cart, prodById, { type: discountType, value: discountValue }), [cart, prodById, discountType, discountValue]);
-      const itemCount = useMemo(() => cart.reduce((s, l) => s + l.qty, 0), [cart]);
-      const changeDue = paymentMethod === 'Cash' ? Math.max(0, (Number(tendered) || 0) - totals.grand) : 0;
-
       const persistHeld = (list) => { setHeld(list); localStorage.setItem('pos_held', JSON.stringify(list)); };
-      const resetSale = () => { setCart([]); setCustomerId(''); setDiscountValue(''); setDiscountType('flat'); setPaymentMethod('Cash'); setTendered(''); };
+      const resetSale = () => {
+        setCart([]);
+        setCustomerId('');
+        setDiscountValue('');
+        setDiscountType('flat');
+        setPaymentMethod('Cash');
+        setTendered('');
+        setSplitCash('');
+        setSplitOnline('');
+        setOnlineVerified(false);
+      };
 
-      // park the current cart (customer + discount too) to localStorage, then clear the till
       const holdSale = () => {
         if (!cart.length) return;
         const cust = customers.find(c => c.id === customerId);
@@ -6670,18 +7088,74 @@ seedDemoData();
 
       const handleCheckout = async () => {
         if (cart.length === 0) return;
-        if (paymentMethod === 'Cash' && (Number(tendered) || 0) < totals.grand) {
+
+        if (paymentMethod === 'Cash' && (Number(tendered) || 0) < totals.grand && Number(tendered) > 0) {
           const go = await Swal.fire({ icon: 'warning', title: 'Short payment', text: `Tendered is less than ${money(totals.grand)}. Continue anyway?`, showCancelButton: true, confirmButtonText: 'Yes, continue' });
           if (!go.isConfirmed) return;
         }
-        if (paymentMethod === 'Credit' && !customerId) { Swal.fire({ icon: 'warning', title: 'Pick a customer', text: 'Credit sales must be tied to a customer.' }); return; }
+
+        if (paymentMethod === 'Split') {
+          const sC = Number(splitCash) || 0;
+          const sO = Number(splitOnline) || 0;
+          const totalSplit = round2(sC + sO);
+          if (totalSplit < round2(totals.grand)) {
+            const go = await Swal.fire({
+              icon: 'warning',
+              title: 'Split Amount Incomplete',
+              text: `Total split payments (${money(totalSplit)}) is less than Grand Total (${money(totals.grand)}). Continue anyway?`,
+              showCancelButton: true,
+              confirmButtonText: 'Yes, proceed'
+            });
+            if (!go.isConfirmed) return;
+          }
+          if (Number(tendered) > 0 && Number(tendered) < sC) {
+            const go = await Swal.fire({
+              icon: 'warning',
+              title: 'Cash Tendered Short',
+              text: `Cash tendered (${money(tendered)}) is less than cash share (${money(sC)}). Continue?`,
+              showCancelButton: true,
+              confirmButtonText: 'Continue'
+            });
+            if (!go.isConfirmed) return;
+          }
+        }
+
+        if (paymentMethod === 'Credit' && !customerId) {
+          Swal.fire({ icon: 'warning', title: 'Pick a customer', text: 'Credit sales must be tied to a customer.' });
+          return;
+        }
+
         setLoad('Processing sale...');
         const cust = customers.find(c => c.id === customerId);
+
+        const sC = paymentMethod === 'Split' ? (Number(splitCash) || 0) : null;
+        const sO = paymentMethod === 'Split' ? (Number(splitOnline) || 0) : null;
+        let amountTendered = totals.grand;
+        if (paymentMethod === 'Cash') {
+          amountTendered = Number(tendered) || totals.grand;
+        } else if (paymentMethod === 'Split') {
+          amountTendered = (Number(tendered) || sC || 0) + (sO || 0);
+        } else if (paymentMethod === 'Credit') {
+          amountTendered = 0;
+        }
+
         const sale = {
-          items: totals.lines, subtotal: totals.subtotal, discount: totals.discount, discountType, tax: totals.tax, total: totals.grand,
-          paymentMethod, amountTendered: paymentMethod === 'Cash' ? (Number(tendered) || 0) : (paymentMethod === 'Credit' ? 0 : totals.grand), changeDue: round2(changeDue),
-          customerId: customerId || '', customerName: cust ? cust.name : 'Walk-in', status: paymentMethod === 'Credit' ? 'credit' : 'completed'
+          items: totals.lines,
+          subtotal: totals.subtotal,
+          discount: totals.discount,
+          discountType,
+          tax: totals.tax,
+          total: totals.grand,
+          paymentMethod,
+          splitCash: sC,
+          splitOnline: sO,
+          amountTendered,
+          changeDue: round2(changeDue),
+          customerId: customerId || '',
+          customerName: cust ? cust.name : 'Walk-in',
+          status: paymentMethod === 'Credit' ? 'credit' : 'completed'
         };
+
         const res = await fbCreateSale(sale, user);
         setLoad('');
         if (res.success) {
@@ -6693,6 +7167,10 @@ seedDemoData();
           Swal.fire({ icon: 'error', title: 'Checkout Failed', text: res.message });
         }
       };
+
+      const splitSum = round2((Number(splitCash) || 0) + (Number(splitOnline) || 0));
+      const splitDiff = round2(totals.grand - splitSum);
+      const isSplitMatched = Math.abs(splitDiff) < 0.01;
 
       return (
         <div className="data-section">
@@ -6724,14 +7202,139 @@ seedDemoData();
                 <SearchableDropdown label="Discount" icon="fas fa-tags" options={DISCOUNT_TYPE_OPTS} value={discountType} onChange={setDiscountType} placeholder="Amount" />
                 <div className="form-group"><label>Value</label><input type="number" min="0" step="0.01" placeholder="0" value={discountValue} onChange={(e) => setDiscountValue(e.target.value)} /></div>
               </div>
-              <SearchableDropdown label="Payment" icon="fas fa-money-bill-wave" options={PAYMENT_OPTS} value={paymentMethod} onChange={setPaymentMethod} placeholder="Cash" />
-              {paymentMethod === 'Cash' && <div className="form-group"><label>Amount Tendered</label><input type="number" min="0" step="0.01" value={tendered} onChange={(e) => setTendered(e.target.value)} /></div>}
+
+              {/* Fast Payment Mode Selector Tabs */}
+              <div style={{ marginTop: 10, marginBottom: 4 }}>
+                <label style={{ fontSize: 12, fontWeight: 700, color: '#475569', display: 'block', marginBottom: 6 }}>
+                  <i className="fas fa-money-bill-wave"></i> Payment Method
+                </label>
+                <div className="pos-pay-tabs">
+                  <button type="button" className={`pos-pay-tab ${paymentMethod === 'Cash' ? 'active' : ''}`} onClick={() => setPaymentMethod('Cash')}>
+                    <i className="fas fa-money-bill"></i>
+                    <span>Cash</span>
+                  </button>
+                  <button type="button" className={`pos-pay-tab ${paymentMethod === 'Online' ? 'active' : ''}`} onClick={() => setPaymentMethod('Online')}>
+                    <i className="fas fa-qrcode"></i>
+                    <span>UPI / QR</span>
+                  </button>
+                  <button type="button" className={`pos-pay-tab ${paymentMethod === 'Split' ? 'active' : ''}`} onClick={() => { setPaymentMethod('Split'); setSplitPreset(50); }}>
+                    <i className="fas fa-bolt" style={{ color: '#f59e0b' }}></i>
+                    <span>Split (Dual)</span>
+                  </button>
+                  <button type="button" className={`pos-pay-tab ${paymentMethod === 'Card' ? 'active' : ''}`} onClick={() => setPaymentMethod('Card')}>
+                    <i className="fas fa-credit-card"></i>
+                    <span>Card</span>
+                  </button>
+                  <button type="button" className={`pos-pay-tab ${paymentMethod === 'Credit' ? 'active' : ''}`} onClick={() => setPaymentMethod('Credit')}>
+                    <i className="fas fa-book"></i>
+                    <span>Credit</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Fallback Dropdown for custom configured payment methods */}
+              <SearchableDropdown label="Select Other Method" icon="fas fa-wallet" options={PAYMENT_OPTS} value={paymentMethod} onChange={setPaymentMethod} placeholder="Select method" />
+
+              {/* 1. Cash Payment Controls */}
+              {paymentMethod === 'Cash' && (
+                <div className="form-group" style={{ marginTop: 8 }}>
+                  <label>Amount Tendered (Cash Received)</label>
+                  <input type="number" min="0" step="0.01" value={tendered} onChange={(e) => setTendered(e.target.value)} placeholder={String(totals.grand)} />
+                  <div className="tender-chips">
+                    <button type="button" className="tender-chip" onClick={() => setTendered(String(totals.grand))}>Exact: {money(totals.grand)}</button>
+                    <button type="button" className="tender-chip" onClick={() => setTendered(String(Math.ceil(totals.grand / 50) * 50))}>Round 50</button>
+                    <button type="button" className="tender-chip" onClick={() => setTendered(String(Math.ceil(totals.grand / 100) * 100))}>Round 100</button>
+                    <button type="button" className="tender-chip" onClick={() => setTendered(String(Math.ceil(totals.grand / 500) * 500))}>Round 500</button>
+                  </div>
+                </div>
+              )}
+
+              {/* 2. Full Online (Dynamic UPI QR) */}
+              {paymentMethod === 'Online' && (
+                <div>
+                  <DynamicUpiQr
+                    amount={totals.grand}
+                    upiId={customUpiId || CFG.upiId}
+                    payeeName={CFG.upiPayeeName || CFG.business?.name}
+                    invoiceNote={`Bill Payment (${cart.length} items)`}
+                    onEditUpi={promptEditUpi}
+                  />
+                  <div style={{ margin: '8px 0', padding: '8px 10px', background: '#f0fdf4', border: '1px solid #86efac', borderRadius: 8 }}>
+                    <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 12, color: '#166534', fontWeight: 600 }}>
+                      <input type="checkbox" checked={onlineVerified} onChange={e => setOnlineVerified(e.target.checked)} />
+                      <span>Online payment verified in shop account</span>
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {/* 3. Split / Dual Payment Mode (Cash + Online Dynamic QR) */}
+              {paymentMethod === 'Split' && (
+                <div className="split-payment-box">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: '#1e293b' }}><i className="fas fa-bolt" style={{ color: '#f59e0b' }}></i> Dual Split Payment</span>
+                    <span style={{ fontSize: 11, color: '#64748b' }}>Bill: <strong>{money(totals.grand)}</strong></span>
+                  </div>
+
+                  <div className="split-presets">
+                    <button type="button" className="split-preset-btn" onClick={() => setSplitPreset(50)}>50% Cash / 50% Online</button>
+                    <button type="button" className="split-preset-btn" onClick={() => { setSplitCash('100'); setSplitOnline(String(Math.max(0, round2(totals.grand - 100)))); }}>₹100 Cash / Rest QR</button>
+                    <button type="button" className="split-preset-btn" onClick={() => { setSplitCash('200'); setSplitOnline(String(Math.max(0, round2(totals.grand - 200)))); }}>₹200 Cash / Rest QR</button>
+                  </div>
+
+                  <div className="split-inputs-grid">
+                    <div className="form-group" style={{ marginBottom: 0 }}>
+                      <label style={{ fontSize: 11, fontWeight: 700 }}><i className="fas fa-money-bill" style={{ color: '#16a34a' }}></i> Cash Share ({CFG.currency})</label>
+                      <input type="number" min="0" step="0.01" value={splitCash} onChange={e => handleSplitCashChange(e.target.value)} placeholder="0.00" />
+                    </div>
+                    <div className="form-group" style={{ marginBottom: 0 }}>
+                      <label style={{ fontSize: 11, fontWeight: 700 }}><i className="fas fa-qrcode" style={{ color: '#0284c7' }}></i> Online Share ({CFG.currency})</label>
+                      <input type="number" min="0" step="0.01" value={splitOnline} onChange={e => handleSplitOnlineChange(e.target.value)} placeholder="0.00" />
+                    </div>
+                  </div>
+
+                  <div style={{ margin: '8px 0' }}>
+                    <div className={`split-balance-bar ${isSplitMatched ? 'match' : 'diff'}`}>
+                      <span>{isSplitMatched ? '✓ Split Perfectly Balanced' : `Difference: ${splitDiff > 0 ? money(splitDiff) + ' remaining' : money(Math.abs(splitDiff)) + ' excess'}`}</span>
+                      <span>Total: {money(splitSum)} / {money(totals.grand)}</span>
+                    </div>
+                  </div>
+
+                  {/* Cash Tendered for the Cash Portion */}
+                  {(Number(splitCash) || 0) > 0 && (
+                    <div className="form-group" style={{ marginTop: 6, marginBottom: 8 }}>
+                      <label style={{ fontSize: 11 }}>Cash Tendered for Cash Portion (optional)</label>
+                      <input type="number" min="0" step="0.01" value={tendered} onChange={e => setTendered(e.target.value)} placeholder={String(splitCash)} />
+                    </div>
+                  )}
+
+                  {/* Dynamic QR for the exact Online portion */}
+                  {(Number(splitOnline) || 0) > 0 && (
+                    <DynamicUpiQr
+                      amount={Number(splitOnline) || 0}
+                      upiId={customUpiId || CFG.upiId}
+                      payeeName={CFG.upiPayeeName || CFG.business?.name}
+                      invoiceNote={'Split Bill QR Share'}
+                      onEditUpi={promptEditUpi}
+                    />
+                  )}
+                </div>
+              )}
+
               <div className="pos-summary-row"><span>Items</span><span>{itemCount}</span></div>
               <div className="pos-summary-row"><span>Subtotal</span><span>{money(totals.subtotal)}</span></div>
               {totals.discount > 0 && <div className="pos-summary-row"><span>Discount</span><span>- {money(totals.discount)}</span></div>}
               {totals.tax > 0 && <div className="pos-summary-row"><span>Tax{CFG.taxInclusive ? ' (incl)' : ''}</span><span>{money(totals.tax)}</span></div>}
               <div className="pos-summary-row grand"><span>Grand Total</span><span>{money(totals.grand)}</span></div>
-              {paymentMethod === 'Cash' && (Number(tendered) || 0) > 0 && <div className="pos-summary-row"><span>Change</span><span>{money(changeDue)}</span></div>}
+
+              {/* Real-time Change Due Display */}
+              {changeDue > 0 && (
+                <div className="pos-summary-row" style={{ color: '#16a34a', fontWeight: 700 }}>
+                  <span>Change to Return</span>
+                  <span>{money(changeDue)}</span>
+                </div>
+              )}
+
               <div className="pos-checkout-actions">
                 <button className="btn btn-secondary" disabled={cart.length === 0} onClick={holdSale}><i className="fas fa-pause"></i> Hold</button>
                 <button className="btn btn-success" disabled={cart.length === 0} onClick={handleCheckout}><i className="fas fa-check"></i> Checkout</button>
@@ -8102,6 +8705,8 @@ seedDemoData();
                 <div className="form-group"><label>Contact Phone</label><input type="text" value={form.phone || ''} onChange={e => upd('phone', e.target.value)} placeholder="+1 234 567 8900" /></div>
                 <div className="form-group"><label>Email Address</label><input type="email" value={form.email || ''} onChange={e => upd('email', e.target.value)} placeholder="shop@domain.com" /></div>
                 <div className="form-group"><label>Logo Image URL</label><input type="text" value={form.logoUrl || ''} onChange={e => upd('logoUrl', e.target.value)} placeholder="https://... logo.png" /></div>
+                <div className="form-group"><label><i className="fas fa-qrcode"></i> Store UPI ID / VPA (Dynamic QR)</label><input type="text" value={form.upiId || ''} onChange={e => upd('upiId', e.target.value)} placeholder="e.g. 9876543210@paytm or shop@okaxis" /></div>
+                <div className="form-group"><label>UPI Merchant Name</label><input type="text" value={form.upiPayeeName || ''} onChange={e => upd('upiPayeeName', e.target.value)} placeholder="Display name on customer payment app" /></div>
               </div>
               <div className="form-group"><label>Physical Address</label><textarea rows="2" value={form.address || ''} onChange={e => upd('address', e.target.value)} placeholder="Store location, street, city"></textarea></div>
               {form.logoUrl && (
