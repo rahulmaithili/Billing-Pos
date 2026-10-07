@@ -6311,3 +6311,621 @@
   text-align: center;
   font-family: monospace;
 }
+
+
+/* ==========================================================================
+   Dashboard V2 & Products V2 Modern SaaS Design (Exact Screenshot Match)
+   ========================================================================== */
+
+/* --- Dashboard V2 Styles (Screenshot 1) --- */
+.dash-v2-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 4px 0 24px;
+}
+
+.dash-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #64748b;
+  margin-bottom: 2px;
+}
+.dash-breadcrumb span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.dash-breadcrumb a {
+  color: #64748b;
+  text-decoration: none;
+}
+.dash-breadcrumb a:hover {
+  color: #0f172a;
+}
+
+.dash-top-grid {
+  display: grid;
+  grid-template-columns: minmax(360px, 420px) 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 1024px) {
+  .dash-top-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Maroon / Wine Sales Today Card */
+.dash-sales-hero-card {
+  background: linear-gradient(135deg, #2d1424 0%, #3d1a31 50%, #26111f 100%);
+  border-radius: var(--r-md, 14px);
+  padding: 22px 24px;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 10px 25px -5px rgba(45, 20, 36, 0.4);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dash-sales-hero-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.dash-sales-pill {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #fce7f3;
+}
+.dash-sales-open-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #fbcfe8;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  transition: all 0.15s;
+}
+.dash-sales-open-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.dash-sales-big-amt {
+  font-size: 40px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+  color: #ffffff;
+  margin: 4px 0 6px;
+}
+.dash-sales-subtext {
+  font-size: 12.5px;
+  color: #fbcfe8;
+  opacity: 0.85;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dash-sales-bottom-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+.dash-sales-stat-col {
+  display: flex;
+  flex-direction: column;
+}
+.dash-sales-stat-col .lbl {
+  font-size: 11px;
+  color: #fbcfe8;
+  opacity: 0.8;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-bottom: 3px;
+}
+.dash-sales-stat-col .val {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+/* Today 4 KPI Card Grid */
+.dash-today-wrap {
+  background: #ffffff;
+  border-radius: var(--r-md, 14px);
+  border: 1px solid #e2e8f0;
+  padding: 18px 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+  display: flex;
+  flex-direction: column;
+}
+.dash-today-h {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 16px;
+}
+.dash-today-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  flex: 1;
+}
+
+@media (max-width: 1200px) {
+  .dash-today-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 600px) {
+  .dash-today-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dash-kpi-subcard {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--r-sm, 10px);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  transition: all 0.15s;
+}
+.dash-kpi-subcard:hover {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+}
+.dash-kpi-subcard-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+.dash-kpi-subcard-title {
+  font-size: 12.5px;
+  color: #64748b;
+  font-weight: 600;
+}
+.dash-kpi-circle-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+.dash-kpi-subcard-num {
+  font-size: 24px;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.1;
+  margin-bottom: 6px;
+}
+.dash-kpi-subcard-note {
+  font-size: 11px;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Middle Row: Attention Required & Recent Activity */
+.dash-mid-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 16px;
+}
+@media (max-width: 1024px) {
+  .dash-mid-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dash-card-box {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--r-md, 14px);
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+  display: flex;
+  flex-direction: column;
+}
+.dash-card-box-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+.dash-card-box-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.dash-card-box-sub {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+/* Attention Table */
+.dash-attention-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+.dash-attention-table th {
+  text-align: left;
+  padding: 8px 10px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #64748b;
+  border-bottom: 1px solid #e2e8f0;
+  font-weight: 700;
+}
+.dash-attention-table td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+.dash-attention-table tr:hover td {
+  background: #f8fafc;
+}
+
+.dash-issue-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  font-size: 12px;
+}
+.dash-issue-tag.late {
+  color: #ea580c;
+}
+.dash-issue-tag.review {
+  color: #dc2626;
+}
+
+.dash-wait-bars {
+  display: inline-flex;
+  gap: 2px;
+  margin-left: 6px;
+  color: #ea580c;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.dash-soldout-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+  color: #e11d48;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 999px;
+  margin-top: 14px;
+}
+
+/* Activity Feed */
+.dash-act-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.dash-act-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 12.5px;
+}
+.dash-act-ic {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.dash-act-content {
+  flex: 1;
+  min-width: 0;
+}
+.dash-act-title {
+  font-weight: 700;
+  color: #0f172a;
+}
+.dash-act-desc {
+  font-size: 11.5px;
+  color: #64748b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dash-act-time {
+  font-size: 11px;
+  color: #94a3b8;
+  flex-shrink: 0;
+}
+
+/* Bottom Row Charts */
+.dash-bot-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+@media (max-width: 768px) {
+  .dash-bot-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dash-chart-empty {
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  gap: 8px;
+  font-size: 13px;
+}
+.dash-chart-empty i {
+  font-size: 28px;
+  color: #cbd5e1;
+}
+
+/* --- Products V2 Pipeline Chevrons & Table (Screenshot 2) --- */
+.prod-pipeline-chevrons {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  margin-bottom: 14px;
+}
+.prod-chevron {
+  flex: 1;
+  min-width: 140px;
+  padding: 10px 14px;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 12.5px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 0 100%, 14px 50%);
+  transition: all 0.15s;
+  border: none;
+}
+.prod-chevron:first-child {
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 0 100%);
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+}
+.prod-chevron:last-child {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 14px 50%);
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+.prod-chevron.c-all { background: #1e293b; }
+.prod-chevron.c-sale { background: #3b82f6; }
+.prod-chevron.c-out { background: #ef4444; }
+.prod-chevron.c-pop { background: #f59e0b; }
+.prod-chevron.c-arch { background: #475569; }
+.prod-chevron.active {
+  filter: brightness(1.2);
+  box-shadow: inset 0 0 0 2px #ffffff;
+}
+
+/* Bulk Bar V2 */
+.prod-bulk-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 8px 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--r-sm, 8px);
+  margin-bottom: 12px;
+  font-size: 12.5px;
+}
+.prod-bulk-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.prod-bulk-btn {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.prod-bulk-btn:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+/* Product Row Specifics */
+.prod-v2-thumb {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+}
+.prod-v2-meta-code {
+  font-size: 11px;
+  color: #64748b;
+  font-family: monospace;
+}
+.prod-v2-cat-pill {
+  font-size: 11px;
+  background: #e0f2fe;
+  color: #0369a1;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+/* Animated Pill Switch */
+.switch-pill {
+  position: relative;
+  display: inline-block;
+  width: 38px;
+  height: 22px;
+}
+.switch-pill input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.switch-slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: #cbd5e1;
+  transition: .2s;
+  border-radius: 999px;
+}
+.switch-slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .2s;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.switch-pill input:checked + .switch-slider {
+  background-color: #e11d48;
+}
+.switch-pill input:checked + .switch-slider:before {
+  transform: translateX(16px);
+}
+
+/* --- Add Drink Modal V2 (Screenshots 3 & 4) --- */
+.add-drink-modal-card {
+  background: #ffffff;
+  width: 100%;
+  max-width: 680px;
+  max-height: 90vh;
+  border-radius: var(--r-md, 14px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  border: 1px solid #e2e8f0;
+}
+
+.add-drink-body {
+  padding: 20px 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.add-drink-sec-title {
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #e11d48;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #fecdd3;
+  padding-bottom: 4px;
+}
+
+.add-drink-dropzone {
+  border: 2px dashed #f43f5e;
+  border-radius: var(--r-sm, 10px);
+  padding: 24px 16px;
+  text-align: center;
+  background: #fff5f7;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.add-drink-dropzone:hover {
+  background: #ffe4e6;
+}
+
+.add-drink-preview-card {
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+  border-radius: var(--r-sm, 10px);
+  padding: 16px;
+  width: 180px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.add-drink-preview-img {
+  width: 100%;
+  height: 110px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: #ffe4e6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  color: #f43f5e;
+  margin-bottom: 10px;
+}
