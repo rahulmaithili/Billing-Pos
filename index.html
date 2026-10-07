@@ -43,9 +43,22 @@
       --navy-light: #003366;
       --navy-accent: #0074D9;
       --navy-hover: #002a52;
+      --text-primary: #333333;
+      /* palette tokens */
+      --c-secondary: #003366;
+      --c-bg: #f5f5f5;
+      --c-card: #ffffff;
+      --c-on-accent: #ffffff;
+      --text-muted: #6b7280;
       --success: #34a853;
       --warning: #fbbc04;
       --danger: #ea4335;
+      --bottom-nav-height: 70px;
+      /* curved design scale — one place to tune roundness app-wide */
+      --r-sm: 8px;      /* controls: buttons, inputs, icons */
+      --r-md: 12px;     /* cards, sections, modals, dropdowns */
+      --r-lg: 18px;     /* large containers, avatars */
+      --r-pill: 999px;  /* status pills, role chips, badges */
     }
 
     * {
@@ -4982,6 +4995,642 @@
       color: #64748b;
     }
 
+  
+    /* ==========================================================================
+       Premium POS & Terminal Visual Grid Styles
+       ========================================================================== */
+    .pos-premium-view {
+      padding: 20px;
+    }
+    .pos-main-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e2e8f0;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .pos-main-header h2 {
+      margin: 0;
+      font-size: 22px;
+      color: var(--navy-primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .pos-main-header .section-subtitle {
+      margin: 4px 0 0 0;
+      font-size: 12.5px;
+      color: #64748b;
+    }
+    .pos-badge-count {
+      background: #ef4444;
+      color: #ffffff;
+      font-size: 11px;
+      padding: 1px 6px;
+      border-radius: var(--r-pill, 999px);
+      margin-left: 6px;
+      font-weight: 700;
+    }
+    .pos-terminal-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.45fr) minmax(360px, 440px);
+      gap: 20px;
+      align-items: start;
+    }
+    @media (max-width: 1024px) {
+      .pos-terminal-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+    .pos-catalog-panel {
+      background: #ffffff;
+      border-radius: var(--r-md, 12px);
+      border: 1px solid #e2e8f0;
+      padding: 16px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .pos-catalog-topbar {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .pos-search-box {
+      flex: 1;
+      min-width: 220px;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .pos-search-icon {
+      position: absolute;
+      left: 12px;
+      color: #94a3b8;
+      font-size: 14px;
+      pointer-events: none;
+    }
+    .pos-search-input {
+      width: 100%;
+      padding: 10px 36px 10px 36px !important;
+      border-radius: var(--r-sm, 8px) !important;
+      border: 1.5px solid #cbd5e1 !important;
+      background: #f8fafc !important;
+      font-size: 14px !important;
+      color: #1e293b !important;
+      transition: all 0.2s ease;
+    }
+    .pos-search-input:focus {
+      outline: none;
+      border-color: var(--navy-accent) !important;
+      background: #ffffff !important;
+      box-shadow: 0 0 0 3px rgba(0, 116, 217, 0.15);
+    }
+    .pos-search-clear-btn {
+      position: absolute;
+      right: 10px;
+      background: none;
+      border: none;
+      color: #94a3b8;
+      cursor: pointer;
+      font-size: 13px;
+      padding: 4px;
+    }
+    .pos-search-clear-btn:hover {
+      color: #ef4444;
+    }
+    .pos-quick-scan-form {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .pos-scan-input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .pos-scan-input-wrap i {
+      position: absolute;
+      left: 10px;
+      color: var(--navy-accent);
+      font-size: 13px;
+      pointer-events: none;
+    }
+    .pos-barcode-input {
+      padding: 9px 10px 9px 30px !important;
+      border-radius: var(--r-sm, 8px) !important;
+      border: 1.5px solid var(--navy-accent) !important;
+      background: #f0f7ff !important;
+      font-size: 13px !important;
+      font-weight: 600;
+      width: 180px;
+      color: var(--navy-primary) !important;
+    }
+    .pos-scan-add-btn {
+      padding: 9px 12px !important;
+      border-radius: var(--r-sm, 8px) !important;
+    }
+    .pos-category-ribbon {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 4px 2px 8px 2px;
+      scrollbar-width: thin;
+    }
+    .pos-category-ribbon::-webkit-scrollbar {
+      height: 4px;
+    }
+    .pos-category-ribbon::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    .pos-cat-pill {
+      padding: 7px 14px;
+      border-radius: var(--r-pill, 999px);
+      border: 1.5px solid #e2e8f0;
+      background: #f8fafc;
+      color: #475569;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .pos-cat-pill:hover {
+      background: #e2e8f0;
+      color: #1e293b;
+    }
+    .pos-cat-pill.active {
+      background: linear-gradient(135deg, var(--navy-primary) 0%, var(--navy-light) 100%);
+      color: #ffffff;
+      border-color: transparent;
+      box-shadow: 0 4px 10px rgba(0, 31, 63, 0.25);
+    }
+    .cat-pill-count {
+      background: rgba(0, 0, 0, 0.08);
+      color: inherit;
+      padding: 1px 6px;
+      border-radius: var(--r-pill, 999px);
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .pos-cat-pill.active .cat-pill-count {
+      background: rgba(255, 255, 255, 0.25);
+      color: #ffffff;
+    }
+    .pos-products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 12px;
+      max-height: calc(100vh - 290px);
+      overflow-y: auto;
+      padding: 4px 4px 8px 2px;
+      scrollbar-width: thin;
+    }
+    .pos-products-grid::-webkit-scrollbar {
+      width: 5px;
+    }
+    .pos-products-grid::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    .pos-product-card {
+      background: #ffffff;
+      border-radius: var(--r-md, 12px);
+      border: 1.5px solid #e2e8f0;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      user-select: none;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+    }
+    .pos-product-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--navy-accent);
+      box-shadow: 0 6px 16px rgba(0, 116, 217, 0.12);
+    }
+    .pos-product-card:active {
+      transform: scale(0.98);
+    }
+    .pos-product-card.is-out {
+      opacity: 0.55;
+      cursor: not-allowed;
+      background: #fafafa;
+      border-color: #f1f5f9;
+    }
+    .pos-product-card.is-in-cart {
+      border-color: #10b981;
+      background: #f0fdf4;
+    }
+    .pos-card-incart-badge {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      background: #10b981;
+      color: #ffffff;
+      border-radius: var(--r-pill, 999px);
+      min-width: 22px;
+      height: 22px;
+      padding: 0 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      font-size: 11px;
+      font-weight: 700;
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.4);
+      z-index: 2;
+    }
+    .pos-card-thumb {
+      width: 100%;
+      height: 90px;
+      border-radius: var(--r-sm, 8px);
+      overflow: hidden;
+      background: #f1f5f9;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .pos-card-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .pos-card-fallback-icon {
+      font-size: 32px;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+    }
+    .pos-card-info {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    .pos-card-name {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #1e293b;
+      line-height: 1.25;
+      margin-bottom: 4px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      height: 32px;
+    }
+    .pos-card-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: #64748b;
+      margin-bottom: 6px;
+    }
+    .pos-card-sku {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 60px;
+    }
+    .pos-card-stock-pill {
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: 4px;
+    }
+    .pos-card-stock-pill.stock-ok {
+      color: #15803d;
+      background: #dcfce7;
+    }
+    .pos-card-stock-pill.stock-low {
+      color: #b45309;
+      background: #fef3c7;
+    }
+    .pos-card-stock-pill.stock-out {
+      color: #b91c1c;
+      background: #fee2e2;
+    }
+    .pos-card-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+      padding-top: 4px;
+    }
+    .pos-card-price {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--navy-primary);
+    }
+    .pos-card-add-btn {
+      width: 26px;
+      height: 26px;
+      border-radius: var(--r-sm, 8px);
+      background: #e0f2fe;
+      color: #0284c7;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .pos-product-card:hover .pos-card-add-btn {
+      background: var(--navy-accent);
+      color: #ffffff;
+    }
+    .pos-loading-state,
+    .pos-empty-catalog {
+      grid-column: 1 / -1;
+      padding: 40px 20px;
+      text-align: center;
+      color: #64748b;
+    }
+    .pos-loading-state i,
+    .pos-empty-catalog i {
+      font-size: 36px;
+      color: #94a3b8;
+      margin-bottom: 10px;
+      display: block;
+    }
+    .pos-empty-catalog h4 {
+      font-size: 15px;
+      color: #334155;
+      margin-bottom: 4px;
+    }
+    .pos-empty-catalog p {
+      font-size: 12.5px;
+      color: #94a3b8;
+      margin: 0;
+    }
+    .pos-terminal-cart-panel {
+      background: #ffffff;
+      border-radius: var(--r-md, 12px);
+      border: 1px solid #e2e8f0;
+      padding: 16px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: sticky;
+      top: 15px;
+    }
+    .pos-cart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 1.5px solid #f1f5f9;
+    }
+    .pos-cart-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .pos-cart-count-pill {
+      background: #f1f5f9;
+      color: #334155;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: var(--r-pill, 999px);
+      font-weight: 700;
+    }
+    .pos-cart-clear-btn {
+      background: none;
+      border: none;
+      color: #ef4444;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      border-radius: var(--r-sm, 8px);
+      transition: background 0.15s;
+    }
+    .pos-cart-clear-btn:hover {
+      background: #fee2e2;
+    }
+    .pos-cart-items-container {
+      max-height: 220px;
+      overflow-y: auto;
+      padding-right: 2px;
+      scrollbar-width: thin;
+    }
+    .pos-cart-items-container::-webkit-scrollbar {
+      width: 4px;
+    }
+    .pos-cart-items-container::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    .pos-cart-empty {
+      padding: 24px 12px;
+      text-align: center;
+      color: #94a3b8;
+    }
+    .pos-cart-empty i {
+      font-size: 36px;
+      color: #cbd5e1;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .pos-cart-empty h4 {
+      font-size: 14px;
+      color: #475569;
+      margin-bottom: 4px;
+    }
+    .pos-cart-empty p {
+      font-size: 12px;
+      color: #94a3b8;
+      margin: 0;
+    }
+    .pos-customer-wrap {
+      margin-bottom: 4px;
+    }
+    .pos-discount-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--r-sm, 8px);
+      padding: 10px;
+    }
+    .pos-field-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .pos-field-header label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #475569;
+      margin: 0;
+    }
+    .pos-discount-input {
+      width: 100%;
+      padding: 7px 10px !important;
+      border-radius: var(--r-sm, 8px) !important;
+      border: 1px solid #cbd5e1 !important;
+      font-size: 13.5px !important;
+      background: #ffffff !important;
+    }
+    .pos-totals-card {
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: var(--r-md, 12px);
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .pos-totals-card .pos-summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: #475569;
+    }
+    .pos-totals-card .pos-summary-row.grand {
+      padding-top: 8px;
+      margin-top: 4px;
+      border-top: 1.5px dashed #cbd5e1;
+      font-size: 15px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+    .pos-totals-card .grand-price {
+      font-size: 18px;
+      color: var(--navy-accent);
+      font-weight: 800;
+    }
+    .pos-disc-highlight {
+      color: #16a34a !important;
+      font-weight: 600;
+    }
+    .pos-change-alert {
+      background: #dcfce7;
+      border: 1px solid #86efac;
+      color: #166534;
+      border-radius: var(--r-sm, 8px);
+      padding: 6px 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12.5px;
+      margin-top: 4px;
+    }
+    .pos-pay-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: #475569;
+      margin-bottom: 6px;
+    }
+    .active-mode-badge {
+      font-size: 11px;
+      color: var(--navy-accent);
+      background: #e0f2fe;
+      padding: 2px 8px;
+      border-radius: var(--r-pill, 999px);
+      font-weight: 700;
+    }
+    .pos-tendered-input {
+      width: 100%;
+      padding: 8px 12px !important;
+      border-radius: var(--r-sm, 8px) !important;
+      border: 1.5px solid #cbd5e1 !important;
+      font-size: 15px !important;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .pos-verify-toggle-wrap {
+      margin: 8px 0;
+      padding: 8px 10px;
+      background: #f0fdf4;
+      border: 1px solid #86efac;
+      border-radius: var(--r-sm, 8px);
+    }
+    .pos-verify-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 12px;
+      color: #166534;
+      font-weight: 600;
+    }
+    .pos-checkout-btn-group {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 8px;
+      margin-top: 6px;
+    }
+    .pos-hold-btn {
+      padding: 12px 10px !important;
+      border-radius: var(--r-md, 12px) !important;
+      font-size: 13px !important;
+    }
+    .btn-checkout-primary {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--r-md, 12px);
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .btn-checkout-primary:hover:not(:disabled) {
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      box-shadow: 0 6px 18px rgba(16, 185, 129, 0.45);
+      transform: translateY(-1px);
+    }
+    .btn-checkout-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+    .checkout-btn-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+    .checkout-total-pill {
+      background: rgba(255, 255, 255, 0.22);
+      padding: 3px 10px;
+      border-radius: var(--r-pill, 999px);
+      font-size: 13.5px;
+      font-weight: 800;
+    }
+
   </style>
 </head>
 
@@ -8104,6 +8753,8 @@ seedDemoData();
       const [customUpiId, setCustomUpiId] = useState(() => localStorage.getItem('pos_custom_upi') || '');
       const [onlineVerified, setOnlineVerified] = useState(false);
       const [held, setHeld] = useState(() => { try { return JSON.parse(localStorage.getItem('pos_held') || '[]'); } catch (e) { return []; } });
+      const [selectedCategory, setSelectedCategory] = useState('ALL');
+      const [searchQuery, setSearchQuery] = useState('');
       const scanRef = useRef(null);
 
       const { loading: loadingProducts, data: productsData } = useFetch(() => fbGetProducts(), []);
@@ -8117,7 +8768,55 @@ seedDemoData();
       const movements = useMemo(() => (movementsData && movementsData.success ? movementsData.data : []), [movementsData]);
       const catalogReady = !loadingProducts && !loadingMovements;
 
-      useEffect(() => { if (catalogReady && !completedSale && !showCamera && scanRef.current) scanRef.current.focus(); }, [catalogReady, completedSale, showCamera, cart]);
+      // Extract unique categories
+      const categories = useMemo(() => {
+        const set = new Set();
+        products.forEach(p => {
+          if (p.category && String(p.category).trim()) set.add(String(p.category).trim());
+        });
+        return ['ALL', ...Array.from(set).sort()];
+      }, [products]);
+
+      // Stock on-hand map
+      const qtyOnHandMap = useMemo(() => {
+        const map = {};
+        products.forEach(p => {
+          map[p.id] = computeQtyOnHand(p.id, movements);
+        });
+        return map;
+      }, [products, movements]);
+
+      // In-cart quantity map
+      const cartQtyMap = useMemo(() => {
+        const map = {};
+        cart.forEach(item => {
+          map[item.productId] = (map[item.productId] || 0) + item.qty;
+        });
+        return map;
+      }, [cart]);
+
+      // Filter products by category and search
+      const filteredProducts = useMemo(() => {
+        const q = searchQuery.trim().toLowerCase();
+        return products.filter(p => {
+          if (p.active === false) return false;
+          const matchCat = selectedCategory === 'ALL' || (p.category && String(p.category).trim() === selectedCategory);
+          if (!matchCat) return false;
+          if (!q) return true;
+          return (
+            (p.name && p.name.toLowerCase().includes(q)) ||
+            (p.sku && p.sku.toLowerCase().includes(q)) ||
+            (p.barcode && String(p.barcode).toLowerCase().includes(q)) ||
+            (p.category && p.category.toLowerCase().includes(q))
+          );
+        });
+      }, [products, selectedCategory, searchQuery]);
+
+      useEffect(() => {
+        if (catalogReady && !completedSale && !showCamera && scanRef.current) {
+          scanRef.current.focus();
+        }
+      }, [catalogReady, completedSale, showCamera]);
 
       const totals = useMemo(() => computeSaleTotals(cart, prodById, { type: discountType, value: discountValue }), [cart, prodById, discountType, discountValue]);
       const itemCount = useMemo(() => cart.reduce((s, l) => s + l.qty, 0), [cart]);
@@ -8189,7 +8888,7 @@ seedDemoData();
         return true;
       }, [movements]);
 
-      const addToCart = useCallback((product, qtyToAdd) => {
+      const addToCart = useCallback((product, qtyToAdd = 1) => {
         setCart(prev => {
           const existing = prev.find(l => l.productId === product.id);
           const nextQty = (existing ? existing.qty : 0) + qtyToAdd;
@@ -8308,42 +9007,59 @@ seedDemoData();
 
         const sC = paymentMethod === 'Split' ? (Number(splitCash) || 0) : null;
         const sO = paymentMethod === 'Split' ? (Number(splitOnline) || 0) : null;
-        let amountTendered = totals.grand;
-        if (paymentMethod === 'Cash') {
-          amountTendered = Number(tendered) || totals.grand;
-        } else if (paymentMethod === 'Split') {
-          amountTendered = (Number(tendered) || sC || 0) + (sO || 0);
-        } else if (paymentMethod === 'Credit') {
-          amountTendered = 0;
-        }
 
         const sale = {
-          items: totals.lines,
+          items: cart.map(it => ({
+            productId: it.productId,
+            name: it.name,
+            sku: it.sku,
+            unitPrice: it.price,
+            qty: it.qty,
+            cost: (prodById[it.productId] && Number(prodById[it.productId].cost)) || 0
+          })),
+          customerId: customerId || null,
+          customerName: cust ? cust.name : 'Walk-in',
           subtotal: totals.subtotal,
-          discount: totals.discount,
           discountType,
-          tax: totals.tax,
+          discountValue: Number(discountValue) || 0,
+          discountAmount: totals.discount,
+          taxAmount: totals.tax,
           total: totals.grand,
           paymentMethod,
+          tendered: paymentMethod === 'Cash' ? (Number(tendered) || totals.grand) : (paymentMethod === 'Split' ? (Number(tendered) || sC) : totals.grand),
+          change: changeDue,
           splitCash: sC,
           splitOnline: sO,
-          amountTendered,
-          changeDue: round2(changeDue),
-          customerId: customerId || '',
-          customerName: cust ? cust.name : 'Walk-in',
-          status: paymentMethod === 'Credit' ? 'credit' : 'completed'
+          onlineVerified: (paymentMethod === 'Online' || (paymentMethod === 'Split' && sO > 0)) ? !!onlineVerified : null,
+          paidOnline: (paymentMethod === 'Online' ? totals.grand : (paymentMethod === 'Split' ? sO : 0)),
+          paidCash: (paymentMethod === 'Cash' ? totals.grand : (paymentMethod === 'Split' ? sC : 0)),
+          cashierId: user.id,
+          cashierName: user.name,
+          source: 'counter_pos'
         };
 
         const res = await fbCreateSale(sale, user);
         setLoad('');
-        if (res.success) {
-          setCompletedSale(res.data);
-          resetSale();
-          setReloadKey(k => k + 1);
-          Swal.fire({ icon: 'success', title: 'Sale Complete', text: `${res.data.invoiceNo || ''} — ${money(res.data.total)}`, timer: 1800, showConfirmButton: false });
-        } else {
-          Swal.fire({ icon: 'error', title: 'Checkout Failed', text: res.message });
+
+        if (!res.success) {
+          Swal.fire({ icon: 'error', title: 'Sale Failed', text: res.message || 'Could not record sale.' });
+          return;
         }
+
+        for (const item of cart) {
+          await fbCreateStockMovement({
+            productId: item.productId,
+            type: 'OUT',
+            qty: item.qty,
+            reason: `Sale #${res.id}`,
+            refId: res.id
+          }, user);
+        }
+
+        const completed = { ...sale, id: res.id, date: nowIso() };
+        resetSale();
+        setReloadKey(k => k + 1);
+        setCompletedSale(completed);
       };
 
       const splitSum = round2((Number(splitCash) || 0) + (Number(splitOnline) || 0));
@@ -8351,160 +9067,406 @@ seedDemoData();
       const isSplitMatched = Math.abs(splitDiff) < 0.01;
 
       return (
-        <div className="data-section">
+        <div className="data-section pos-premium-view">
           {load && <TopLoadingBar />}
-          <div className="section-header">
-            <h2><i className="fas fa-cash-register"></i> QR Sales / POS</h2>
+          
+          <div className="section-header pos-main-header">
+            <div>
+              <h2><i className="fas fa-cash-register"></i> Fast POS &amp; QR Terminal</h2>
+              <p className="section-subtitle">Real-time Visual Billing, Live Stock &amp; Instant Dynamic UPI Payment</p>
+            </div>
             <div className="pos-scan-actions">
-              <button className="btn btn-secondary" disabled={!catalogReady} onClick={() => setShowCamera(true)}><i className="fas fa-camera"></i> Camera</button>
-              <button className="btn btn-secondary" onClick={recallHeld}><i className="fas fa-clock-rotate-left"></i> Held{held.length ? ` (${held.length})` : ''}</button>
+              <button type="button" className="btn btn-secondary" onClick={() => setShowCamera(true)} disabled={!catalogReady}>
+                <i className="fas fa-camera"></i> Camera Scan
+              </button>
+              <button type="button" className="btn btn-secondary pos-held-btn" onClick={recallHeld}>
+                <i className="fas fa-clock-rotate-left"></i> Held Orders
+                {held.length > 0 && <span className="pos-badge-count">{held.length}</span>}
+              </button>
             </div>
           </div>
 
-          <form className="pos-scan-box" onSubmit={handleScanSubmit}>
-            <div className="form-group">
-              <label><i className="fas fa-barcode"></i> Scan or type SKU / Product Code</label>
-              <input ref={scanRef} type="text" className="pos-scan-input" autoFocus disabled={!catalogReady} value={scanValue}
-                onChange={(e) => setScanValue(e.target.value)} placeholder={catalogReady ? 'Scan barcode/QR or type code, then press Enter' : 'Loading catalog...'} />
-            </div>
-            <button type="submit" className="btn btn-primary" disabled={!catalogReady}><i className="fas fa-plus"></i> Add</button>
-          </form>
-
-          <div className="pos-grid">
-            <div>
-              {loadingProducts ? <TableSkeleton rows={4} columns={4} /> : <Cart items={cart} onInc={(id) => changeQty(id, 1)} onDec={(id) => changeQty(id, -1)} onRemove={removeLine} />}
-            </div>
-            <div className="pos-summary">
-              <SearchableDropdown label="Customer" icon="fas fa-user" options={customerOpts} value={customerId} onChange={setCustomerId} placeholder="Walk-in customer" />
-              
-              {/* Discount Selector: Fast Radio Buttons */}
-              <div style={{ marginBottom: 10 }}>
-                <label style={{ fontSize: 12, fontWeight: 700, color: '#475569', display: 'block', marginBottom: 4 }}>
-                  <i className="fas fa-tags"></i> Discount Type &amp; Value
-                </label>
-                <div className="radio-group-horizontal">
-                  <label className={`radio-label-pill ${discountType === 'flat' ? 'active' : ''}`}>
-                    <input
-                      type="radio"
-                      name="discountType"
-                      value="flat"
-                      checked={discountType === 'flat'}
-                      onChange={() => setDiscountType('flat')}
-                    />
-                    <span><i className="fas fa-tag"></i> Flat ({CFG.currency})</span>
-                  </label>
-                  <label className={`radio-label-pill ${discountType === 'percent' ? 'active' : ''}`}>
-                    <input
-                      type="radio"
-                      name="discountType"
-                      value="percent"
-                      checked={discountType === 'percent'}
-                      onChange={() => setDiscountType('percent')}
-                    />
-                    <span><i className="fas fa-percent"></i> Percentage (%)</span>
-                  </label>
+          <div className="pos-terminal-layout">
+            {/* LEFT COLUMN: Visual Product Catalog & Categories */}
+            <div className="pos-catalog-panel">
+              {/* Top Controls: Search Bar & Barcode Scanner */}
+              <div className="pos-catalog-topbar">
+                <div className="pos-search-box">
+                  <i className="fas fa-search pos-search-icon"></i>
+                  <input
+                    type="text"
+                    className="pos-search-input"
+                    placeholder="Search menu, drinks, food, SKU..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                  {searchQuery && (
+                    <button type="button" className="pos-search-clear-btn" onClick={() => setSearchQuery('')}>
+                      <i className="fas fa-times"></i>
+                    </button>
+                  )}
                 </div>
-                <div style={{ marginTop: 6 }}>
+
+                <form className="pos-quick-scan-form" onSubmit={handleScanSubmit}>
+                  <div className="pos-scan-input-wrap">
+                    <i className="fas fa-barcode"></i>
+                    <input
+                      ref={scanRef}
+                      type="text"
+                      className="pos-barcode-input"
+                      value={scanValue}
+                      onChange={(e) => setScanValue(e.target.value)}
+                      placeholder="Scan Barcode / SKU + Enter"
+                    />
+                  </div>
+                  <button type="submit" className="btn btn-primary pos-scan-add-btn" title="Add item by barcode">
+                    <i className="fas fa-arrow-right"></i>
+                  </button>
+                </form>
+              </div>
+
+              {/* Category Ribbon */}
+              <div className="pos-category-ribbon">
+                {categories.map((cat) => {
+                  const count = cat === 'ALL' ? products.length : products.filter(p => p.category === cat).length;
+                  return (
+                    <button
+                      key={cat}
+                      type="button"
+                      className={`pos-cat-pill ${selectedCategory === cat ? 'active' : ''}`}
+                      onClick={() => setSelectedCategory(cat)}
+                    >
+                      <i className={cat === 'ALL' ? 'fas fa-border-all' : 'fas fa-tag'}></i>
+                      <span>{cat === 'ALL' ? 'All Items' : cat}</span>
+                      <span className="cat-pill-count">{count}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Visual Products Grid */}
+              <div className="pos-products-grid">
+                {loadingProducts ? (
+                  <div className="pos-loading-state">
+                    <i className="fas fa-circle-notch fa-spin"></i>
+                    <p>Loading Product Catalog...</p>
+                  </div>
+                ) : filteredProducts.length === 0 ? (
+                  <div className="pos-empty-catalog">
+                    <i className="fas fa-mug-saucer"></i>
+                    <h4>No items found</h4>
+                    <p>No products match "{searchQuery || selectedCategory}"</p>
+                  </div>
+                ) : (
+                  filteredProducts.map((p) => {
+                    const onHand = qtyOnHandMap[p.id] ?? 0;
+                    const inCart = cartQtyMap[p.id] || 0;
+                    const isOut = onHand <= 0;
+                    return (
+                      <div
+                        key={p.id}
+                        className={`pos-product-card ${isOut ? 'is-out' : ''} ${inCart > 0 ? 'is-in-cart' : ''}`}
+                        onClick={() => !isOut && addToCart(p, 1)}
+                        title={isOut ? 'Out of stock' : `Add ${p.name}`}
+                      >
+                        {inCart > 0 && (
+                          <div className="pos-card-incart-badge">
+                            <i className="fas fa-check"></i> {inCart}
+                          </div>
+                        )}
+                        <div className="pos-card-thumb">
+                          {p.imageUrl ? (
+                            <img
+                              src={p.imageUrl}
+                              alt={p.name}
+                              onError={(e) => {
+                                e.target.style.display = 'none';
+                                if (e.target.nextSibling) e.target.nextSibling.style.display = 'flex';
+                              }}
+                            />
+                          ) : null}
+                          <div
+                            className="pos-card-fallback-icon"
+                            style={{ display: p.imageUrl ? 'none' : 'flex' }}
+                          >
+                            <i className="fas fa-mug-hot"></i>
+                          </div>
+                        </div>
+                        <div className="pos-card-info">
+                          <div className="pos-card-name" title={p.name}>{p.name}</div>
+                          <div className="pos-card-meta">
+                            <span className="pos-card-sku">{p.sku || p.category || 'SKU'}</span>
+                            <span className={`pos-card-stock-pill ${isOut ? 'stock-out' : onHand <= 5 ? 'stock-low' : 'stock-ok'}`}>
+                              {isOut ? '0 stock' : `${onHand} in stock`}
+                            </span>
+                          </div>
+                          <div className="pos-card-bottom">
+                            <span className="pos-card-price">{money(p.price)}</span>
+                            <button
+                              type="button"
+                              className="pos-card-add-btn"
+                              disabled={isOut}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (!isOut) addToCart(p, 1);
+                              }}
+                            >
+                              <i className="fas fa-plus"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            </div>
+
+            {/* RIGHT COLUMN: Interactive Cart & Payment Terminal */}
+            <div className="pos-terminal-cart-panel">
+              {/* Cart Top Header */}
+              <div className="pos-cart-header">
+                <div className="pos-cart-title">
+                  <i className="fas fa-receipt"></i> Current Bill
+                  <span className="pos-cart-count-pill">{itemCount} items</span>
+                </div>
+                {cart.length > 0 && (
+                  <button type="button" className="pos-cart-clear-btn" onClick={resetSale} title="Clear all cart items">
+                    <i className="fas fa-trash-can"></i> Clear
+                  </button>
+                )}
+              </div>
+
+              {/* Cart Items List */}
+              <div className="pos-cart-items-container">
+                {cart.length === 0 ? (
+                  <div className="pos-cart-empty">
+                    <i className="fas fa-basket-shopping"></i>
+                    <h4>Cart is Empty</h4>
+                    <p>Select items from menu or scan barcode to add</p>
+                  </div>
+                ) : (
+                  <div className="pos-cart-list">
+                    {cart.map((it) => (
+                      <div className="pos-cart-row" key={it.productId}>
+                        <div className="pi-name">
+                          <strong>{it.name}</strong>
+                          <small>SKU: {it.sku} · {money(it.price)} each</small>
+                        </div>
+                        <div className="pos-qty-ctrl">
+                          <button type="button" onClick={() => changeQty(it.productId, -1)} title="Decrease">
+                            <i className="fas fa-minus"></i>
+                          </button>
+                          <span>{it.qty}</span>
+                          <button type="button" onClick={() => changeQty(it.productId, 1)} title="Increase">
+                            <i className="fas fa-plus"></i>
+                          </button>
+                        </div>
+                        <div className="pos-line-total">{money(it.qty * it.price)}</div>
+                        <button type="button" className="pos-remove-btn" title="Remove line" onClick={() => removeLine(it.productId)}>
+                          <i className="fas fa-trash"></i>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Customer Selector */}
+              <div className="pos-customer-wrap">
+                <SearchableDropdown
+                  label="Customer (Walk-in / Account)"
+                  icon="fas fa-user"
+                  options={customerOpts}
+                  value={customerId}
+                  onChange={setCustomerId}
+                  placeholder="Walk-in Customer"
+                />
+              </div>
+
+              {/* Discount Section */}
+              <div className="pos-discount-box">
+                <div className="pos-field-header">
+                  <label><i className="fas fa-tags"></i> Discount Type &amp; Value</label>
+                  <div className="radio-group-horizontal">
+                    <label className={`radio-label-pill ${discountType === 'flat' ? 'active' : ''}`}>
+                      <input
+                        type="radio"
+                        name="discountType"
+                        value="flat"
+                        checked={discountType === 'flat'}
+                        onChange={() => setDiscountType('flat')}
+                      />
+                      <span>Flat ({CFG.currency})</span>
+                    </label>
+                    <label className={`radio-label-pill ${discountType === 'percent' ? 'active' : ''}`}>
+                      <input
+                        type="radio"
+                        name="discountType"
+                        value="percent"
+                        checked={discountType === 'percent'}
+                        onChange={() => setDiscountType('percent')}
+                      />
+                      <span>Percent (%)</span>
+                    </label>
+                  </div>
+                </div>
+                <div className="pos-discount-input-wrap">
                   <input
                     type="number"
                     min="0"
                     max={discountType === 'percent' ? 100 : undefined}
                     step="0.01"
-                    placeholder={discountType === 'percent' ? 'e.g. 10 (%)' : `Discount in ${CFG.currency}`}
+                    className="pos-discount-input"
+                    placeholder={discountType === 'percent' ? 'Discount in % (e.g. 10)' : `Discount in ${CFG.currency}`}
                     value={discountValue}
                     onChange={(e) => setDiscountValue(e.target.value)}
                   />
                 </div>
               </div>
 
-              {/* Payment Method Selector: Modern Radio Cards */}
-              <div style={{ marginTop: 10, marginBottom: 8 }}>
-                <label style={{ fontSize: 12, fontWeight: 700, color: '#475569', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
-                  <span><i className="fas fa-money-bill-wave"></i> Payment Method (Select Mode)</span>
-                  <span style={{ fontSize: 11, color: '#0284c7', fontWeight: 600 }}>Active: {paymentMethod}</span>
+              {/* Order Totals Summary */}
+              <div className="pos-totals-card">
+                <div className="pos-summary-row"><span>Items Count:</span><span>{itemCount}</span></div>
+                <div className="pos-summary-row"><span>Subtotal:</span><span>{money(totals.subtotal)}</span></div>
+                {totals.discount > 0 && (
+                  <div className="pos-summary-row pos-disc-highlight">
+                    <span>Discount:</span>
+                    <span>- {money(totals.discount)}</span>
+                  </div>
+                )}
+                {totals.tax > 0 && (
+                  <div className="pos-summary-row">
+                    <span>Tax{CFG.taxInclusive ? ' (incl)' : ''}:</span>
+                    <span>{money(totals.tax)}</span>
+                  </div>
+                )}
+                <div className="pos-summary-row grand">
+                  <span>Grand Total:</span>
+                  <span className="grand-price">{money(totals.grand)}</span>
+                </div>
+
+                {changeDue > 0 && (
+                  <div className="pos-change-alert">
+                    <span><i className="fas fa-hand-holding-dollar"></i> Change to Return:</span>
+                    <strong>{money(changeDue)}</strong>
+                  </div>
+                )}
+              </div>
+
+              {/* Payment Mode Selector: Modern Radio Cards */}
+              <div className="pos-pay-modes-wrap">
+                <label className="pos-pay-label">
+                  <span><i className="fas fa-wallet"></i> Payment Method</span>
+                  <span className="active-mode-badge">{paymentMethod}</span>
                 </label>
                 <div className="pos-pay-radio-grid">
                   <label className={`pos-pay-radio-card ${paymentMethod === 'Cash' ? 'active' : ''}`}>
-                    <input type="radio" name="posPayMethod" value="Cash" checked={paymentMethod === 'Cash'} onChange={() => { setPaymentMethod('Cash'); setTendered(String(totals.grand)); }} />
+                    <input
+                      type="radio"
+                      name="posPayMethod"
+                      value="Cash"
+                      checked={paymentMethod === 'Cash'}
+                      onChange={() => {
+                        setPaymentMethod('Cash');
+                        setTendered(String(totals.grand));
+                      }}
+                    />
                     <div className="radio-card-content">
                       <i className="fas fa-money-bill-wave icon-cash"></i>
                       <span>Cash</span>
                     </div>
                   </label>
+
                   <label className={`pos-pay-radio-card ${paymentMethod === 'Online' ? 'active' : ''}`}>
-                    <input type="radio" name="posPayMethod" value="Online" checked={paymentMethod === 'Online'} onChange={() => { setPaymentMethod('Online'); setTendered(''); }} />
+                    <input
+                      type="radio"
+                      name="posPayMethod"
+                      value="Online"
+                      checked={paymentMethod === 'Online'}
+                      onChange={() => {
+                        setPaymentMethod('Online');
+                        setOnlineVerified(false);
+                      }}
+                    />
                     <div className="radio-card-content">
-                      <i className="fas fa-qrcode icon-upi"></i>
-                      <span>UPI / QR</span>
+                      <i className="fas fa-qrcode icon-online"></i>
+                      <span>UPI QR</span>
                     </div>
                   </label>
+
                   <label className={`pos-pay-radio-card ${paymentMethod === 'Split' ? 'active' : ''}`}>
-                    <input type="radio" name="posPayMethod" value="Split" checked={paymentMethod === 'Split'} onChange={() => { setPaymentMethod('Split'); setSplitPreset(50); setTendered(''); }} />
+                    <input
+                      type="radio"
+                      name="posPayMethod"
+                      value="Split"
+                      checked={paymentMethod === 'Split'}
+                      onChange={() => setPaymentMethod('Split')}
+                    />
                     <div className="radio-card-content">
-                      <i className="fas fa-bolt icon-split"></i>
-                      <span>Split (Dual)</span>
+                      <i className="fas fa-arrows-split-up-and-left icon-split"></i>
+                      <span>Split Dual</span>
                     </div>
                   </label>
+
                   <label className={`pos-pay-radio-card ${paymentMethod === 'Card' ? 'active' : ''}`}>
-                    <input type="radio" name="posPayMethod" value="Card" checked={paymentMethod === 'Card'} onChange={() => { setPaymentMethod('Card'); setTendered(''); }} />
+                    <input
+                      type="radio"
+                      name="posPayMethod"
+                      value="Card"
+                      checked={paymentMethod === 'Card'}
+                      onChange={() => setPaymentMethod('Card')}
+                    />
                     <div className="radio-card-content">
                       <i className="fas fa-credit-card icon-card"></i>
                       <span>Card</span>
                     </div>
                   </label>
+
                   <label className={`pos-pay-radio-card ${paymentMethod === 'Credit' ? 'active' : ''}`}>
-                    <input type="radio" name="posPayMethod" value="Credit" checked={paymentMethod === 'Credit'} onChange={() => { setPaymentMethod('Credit'); setTendered(''); }} />
+                    <input
+                      type="radio"
+                      name="posPayMethod"
+                      value="Credit"
+                      checked={paymentMethod === 'Credit'}
+                      onChange={() => setPaymentMethod('Credit')}
+                    />
                     <div className="radio-card-content">
-                      <i className="fas fa-book icon-credit"></i>
+                      <i className="fas fa-user-clock icon-credit"></i>
                       <span>Credit</span>
                     </div>
                   </label>
                 </div>
               </div>
 
-              {/* Fallback Dropdown for custom configured payment methods */}
-              <SearchableDropdown label="Select Other Method" icon="fas fa-wallet" options={PAYMENT_OPTS} value={paymentMethod} onChange={(val) => { setPaymentMethod(val); setTendered(''); }} placeholder="Select method" />
-
-              {/* 1. Cash Payment Controls with Real-Time Due/Change Feedback */}
+              {/* Mode-Specific Dynamic Panels */}
               {paymentMethod === 'Cash' && (
-                <div className="form-group" style={{ marginTop: 8 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                    <label style={{ margin: 0, fontSize: 12, fontWeight: 700 }}>Amount Tendered (Cash Received)</label>
-                    {totals.grand > 0 && Number(tendered) >= totals.grand && (
-                      <span style={{ fontSize: 11, color: '#16a34a', fontWeight: 700 }}>
-                        <i className="fas fa-circle-check"></i> Change: {money(changeDue)}
-                      </span>
-                    )}
-                    {totals.grand > 0 && Number(tendered) > 0 && Number(tendered) < totals.grand && (
-                      <span style={{ fontSize: 11, color: '#dc2626', fontWeight: 700 }}>
-                        <i className="fas fa-triangle-exclamation"></i> Short by: {money(totals.grand - Number(tendered))}
-                      </span>
-                    )}
-                  </div>
+                <div className="pos-cash-panel">
+                  <label className="pos-field-sublabel">Cash Tendered ({CFG.currency})</label>
                   <input
                     type="number"
                     min="0"
                     step="0.01"
+                    className="pos-tendered-input"
                     value={tendered}
                     onChange={(e) => setTendered(e.target.value)}
                     placeholder={String(totals.grand)}
                   />
-                  <div className="tender-chips" style={{ marginTop: 6 }}>
-                    <button type="button" className="tender-chip" onClick={() => setTendered(String(totals.grand))}>Exact: {money(totals.grand)}</button>
+                  <div className="tender-chips">
+                    <button type="button" className="tender-chip" onClick={() => setTendered(String(totals.grand))}>Exact ({money(totals.grand)})</button>
                     <button type="button" className="tender-chip" onClick={() => setTendered(String((Number(tendered) || 0) + 10))}>+10</button>
                     <button type="button" className="tender-chip" onClick={() => setTendered(String((Number(tendered) || 0) + 50))}>+50</button>
                     <button type="button" className="tender-chip" onClick={() => setTendered(String((Number(tendered) || 0) + 100))}>+100</button>
                     <button type="button" className="tender-chip" onClick={() => setTendered(String((Number(tendered) || 0) + 500))}>+500</button>
                     <button type="button" className="tender-chip" onClick={() => setTendered(String(Math.ceil(totals.grand / 50) * 50))}>Round 50</button>
                     <button type="button" className="tender-chip" onClick={() => setTendered(String(Math.ceil(totals.grand / 100) * 100))}>Round 100</button>
-                    <button type="button" className="tender-chip" style={{ color: '#ef4444' }} onClick={() => setTendered('')}>Clear</button>
+                    <button type="button" className="tender-chip chip-clear" onClick={() => setTendered('')}>Clear</button>
                   </div>
                 </div>
               )}
 
-              {/* 2. Full Online (Dynamic UPI QR) */}
               {paymentMethod === 'Online' && (
-                <div>
+                <div className="pos-online-panel">
                   <DynamicUpiQr
                     amount={totals.grand}
                     upiId={customUpiId || CFG.upiId}
@@ -8512,21 +9474,24 @@ seedDemoData();
                     invoiceNote={`Bill Payment (${cart.length} items)`}
                     onEditUpi={promptEditUpi}
                   />
-                  <div style={{ margin: '8px 0', padding: '8px 10px', background: '#f0fdf4', border: '1px solid #86efac', borderRadius: 8 }}>
-                    <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 12, color: '#166534', fontWeight: 600 }}>
-                      <input type="checkbox" checked={onlineVerified} onChange={e => setOnlineVerified(e.target.checked)} />
-                      <span>Online payment verified in shop account</span>
+                  <div className="pos-verify-toggle-wrap">
+                    <label className="pos-verify-label">
+                      <input
+                        type="checkbox"
+                        checked={onlineVerified}
+                        onChange={(e) => setOnlineVerified(e.target.checked)}
+                      />
+                      <span>Payment received &amp; verified in store account</span>
                     </label>
                   </div>
                 </div>
               )}
 
-              {/* 3. Split / Dual Payment Mode (Cash + Online Dynamic QR) */}
               {paymentMethod === 'Split' && (
                 <div className="split-payment-box">
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                    <span style={{ fontSize: 12, fontWeight: 700, color: '#1e293b' }}><i className="fas fa-bolt" style={{ color: '#f59e0b' }}></i> Dual Split Payment</span>
-                    <span style={{ fontSize: 11, color: '#64748b' }}>Bill: <strong>{money(totals.grand)}</strong></span>
+                  <div className="split-header">
+                    <span><i className="fas fa-bolt" style={{ color: '#f59e0b' }}></i> Dual Split Payment</span>
+                    <span>Bill: <strong>{money(totals.grand)}</strong></span>
                   </div>
 
                   <div className="split-presets">
@@ -8553,7 +9518,6 @@ seedDemoData();
                     </div>
                   </div>
 
-                  {/* Cash Tendered for the Cash Portion */}
                   {(Number(splitCash) || 0) > 0 && (
                     <div className="form-group" style={{ marginTop: 6, marginBottom: 8 }}>
                       <label style={{ fontSize: 11 }}>Cash Tendered for Cash Portion (optional)</label>
@@ -8561,7 +9525,6 @@ seedDemoData();
                     </div>
                   )}
 
-                  {/* Dynamic QR for the exact Online portion */}
                   {(Number(splitOnline) || 0) > 0 && (
                     <DynamicUpiQr
                       amount={Number(splitOnline) || 0}
@@ -8574,23 +9537,28 @@ seedDemoData();
                 </div>
               )}
 
-              <div className="pos-summary-row"><span>Items</span><span>{itemCount}</span></div>
-              <div className="pos-summary-row"><span>Subtotal</span><span>{money(totals.subtotal)}</span></div>
-              {totals.discount > 0 && <div className="pos-summary-row"><span>Discount</span><span>- {money(totals.discount)}</span></div>}
-              {totals.tax > 0 && <div className="pos-summary-row"><span>Tax{CFG.taxInclusive ? ' (incl)' : ''}</span><span>{money(totals.tax)}</span></div>}
-              <div className="pos-summary-row grand"><span>Grand Total</span><span>{money(totals.grand)}</span></div>
-
-              {/* Real-time Change Due Display */}
-              {changeDue > 0 && (
-                <div className="pos-summary-row" style={{ color: '#16a34a', fontWeight: 700 }}>
-                  <span>Change to Return</span>
-                  <span>{money(changeDue)}</span>
-                </div>
-              )}
-
-              <div className="pos-checkout-actions">
-                <button className="btn btn-secondary" disabled={cart.length === 0} onClick={holdSale}><i className="fas fa-pause"></i> Hold</button>
-                <button className="btn btn-success" disabled={cart.length === 0} onClick={handleCheckout}><i className="fas fa-check"></i> Checkout</button>
+              {/* Bottom Actions */}
+              <div className="pos-checkout-btn-group">
+                <button
+                  type="button"
+                  className="btn btn-secondary pos-hold-btn"
+                  disabled={cart.length === 0}
+                  onClick={holdSale}
+                  title="Hold sale for later"
+                >
+                  <i className="fas fa-pause"></i> Hold
+                </button>
+                <button
+                  type="button"
+                  className="btn-checkout-primary"
+                  disabled={cart.length === 0}
+                  onClick={handleCheckout}
+                >
+                  <div className="checkout-btn-inner">
+                    <span><i className="fas fa-check-circle"></i> Complete Sale &amp; Print</span>
+                    <span className="checkout-total-pill">{money(totals.grand)}</span>
+                  </div>
+                </button>
               </div>
             </div>
           </div>
