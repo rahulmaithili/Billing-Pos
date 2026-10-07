@@ -99,7 +99,14 @@ seedDemoData();
       } catch (e) { return { success: false, message: e.message }; }
     }
     async function fbDeleteCategory(id, name, user) {
-      try { await db.ref('categories/' + id).remove(); await fbLogActivity('Delete Category', user, name); return { success: true, message: 'Category deleted' }; }
+      try {
+        await db.ref('categories/' + id).remove();
+        await fbLogActivity('Delete Category', user, name);
+        return { success: true, message: 'Category deleted' };
+      } catch (e) {
+        return { success: false, message: e.message };
+      }
+    }
 
     async function fbUpdateCategory(id, data, user) {
       try {
@@ -110,8 +117,6 @@ seedDemoData();
       } catch (e) {
         return { success: false, message: e.message };
       }
-    }
-      catch (e) { return { success: false, message: e.message }; }
     }
 
     // customers live in /records (repurposed) - POS reads the same node via fbGetCustomers
