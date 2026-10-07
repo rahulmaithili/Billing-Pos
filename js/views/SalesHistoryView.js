@@ -1,7 +1,8 @@
-function SalesHistoryView({ user, role }) {
+function SalesHistoryView({ user, role, setActiveMenu }) {
       const [reloadKey, setReloadKey] = useState(0);
       const [returnSaleId, setReturnSaleId] = useState(null);
       const [viewSale, setViewSale] = useState(null);
+      const [selectedOrderForModal, setSelectedOrderForModal] = useState(null);
       const [payStage, setPayStage] = useState('all');
       const [showZReport, setShowZReport] = useState(false);
       const tableInstanceRef = useRef(null);
@@ -70,8 +71,8 @@ function SalesHistoryView({ user, role }) {
         } else {
           table = $('#salesTable').DataTable({
             data: tableData,
-            columnDefs: [{ targets: '_all', defaultContent: '' }], // tolerate rows missing newer fields - no "unknown parameter" warning
-            createdRow: (row, d) => { if (d.status === 'credit') $(row).addClass('row-danger'); else if (Number(d.returnedTotal) > 0) $(row).addClass('row-warn'); }, // credit=red, has-return=amber
+            columnDefs: [{ targets: '_all', defaultContent: '' }],
+            createdRow: (row, d) => { if (d.status === 'credit') $(row).addClass('row-danger'); else if (Number(d.returnedTotal) > 0) $(row).addClass('row-warn'); },
             columns: [
               { data: 'invoiceNo', title: 'Invoice', render: (d, t, row) => t === 'display' ? '<code>' + esc(d || String(row.id).slice(-6).toUpperCase()) + '</code>' : (d || row.id) },
               { data: 'createdAt', title: 'Date', render: (d, t) => t === 'display' ? formatDateForDisplay(d) : d },
@@ -82,7 +83,15 @@ function SalesHistoryView({ user, role }) {
               { data: 'paymentMethod', title: 'Payment', render: (d, t) => t === 'display' ? (d ? '<span class="type-chip">' + esc(d) + '</span>' : '-') : (d || '') },
               { data: 'profit', title: 'Profit', render: (d, t) => t === 'display' ? `<span style="color:${Number(d) >= 0 ? '#155724' : '#721c24'};font-weight:600">${money(d)}</span>` : d },
               { data: 'returnedTotal', title: 'Returned', render: (d, t) => t === 'display' ? (d > 0 ? '<span class="status-badge status-inactive">' + money(d) + '</span>' : '-') : d },
-              { data: null, title: 'Actions', orderable: false, render: () => `<button class="action-icon edit-icon" data-action="view"><i class="fas fa-receipt"></i></button>` + (role === 'Admin' ? `<button class="action-icon qr-icon" data-action="return"><i class="fas fa-rotate-left"></i></button>` : '') }
+              {
+                data: null,
+                title: 'Actions',
+                orderable: false,
+                render: () =>
+                  `<button class="action-icon" data-action="view" title="View Order Details"><i class="fas fa-eye"></i></button>` +
+                  `<button class="action-icon print-icon" data-action="print" title="Print Thermal Receipt"><i class="fas fa-print"></i></button>` +
+                  (role === 'Admin' ? `<button class="action-icon qr-icon" data-action="return" title="Return / Refund"><i class="fas fa-rotate-left"></i></button>` : '')
+              }
             ],
             pageLength: 10,
             lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'All']],
@@ -100,7 +109,8 @@ function SalesHistoryView({ user, role }) {
         $('#salesTable').off('click', '.action-icon').on('click', '.action-icon', function () {
           const id = table.row($(this).parents('tr')).data().id;
           const action = $(this).data('action');
-          if (action === 'view') setViewSale(byId[id]);
+          if (action === 'view') setSelectedOrderForModal(byId[id]);
+          else if (action === 'print') setViewSale(byId[id]);
           else if (action === 'return') setReturnSaleId(id);
         });
       }, [loading, tableData, role]);
@@ -126,11 +136,23 @@ function SalesHistoryView({ user, role }) {
             <table id="salesTable" className="display" style={{ width: '100%' }}></table>
             {sales.length > 0 && <SummaryBar items={[{ label: 'Sales', value: summary.count }, { label: 'Total', value: money(summary.total) }, { label: 'Profit', value: money(summary.profit) }, { label: 'Returned', value: money(summary.returned) }]} />}
           </div>
+          {selectedOrderForModal && (
+            <OrderDetailsModal
+              order={selectedOrderForModal}
+              onClose={() => setSelectedOrderForModal(null)}
+              onReviewPayment={(sale) => {
+                setSelectedOrderForModal(null);
+                window.selectedReviewSaleId = sale.id;
+                if (setActiveMenu) setActiveMenu('review');
+              }}
+              onPrint={(sale) => setViewSale(sale)}
+              user={user}
+              onOrderUpdated={reload}
+            />
+          )}
           {viewSale && <ThermalReceiptOverlay sale={viewSale} onClose={() => setViewSale(null)} />}
           {returnSaleId && <ReturnModal sale={byId[returnSaleId]} returns={returns} user={user} onClose={() => setReturnSaleId(null)} onDone={() => { setReturnSaleId(null); reload(); }} />}
           {showZReport && <RegisterZReportModal sales={sales} returns={returns} onClose={() => setShowZReport(false)} />}
         </div>
       );
     }
-
-    // --- Dashboard View (Admin only) - POS overview ---

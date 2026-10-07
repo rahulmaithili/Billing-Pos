@@ -511,11 +511,28 @@ seedDemoData();
       } catch (e) { return { success: false, message: e.message }; }
     }
 
-    async function fbApprovePayment(saleId, approved, user) {
+        async function fbApprovePayment(saleId, approved, user, rejectReason) {
       try {
-        await db.ref('sales/' + saleId + '/paymentApproved').set(approved);
-        await fbLogActivity('Payment Approval', user, 'Order ' + saleId.slice(-6).toUpperCase() + ' payment ' + (approved ? 'Approved' : 'Rejected'));
+        const updateData = {
+          paymentApproved: approved,
+          paymentStatus: approved ? 'verified' : 'rejected'
+        };
+        if (!approved && rejectReason) updateData.rejectReason = rejectReason;
+        if (approved) {
+          updateData.verifiedAt = nowIso();
+          updateData.verifiedBy = user?.name || 'Staff';
+        }
+        await db.ref('sales/' + saleId).update(updateData);
+        await fbLogActivity('Payment Approval', user, 'Order ' + saleId.slice(-6).toUpperCase() + ' payment ' + (approved ? 'Approved' : 'Rejected' + (rejectReason ? ': ' + rejectReason : '')));
         return { success: true, message: approved ? 'Payment approved' : 'Payment rejected' };
+      } catch (e) { return { success: false, message: e.message }; }
+    }
+
+    async function fbUpdateSaleNote(saleId, note, user) {
+      try {
+        await db.ref('sales/' + saleId + '/adminNote').set(note);
+        await fbLogActivity('Order Note', user, 'Updated note for order ' + saleId.slice(-6).toUpperCase());
+        return { success: true, message: 'Note saved' };
       } catch (e) { return { success: false, message: e.message }; }
     }
 

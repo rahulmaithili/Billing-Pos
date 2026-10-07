@@ -15,6 +15,7 @@ function runBuild() {
 
   // Read Components Common
   const common = fs.readFileSync(path.join(compDir, 'common.js'), 'utf8');
+  const orderDetailsModal = fs.existsSync(path.join(compDir, 'OrderDetailsModal.js')) ? fs.readFileSync(path.join(compDir, 'OrderDetailsModal.js'), 'utf8') : '';
 
   // Read Views in dependency order
   const viewOrder = [
@@ -54,6 +55,7 @@ function runBuild() {
   // Combine full Babel Code
   const fullBabelCode = [
     common,
+    orderDetailsModal,
     viewsCode,
     appCode
   ].join('\n\n');

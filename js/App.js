@@ -3,9 +3,9 @@
       switch (activeMenu) {
         case 'dashboard': return <DashboardView user={user} role={role} setActiveMenu={setActiveMenu} />;
         case 'pos': return <POSView user={user} role={role} />;
-        case 'board': return <OrderBoardView user={user} role={role} />;
-        case 'review': return <PaymentReviewView user={user} role={role} />;
-        case 'sales-history': return <SalesHistoryView user={user} role={role} />;
+        case 'board': return <OrderBoardView user={user} role={role} setActiveMenu={setActiveMenu} />;
+        case 'review': return <PaymentReviewView user={user} role={role} setActiveMenu={setActiveMenu} />;
+        case 'sales-history': return <SalesHistoryView user={user} role={role} setActiveMenu={setActiveMenu} />;
         case 'products': return <ProductsView user={user} role={role} />;
         case 'categories': return <CategoriesView user={user} role={role} />;
         case 'addons': return <AddonsView user={user} role={role} />;
