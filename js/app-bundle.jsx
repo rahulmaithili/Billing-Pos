@@ -772,7 +772,12 @@ const { useState, useEffect, useRef, useMemo, useCallback, useDeferredValue } = 
     // build an instant lookup for POS - normalized id/sku/barcode -> product (avoids a firebase round-trip per scan)
     function buildCodeIndex(products) {
       const m = new Map();
-      (products || []).forEach(p => { [p.id, p.sku, p.barcode].forEach(k => { if (k) m.set(String(k).trim().toLowerCase(), p); }); });
+      (products || []).forEach(p => {
+        const derivedCode = p.code || p.sku || ('DRK-' + (p.id ? p.id.slice(-3).toUpperCase() : '001'));
+        [p.id, p.sku, p.code, derivedCode, p.barcode].forEach(k => {
+          if (k) m.set(String(k).trim().toLowerCase(), p);
+        });
+      });
       return m;
     }
 
@@ -2184,6 +2189,8 @@ function ProductsView({ user, role }) {
   const [selectedIds, setSelectedIds] = useState([]);
   const [allCategories, setAllCategories] = useState([]);
   const [allAddons, setAllAddons] = useState([]);
+  const [qrProduct, setQrProduct] = useState(null);
+  const [showBulkQr, setShowBulkQr] = useState(false);
 
   const { loading, data, err } = useFetch(() => Promise.all([
     fbGetProducts(),
@@ -2398,6 +2405,15 @@ function ProductsView({ user, role }) {
           >
             <i className="fas fa-plus"></i> Add Drink
           </button>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={() => setShowBulkQr(true)}
+            style={{ fontWeight: 600, padding: '7px 14px', display: 'inline-flex', alignItems: 'center', gap: 6 }}
+            title="Print QR Labels for all products"
+          >
+            <i className="fas fa-qrcode"></i> Print All Labels
+          </button>
           <button type="button" className="btn btn-secondary btn-sm" onClick={reload} title="Refresh catalog">
             <i className="fas fa-rotate"></i>
           </button>
@@ -2518,6 +2534,9 @@ function ProductsView({ user, role }) {
           </button>
           <button type="button" className="prod-bulk-btn" onClick={() => handleBulkArchive(false)} disabled={!selectedIds.length}>
             <i className="fas fa-rotate-left" style={{ marginRight: 4 }}></i> Restore
+          </button>
+          <button type="button" className="prod-bulk-btn" onClick={() => setShowBulkQr(true)} disabled={!selectedIds.length} title="Print QR Labels for selected drinks">
+            <i className="fas fa-qrcode" style={{ color: '#0284c7', marginRight: 4 }}></i> Print QR ({selectedIds.length})
           </button>
           <button type="button" className="prod-bulk-btn" onClick={handleExportSelected} disabled={!selectedIds.length}>
             <i className="fas fa-file-export" style={{ color: 'var(--navy-accent)', marginRight: 4 }}></i> Export Selected
@@ -2661,6 +2680,14 @@ function ProductsView({ user, role }) {
                       <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 6 }}>
                         <button
                           type="button"
+                          className="action-icon qr-icon"
+                          onClick={() => setQrProduct(p)}
+                          title="Product QR Code / Print Label"
+                        >
+                          <i className="fas fa-qrcode"></i>
+                        </button>
+                        <button
+                          type="button"
                           className="action-icon edit-icon"
                           onClick={() => { setEditingProduct(p); setShowModal(true); }}
                           title="Edit drink"
@@ -2694,6 +2721,22 @@ function ProductsView({ user, role }) {
           onClose={() => { setShowModal(false); setEditingProduct(null); }}
           onSaved={() => { setShowModal(false); setEditingProduct(null); reload(); }}
           user={user}
+        />
+      )}
+
+      {/* Product QR Code Modal */}
+      {qrProduct && (
+        <ProductQRModal
+          product={qrProduct}
+          onClose={() => setQrProduct(null)}
+        />
+      )}
+
+      {/* Bulk QR Code Print Modal */}
+      {showBulkQr && (
+        <BulkQRModal
+          products={selectedIds.length > 0 ? products.filter(p => selectedIds.includes(p.id)) : filteredProducts}
+          onClose={() => setShowBulkQr(false)}
         />
       )}
     </div>
@@ -3089,6 +3132,238 @@ function AddDrinkModal({ product, categories, addons, onClose, onSaved, user }) 
             </button>
           </div>
         </form>
+      </div>
+    </div>
+  );
+}
+
+
+// --- Product QR Label & Fast Billing Modal ---
+function ProductQRModal({ product, onClose }) {
+  const canvasRef = useRef(null);
+  const [useFallback, setUseFallback] = useState(false);
+  const scanCode = product.code || product.sku || product.id;
+  const storeName = (CFG.business && CFG.business.name) ? CFG.business.name : 'BILLING POS';
+  const priceDisplay = money(product.basePrice != null ? product.basePrice : product.price || 0);
+
+  useEffect(() => {
+    setUseFallback(false);
+    if (!scanCode) return;
+    try {
+      if (typeof QRCode !== 'undefined' && QRCode.toCanvas && canvasRef.current) {
+        QRCode.toCanvas(canvasRef.current, scanCode, {
+          width: 170,
+          margin: 1,
+          color: { dark: '#0f172a', light: '#ffffff' }
+        }, (err) => {
+          if (err) {
+            console.warn('QR Canvas error, using fallback:', err);
+            setUseFallback(true);
+          }
+        });
+      } else {
+        setUseFallback(true);
+      }
+    } catch (e) {
+      setUseFallback(true);
+    }
+  }, [scanCode]);
+
+  const handlePrint = () => {
+    window.print();
+  };
+
+  const handleDownload = () => {
+    if (canvasRef.current) {
+      try {
+        const link = document.createElement('a');
+        link.download = `${(product.name || 'product').replace(/\s+/g, '_')}_QR.png`;
+        link.href = canvasRef.current.toDataURL('image/png');
+        link.click();
+      } catch (e) {
+        Swal.fire({ icon: 'info', title: 'Scan Code', text: scanCode });
+      }
+    }
+  };
+
+  const handleCopyCode = () => {
+    try {
+      navigator.clipboard.writeText(scanCode);
+      Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 1500 }).fire({
+        icon: 'success',
+        title: `Copied: ${scanCode}`
+      });
+    } catch (e) {
+      Swal.fire({ icon: 'info', title: 'Scan Code', text: scanCode });
+    }
+  };
+
+  const fallbackUrl = `https://api.qrserver.com/v1/create-qr-code/?size=170x170&margin=2&data=${encodeURIComponent(scanCode)}`;
+
+  return (
+    <div className="modal-backdrop" onClick={onClose}>
+      <div className="modal qr-label-modal-card" onClick={e => e.stopPropagation()}>
+        <div className="modal-header">
+          <h3>
+            <i className="fas fa-qrcode" style={{ color: 'var(--navy-accent)' }}></i>
+            Product QR Label
+          </h3>
+          <button type="button" className="modal-close-btn" onClick={onClose}>
+            <i className="fas fa-times"></i>
+          </button>
+        </div>
+
+        <div className="modal-body">
+          <div className="qr-label-preview-sheet print-qr-target">
+            <div className="qr-sticker-box">
+              <div className="qr-sticker-store">{storeName}</div>
+              <div className="qr-sticker-title">{product.name}</div>
+
+              <div className="qr-canvas-holder">
+                {useFallback ? (
+                  <img
+                    src={fallbackUrl}
+                    alt={scanCode}
+                    style={{ width: 170, height: 170, display: 'block', margin: '0 auto', borderRadius: 6 }}
+                  />
+                ) : (
+                  <canvas
+                    ref={canvasRef}
+                    style={{ width: 170, height: 170, display: 'block', margin: '0 auto', borderRadius: 6 }}
+                  />
+                )}
+              </div>
+
+              <div className="qr-sticker-code-badge">
+                #{scanCode}
+              </div>
+
+              <div className="qr-sticker-price-tag">
+                {priceDisplay}
+              </div>
+
+              <div className="qr-sticker-hint">
+                <i className="fas fa-bolt" style={{ color: '#eab308', marginRight: 4 }}></i>
+                Scan at POS for 1-Click Fast Billing
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="modal-footer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+          <div style={{ display: 'flex', gap: 6 }}>
+            <button
+              type="button"
+              className="btn btn-secondary btn-sm"
+              onClick={handleCopyCode}
+              title="Copy scan string"
+            >
+              <i className="fas fa-copy"></i> Copy Code
+            </button>
+            <button
+              type="button"
+              className="btn btn-secondary btn-sm"
+              onClick={handleDownload}
+              title="Download QR Image PNG"
+            >
+              <i className="fas fa-download"></i> Download PNG
+            </button>
+          </div>
+
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button
+              type="button"
+              className="btn btn-primary btn-sm"
+              onClick={handlePrint}
+              style={{ fontWeight: 700 }}
+              title="Print Sticker / Thermal Label"
+            >
+              <i className="fas fa-print"></i> Print Label
+            </button>
+            <button
+              type="button"
+              className="btn btn-secondary btn-sm"
+              onClick={onClose}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// --- Bulk Product QR Labels Print Modal ---
+function BulkQRModal({ products, onClose }) {
+  const storeName = (CFG.business && CFG.business.name) ? CFG.business.name : 'BILLING POS';
+
+  const handlePrint = () => {
+    window.print();
+  };
+
+  return (
+    <div className="modal-backdrop" onClick={onClose}>
+      <div className="modal" style={{ maxWidth: '850px' }} onClick={e => e.stopPropagation()}>
+        <div className="modal-header">
+          <h3>
+            <i className="fas fa-qrcode" style={{ color: 'var(--navy-accent)' }}></i>
+            Bulk Product QR Labels ({products.length} Items)
+          </h3>
+          <button type="button" className="modal-close-btn" onClick={onClose}>
+            <i className="fas fa-times"></i>
+          </button>
+        </div>
+
+        <div className="modal-body">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12, paddingBottom: 8, borderBottom: '1px solid #e2e8f0' }}>
+            <div style={{ fontSize: 13, color: '#64748b' }}>
+              Printing <strong>{products.length}</strong> barcode/QR stickers for cups, packaging, and shelf tags.
+            </div>
+            <button type="button" className="btn btn-primary btn-sm" onClick={handlePrint} style={{ fontWeight: 700 }}>
+              <i className="fas fa-print"></i> Print All Labels
+            </button>
+          </div>
+
+          <div className="bulk-qr-sheet print-qr-target">
+            {products.map(p => {
+              const code = p.code || p.sku || p.id;
+              const price = money(p.basePrice != null ? p.basePrice : p.price || 0);
+              const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=130x130&margin=1&data=${encodeURIComponent(code)}`;
+
+              return (
+                <div key={p.id} className="bulk-qr-sticker">
+                  <div style={{ fontSize: 10, fontWeight: 800, textTransform: 'uppercase', color: '#64748b', letterSpacing: 0.8 }}>
+                    {storeName}
+                  </div>
+                  <div style={{ fontSize: 13, fontWeight: 800, color: '#0f172a', margin: '3px 0 6px', maxWidth: 180, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {p.name}
+                  </div>
+                  <img
+                    src={qrUrl}
+                    alt={code}
+                    style={{ width: 120, height: 120, display: 'block', margin: '0 auto 6px', borderRadius: 4 }}
+                  />
+                  <div style={{ fontFamily: 'monospace', fontSize: 11.5, fontWeight: 700, color: '#0284c7', background: '#f0f9ff', padding: '1px 6px', borderRadius: 4, marginBottom: 4 }}>
+                    #{code}
+                  </div>
+                  <div style={{ fontSize: 13, fontWeight: 800, color: '#16a34a' }}>
+                    {price}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="modal-footer">
+          <button type="button" className="btn btn-secondary" onClick={onClose}>
+            Close
+          </button>
+          <button type="button" className="btn btn-primary" onClick={handlePrint} style={{ fontWeight: 700 }}>
+            <i className="fas fa-print"></i> Print All Labels
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -4036,7 +4311,8 @@ function POSView({ user, role }) {
           const nextQty = (existing ? existing.qty : 0) + qtyToAdd;
           if (!capacityCheck(product.id, product.name, nextQty)) return prev;
           if (existing) return prev.map(l => l.productId === product.id ? { ...l, qty: nextQty } : l);
-          return [...prev, { productId: product.id, name: product.name, sku: product.sku, price: Number(product.price) || 0, qty: qtyToAdd }];
+          const priceVal = Number(product.base_price != null ? product.base_price : product.price) || 0;
+          return [...prev, { productId: product.id, name: product.name, sku: product.sku || product.code || '', price: priceVal, qty: qtyToAdd }];
         });
       }, [capacityCheck]);
 
@@ -4045,10 +4321,15 @@ function POSView({ user, role }) {
         if (!code) return;
         if (!catalogReady) { Swal.fire({ icon: 'warning', title: 'Still Loading', text: 'Catalog is still loading, try again in a moment.' }); return; }
         const local = codeIndex.get(code.toLowerCase());
-        if (local) { addToCart(local, 1); return; }
+        if (local) {
+          addToCart(local, 1);
+          Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 1200 }).fire({ icon: 'success', title: `Added: ${local.name}` });
+          return;
+        }
         const res = await fbFindProductByCode(code);
         if (!res.success) { Swal.fire({ icon: 'error', title: 'Not Found', text: res.message || `No product matches "${code}"` }); return; }
         addToCart(res.data, 1);
+        Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 1200 }).fire({ icon: 'success', title: `Added: ${res.data.name}` });
       }, [addToCart, catalogReady, codeIndex]);
 
       const handleScanSubmit = (e) => {

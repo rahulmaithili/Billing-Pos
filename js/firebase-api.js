@@ -260,6 +260,11 @@ seedDemoData();
         const byBarSnap = await db.ref('products').orderByChild('barcode').equalTo(trimmed).once('value');
         const val = byBarSnap.val();
         if (val) { const entry = Object.entries(val)[0]; return { success: true, data: Object.assign({ id: entry[0] }, entry[1]) }; }
+      } catch (e) { /* fall through */ }
+      try {
+        const byCodeSnap = await db.ref('products').orderByChild('code').equalTo(trimmed).once('value');
+        const val = byCodeSnap.val();
+        if (val) { const entry = Object.entries(val)[0]; return { success: true, data: Object.assign({ id: entry[0] }, entry[1]) }; }
         return { success: false, message: 'No product found for code: ' + trimmed };
       } catch (e) { return { success: false, message: e.message }; }
     }

@@ -156,7 +156,8 @@ function POSView({ user, role }) {
           const nextQty = (existing ? existing.qty : 0) + qtyToAdd;
           if (!capacityCheck(product.id, product.name, nextQty)) return prev;
           if (existing) return prev.map(l => l.productId === product.id ? { ...l, qty: nextQty } : l);
-          return [...prev, { productId: product.id, name: product.name, sku: product.sku, price: Number(product.price) || 0, qty: qtyToAdd }];
+          const priceVal = Number(product.base_price != null ? product.base_price : product.price) || 0;
+          return [...prev, { productId: product.id, name: product.name, sku: product.sku || product.code || '', price: priceVal, qty: qtyToAdd }];
         });
       }, [capacityCheck]);
 
@@ -165,10 +166,15 @@ function POSView({ user, role }) {
         if (!code) return;
         if (!catalogReady) { Swal.fire({ icon: 'warning', title: 'Still Loading', text: 'Catalog is still loading, try again in a moment.' }); return; }
         const local = codeIndex.get(code.toLowerCase());
-        if (local) { addToCart(local, 1); return; }
+        if (local) {
+          addToCart(local, 1);
+          Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 1200 }).fire({ icon: 'success', title: `Added: ${local.name}` });
+          return;
+        }
         const res = await fbFindProductByCode(code);
         if (!res.success) { Swal.fire({ icon: 'error', title: 'Not Found', text: res.message || `No product matches "${code}"` }); return; }
         addToCart(res.data, 1);
+        Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 1200 }).fire({ icon: 'success', title: `Added: ${res.data.name}` });
       }, [addToCart, catalogReady, codeIndex]);
 
       const handleScanSubmit = (e) => {

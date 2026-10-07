@@ -772,7 +772,12 @@ const { useState, useEffect, useRef, useMemo, useCallback, useDeferredValue } = 
     // build an instant lookup for POS - normalized id/sku/barcode -> product (avoids a firebase round-trip per scan)
     function buildCodeIndex(products) {
       const m = new Map();
-      (products || []).forEach(p => { [p.id, p.sku, p.barcode].forEach(k => { if (k) m.set(String(k).trim().toLowerCase(), p); }); });
+      (products || []).forEach(p => {
+        const derivedCode = p.code || p.sku || ('DRK-' + (p.id ? p.id.slice(-3).toUpperCase() : '001'));
+        [p.id, p.sku, p.code, derivedCode, p.barcode].forEach(k => {
+          if (k) m.set(String(k).trim().toLowerCase(), p);
+        });
+      });
       return m;
     }
 
