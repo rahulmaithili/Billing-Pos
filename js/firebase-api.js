@@ -100,6 +100,17 @@ seedDemoData();
     }
     async function fbDeleteCategory(id, name, user) {
       try { await db.ref('categories/' + id).remove(); await fbLogActivity('Delete Category', user, name); return { success: true, message: 'Category deleted' }; }
+
+    async function fbUpdateCategory(id, data, user) {
+      try {
+        const cleanData = typeof data === 'string' ? { name: data.trim() } : data;
+        await db.ref('categories/' + id).update(cleanData);
+        await fbLogActivity('Update Category', user, cleanData.name || id);
+        return { success: true, message: 'Category updated' };
+      } catch (e) {
+        return { success: false, message: e.message };
+      }
+    }
       catch (e) { return { success: false, message: e.message }; }
     }
 

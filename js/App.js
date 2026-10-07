@@ -7,7 +7,7 @@
         case 'review': return <PaymentReviewView user={user} role={role} />;
         case 'sales-history': return <SalesHistoryView user={user} role={role} />;
         case 'products': return <ProductsView user={user} role={role} />;
-        case 'categories': return <SettingsView user={user} role={role} />;
+        case 'categories': return <CategoriesView user={user} role={role} />;
         case 'addons': return <AddonsView user={user} role={role} />;
         case 'stock': return <StockView user={user} role={role} />;
         case 'records': return <RecordsView user={user} role={role} />;

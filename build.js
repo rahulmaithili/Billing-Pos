@@ -20,6 +20,7 @@ function runBuild() {
   const viewOrder = [
     'RecordsView.js',
     'ProductsView.js',
+    'CategoriesView.js',
     'StockView.js',
     'POSView.js',
     'SalesHistoryView.js',
