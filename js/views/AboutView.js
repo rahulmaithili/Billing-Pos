@@ -268,11 +268,11 @@ function AboutView() {
                 <div className="form-grid">
                   <div className="form-group">
                     <label><i className="fas fa-toggle-on"></i> Active Status</label>
-                    <div><input type="checkbox" className="toggle" checked={formData.active} onChange={e => setFormData(p => ({ ...p, active: e.target.checked }))} /></div>
+                    <div><label className="switch-pill"><input type="checkbox" checked={formData.active} onChange={e => setFormData(p => ({ ...p, active: e.target.checked }))} /><span className="switch-slider"></span></label></div>
                   </div>
                   <div className="form-group">
                     <label><i className="fas fa-receipt"></i> Require Receipt Upload</label>
-                    <div><input type="checkbox" className="toggle" checked={formData.requiresReceipt} onChange={e => setFormData(p => ({ ...p, requiresReceipt: e.target.checked }))} /></div>
+                    <div><label className="switch-pill"><input type="checkbox" checked={formData.requiresReceipt} onChange={e => setFormData(p => ({ ...p, requiresReceipt: e.target.checked }))} /><span className="switch-slider"></span></label></div>
                   </div>
                 </div>
 

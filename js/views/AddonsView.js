@@ -205,15 +205,19 @@
                           </strong>
                         </td>
                         <td>
-                          <button
-                            type="button"
-                            className={`table-toggle-btn ${isAvailable ? 'is-active' : 'is-inactive'}`}
-                            onClick={() => handleToggle(a)}
-                            title="Click to toggle availability"
-                          >
-                            <i className={`fas ${isAvailable ? 'fa-check-circle' : 'fa-circle-xmark'}`}></i>
-                            <span>{isAvailable ? 'In Stock' : 'Out of Stock'}</span>
-                          </button>
+                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: isAvailable ? '#f0fdf4' : '#fef2f2', border: `1px solid ${isAvailable ? '#bbf7d0' : '#fecaca'}`, padding: '4px 10px', borderRadius: 'var(--r-pill, 999px)' }}>
+                            <label className="switch-pill" style={{ margin: 0, width: 34, height: 18, flexShrink: 0 }} title={isAvailable ? "Click to mark Out of Stock" : "Click to mark In Stock"}>
+                              <input
+                                type="checkbox"
+                                checked={isAvailable}
+                                onChange={() => handleToggle(a)}
+                              />
+                              <span className="switch-slider" style={{ backgroundColor: isAvailable ? '#16a34a' : '#cbd5e1' }}></span>
+                            </label>
+                            <span style={{ fontSize: 12, fontWeight: 700, color: isAvailable ? '#15803d' : '#dc2626' }}>
+                              {isAvailable ? 'In Stock' : 'Out of Stock'}
+                            </span>
+                          </div>
                         </td>
                         <td>
                           <div className="table-action-group" style={{ justifyContent: 'flex-end' }}>
@@ -322,17 +326,19 @@
                   <label style={{ fontSize: 13, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 6 }}>
                     Availability Status
                   </label>
-                  <label style={{ display: 'inline-flex', alignItems: 'center', gap: 10, cursor: 'pointer', background: form.is_available ? '#f0fdf4' : '#fff1f2', border: `1px solid ${form.is_available ? '#86efac' : '#fecdd3'}`, padding: '8px 14px', borderRadius: 'var(--r-sm, 8px)', width: '100%' }}>
-                    <input
-                      type="checkbox"
-                      className="toggle"
-                      checked={form.is_available}
-                      onChange={e => setForm(p => ({ ...p, is_available: e.target.checked }))}
-                    />
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: form.is_available ? '#f0fdf4' : '#fff1f2', border: `1.5px solid ${form.is_available ? '#86efac' : '#fecdd3'}`, padding: '10px 14px', borderRadius: 'var(--r-sm, 8px)' }}>
                     <span style={{ fontSize: 13, fontWeight: 700, color: form.is_available ? '#166534' : '#be123c' }}>
                       {form.is_available ? 'Available In Stock (Active in POS)' : 'Out of Stock (Disabled in POS)'}
                     </span>
-                  </label>
+                    <label className="switch-pill" style={{ margin: 0, flexShrink: 0 }}>
+                      <input
+                        type="checkbox"
+                        checked={form.is_available}
+                        onChange={e => setForm(p => ({ ...p, is_available: e.target.checked }))}
+                      />
+                      <span className="switch-slider" style={{ backgroundColor: form.is_available ? '#16a34a' : '#cbd5e1' }}></span>
+                    </label>
+                  </div>
                 </div>
               </div>
 

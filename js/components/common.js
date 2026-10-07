@@ -1272,7 +1272,7 @@ const { useState, useEffect, useRef, useMemo, useCallback, useDeferredValue } = 
                   <div className="form-group"><label>Tags</label><input type="text" placeholder="comma,separated" value={formData.tags} onChange={(e) => setFormData(p => ({ ...p, tags: e.target.value }))} /></div>
                   <div className="form-group">
                     <label><i className="fas fa-toggle-on"></i> Active</label>
-                    <div><input type="checkbox" className="toggle" checked={formData.active} onChange={(e) => setFormData(p => ({ ...p, active: e.target.checked }))} /></div>
+                    <div><label className="switch-pill"><input type="checkbox" checked={formData.active} onChange={(e) => setFormData(p => ({ ...p, active: e.target.checked }))} /><span className="switch-slider"></span></label></div>
                   </div>
                 </div>
                 <div className="form-group"><label>Address</label><textarea rows="2" value={formData.address} onChange={(e) => setFormData(p => ({ ...p, address: e.target.value }))}></textarea></div>

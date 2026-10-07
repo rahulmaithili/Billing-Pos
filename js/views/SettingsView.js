@@ -289,7 +289,7 @@ function SettingsView({ user, role }) {
                     <div className="form-group">
                       <label><i className="fas fa-store"></i> Store Open Right Now</label>
                       <div>
-                        <input type="checkbox" className="toggle" checked={form.isStoreOpen !== false} onChange={e => upd('isStoreOpen', e.target.checked)} />
+                        <label className="switch-pill"><input type="checkbox" checked={form.isStoreOpen !== false} onChange={e => upd('isStoreOpen', e.target.checked)} /><span className="switch-slider"></span></label>
                       </div>
                     </div>
                   </div>
@@ -306,7 +306,7 @@ function SettingsView({ user, role }) {
                   <div className="form-grid">
                     <div className="form-group">
                       <label><i className="fas fa-pause"></i> Temporary Pause Online Ordering</label>
-                      <div><input type="checkbox" className="toggle" checked={!!form.isPaused} onChange={e => upd('isPaused', e.target.checked)} /></div>
+                      <div><label className="switch-pill"><input type="checkbox" checked={!!form.isPaused} onChange={e => upd('isPaused', e.target.checked)} /><span className="switch-slider"></span></label></div>
                     </div>
                     <div className="form-group">
                       <label>Default Kitchen Preparation Time (Minutes)</label>
@@ -378,7 +378,7 @@ function SettingsView({ user, role }) {
                   </div>
                   <div className="form-group">
                     <label><i className="fas fa-toggle-on"></i> Prices Include Tax</label>
-                    <div><input type="checkbox" className="toggle" checked={!!form.taxInclusive} onChange={e => upd('taxInclusive', e.target.checked)} /></div>
+                    <div><label className="switch-pill"><input type="checkbox" checked={!!form.taxInclusive} onChange={e => upd('taxInclusive', e.target.checked)} /><span className="switch-slider"></span></label></div>
                   </div>
                 </LteCard>
               )}
@@ -388,7 +388,7 @@ function SettingsView({ user, role }) {
                 <LteCard title="Receipts & Slip Verification" icon="fa-receipt">
                   <div className="form-group">
                     <label><i className="fas fa-file-arrow-up"></i> Require Slip / Receipt Upload for Online Payments</label>
-                    <div><input type="checkbox" className="toggle" checked={!!form.requireReceiptUpload} onChange={e => upd('requireReceiptUpload', e.target.checked)} /></div>
+                    <div><label className="switch-pill"><input type="checkbox" checked={!!form.requireReceiptUpload} onChange={e => upd('requireReceiptUpload', e.target.checked)} /><span className="switch-slider"></span></label></div>
                   </div>
                   <div className="form-group">
                     <label>Payment Instructions (Shown at checkout)</label>
@@ -414,7 +414,7 @@ function SettingsView({ user, role }) {
                   </div>
                   <div className="form-group">
                     <label><i className="fas fa-envelope"></i> Send Order Confirmations via Email</label>
-                    <div><input type="checkbox" className="toggle" checked={form.orderEmailAlerts !== false} onChange={e => upd('orderEmailAlerts', e.target.checked)} /></div>
+                    <div><label className="switch-pill"><input type="checkbox" checked={form.orderEmailAlerts !== false} onChange={e => upd('orderEmailAlerts', e.target.checked)} /><span className="switch-slider"></span></label></div>
                   </div>
                   <div className="form-group">
                     <label><i className="fab fa-whatsapp"></i> WhatsApp Order Ready Message Template</label>
@@ -456,7 +456,7 @@ function SettingsView({ user, role }) {
                 <LteCard title="Database Safety & Backup" icon="fa-shield-halved">
                   <div className="form-group" style={{ marginBottom: 18 }}>
                     <label><i className="fas fa-cloud-arrow-up"></i> Nightly Automatic Database Snapshot</label>
-                    <div><input type="checkbox" className="toggle" checked={form.nightlyBackupEnabled !== false} onChange={e => upd('nightlyBackupEnabled', e.target.checked)} /></div>
+                    <div><label className="switch-pill"><input type="checkbox" checked={form.nightlyBackupEnabled !== false} onChange={e => upd('nightlyBackupEnabled', e.target.checked)} /><span className="switch-slider"></span></label></div>
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16 }}>
                     <div style={{ padding: 16, border: '1px solid #e2e8f0', borderRadius: 8, background: '#f8fafc' }}>

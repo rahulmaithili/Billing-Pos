@@ -1272,7 +1272,7 @@ const { useState, useEffect, useRef, useMemo, useCallback, useDeferredValue } = 
                   <div className="form-group"><label>Tags</label><input type="text" placeholder="comma,separated" value={formData.tags} onChange={(e) => setFormData(p => ({ ...p, tags: e.target.value }))} /></div>
                   <div className="form-group">
                     <label><i className="fas fa-toggle-on"></i> Active</label>
-                    <div><input type="checkbox" className="toggle" checked={formData.active} onChange={(e) => setFormData(p => ({ ...p, active: e.target.checked }))} /></div>
+                    <div><label className="switch-pill"><input type="checkbox" checked={formData.active} onChange={(e) => setFormData(p => ({ ...p, active: e.target.checked }))} /><span className="switch-slider"></span></label></div>
                   </div>
                 </div>
                 <div className="form-group"><label>Address</label><textarea rows="2" value={formData.address} onChange={(e) => setFormData(p => ({ ...p, address: e.target.value }))}></textarea></div>
@@ -3597,21 +3597,21 @@ function BulkQRModal({ products, onClose }) {
                     <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 14, paddingTop: 10, borderTop: '1px solid #f1f5f9' }}>
                       <button
                         type="button"
-                        className="btn btn-secondary btn-sm"
+                        className="btn btn-sm"
                         onClick={() => openEditModal(cat)}
                         title="Edit Category Name & Icon"
-                        style={{ padding: '6px 12px', fontSize: 12 }}
+                        style={{ padding: '5px 12px', fontSize: 12, background: '#f8fafc', color: '#334155', border: '1px solid #cbd5e1', borderRadius: 6, fontWeight: 600 }}
                       >
-                        <i className="fas fa-edit"></i> Edit
+                        <i className="fas fa-edit" style={{ marginRight: 4, color: '#0284c7' }}></i> Edit
                       </button>
                       <button
                         type="button"
-                        className="btn btn-secondary btn-sm"
+                        className="btn btn-sm"
                         onClick={() => handleDelete(cat)}
                         title="Delete Category"
-                        style={{ padding: '6px 12px', fontSize: 12, color: '#ea4335' }}
+                        style={{ padding: '5px 12px', fontSize: 12, background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca', borderRadius: 6, fontWeight: 600 }}
                       >
-                        <i className="fas fa-trash"></i> Delete
+                        <i className="fas fa-trash" style={{ marginRight: 4 }}></i> Delete
                       </button>
                     </div>
                   </div>
@@ -6596,11 +6596,11 @@ function AboutView() {
                 <div className="form-grid">
                   <div className="form-group">
                     <label><i className="fas fa-toggle-on"></i> Active Status</label>
-                    <div><input type="checkbox" className="toggle" checked={formData.active} onChange={e => setFormData(p => ({ ...p, active: e.target.checked }))} /></div>
+                    <div><label className="switch-pill"><input type="checkbox" checked={formData.active} onChange={e => setFormData(p => ({ ...p, active: e.target.checked }))} /><span className="switch-slider"></span></label></div>
                   </div>
                   <div className="form-group">
                     <label><i className="fas fa-receipt"></i> Require Receipt Upload</label>
-                    <div><input type="checkbox" className="toggle" checked={formData.requiresReceipt} onChange={e => setFormData(p => ({ ...p, requiresReceipt: e.target.checked }))} /></div>
+                    <div><label className="switch-pill"><input type="checkbox" checked={formData.requiresReceipt} onChange={e => setFormData(p => ({ ...p, requiresReceipt: e.target.checked }))} /><span className="switch-slider"></span></label></div>
                   </div>
                 </div>
 
@@ -7094,7 +7094,7 @@ function SettingsView({ user, role }) {
                     <div className="form-group">
                       <label><i className="fas fa-store"></i> Store Open Right Now</label>
                       <div>
-                        <input type="checkbox" className="toggle" checked={form.isStoreOpen !== false} onChange={e => upd('isStoreOpen', e.target.checked)} />
+                        <label className="switch-pill"><input type="checkbox" checked={form.isStoreOpen !== false} onChange={e => upd('isStoreOpen', e.target.checked)} /><span className="switch-slider"></span></label>
                       </div>
                     </div>
                   </div>
@@ -7111,7 +7111,7 @@ function SettingsView({ user, role }) {
                   <div className="form-grid">
                     <div className="form-group">
                       <label><i className="fas fa-pause"></i> Temporary Pause Online Ordering</label>
-                      <div><input type="checkbox" className="toggle" checked={!!form.isPaused} onChange={e => upd('isPaused', e.target.checked)} /></div>
+                      <div><label className="switch-pill"><input type="checkbox" checked={!!form.isPaused} onChange={e => upd('isPaused', e.target.checked)} /><span className="switch-slider"></span></label></div>
                     </div>
                     <div className="form-group">
                       <label>Default Kitchen Preparation Time (Minutes)</label>
@@ -7183,7 +7183,7 @@ function SettingsView({ user, role }) {
                   </div>
                   <div className="form-group">
                     <label><i className="fas fa-toggle-on"></i> Prices Include Tax</label>
-                    <div><input type="checkbox" className="toggle" checked={!!form.taxInclusive} onChange={e => upd('taxInclusive', e.target.checked)} /></div>
+                    <div><label className="switch-pill"><input type="checkbox" checked={!!form.taxInclusive} onChange={e => upd('taxInclusive', e.target.checked)} /><span className="switch-slider"></span></label></div>
                   </div>
                 </LteCard>
               )}
@@ -7193,7 +7193,7 @@ function SettingsView({ user, role }) {
                 <LteCard title="Receipts & Slip Verification" icon="fa-receipt">
                   <div className="form-group">
                     <label><i className="fas fa-file-arrow-up"></i> Require Slip / Receipt Upload for Online Payments</label>
-                    <div><input type="checkbox" className="toggle" checked={!!form.requireReceiptUpload} onChange={e => upd('requireReceiptUpload', e.target.checked)} /></div>
+                    <div><label className="switch-pill"><input type="checkbox" checked={!!form.requireReceiptUpload} onChange={e => upd('requireReceiptUpload', e.target.checked)} /><span className="switch-slider"></span></label></div>
                   </div>
                   <div className="form-group">
                     <label>Payment Instructions (Shown at checkout)</label>
@@ -7219,7 +7219,7 @@ function SettingsView({ user, role }) {
                   </div>
                   <div className="form-group">
                     <label><i className="fas fa-envelope"></i> Send Order Confirmations via Email</label>
-                    <div><input type="checkbox" className="toggle" checked={form.orderEmailAlerts !== false} onChange={e => upd('orderEmailAlerts', e.target.checked)} /></div>
+                    <div><label className="switch-pill"><input type="checkbox" checked={form.orderEmailAlerts !== false} onChange={e => upd('orderEmailAlerts', e.target.checked)} /><span className="switch-slider"></span></label></div>
                   </div>
                   <div className="form-group">
                     <label><i className="fab fa-whatsapp"></i> WhatsApp Order Ready Message Template</label>
@@ -7261,7 +7261,7 @@ function SettingsView({ user, role }) {
                 <LteCard title="Database Safety & Backup" icon="fa-shield-halved">
                   <div className="form-group" style={{ marginBottom: 18 }}>
                     <label><i className="fas fa-cloud-arrow-up"></i> Nightly Automatic Database Snapshot</label>
-                    <div><input type="checkbox" className="toggle" checked={form.nightlyBackupEnabled !== false} onChange={e => upd('nightlyBackupEnabled', e.target.checked)} /></div>
+                    <div><label className="switch-pill"><input type="checkbox" checked={form.nightlyBackupEnabled !== false} onChange={e => upd('nightlyBackupEnabled', e.target.checked)} /><span className="switch-slider"></span></label></div>
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16 }}>
                     <div style={{ padding: 16, border: '1px solid #e2e8f0', borderRadius: 8, background: '#f8fafc' }}>
@@ -8100,15 +8100,19 @@ function PaymentReviewView({ user, role, setActiveMenu }) {
                           </strong>
                         </td>
                         <td>
-                          <button
-                            type="button"
-                            className={`table-toggle-btn ${isAvailable ? 'is-active' : 'is-inactive'}`}
-                            onClick={() => handleToggle(a)}
-                            title="Click to toggle availability"
-                          >
-                            <i className={`fas ${isAvailable ? 'fa-check-circle' : 'fa-circle-xmark'}`}></i>
-                            <span>{isAvailable ? 'In Stock' : 'Out of Stock'}</span>
-                          </button>
+                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: isAvailable ? '#f0fdf4' : '#fef2f2', border: `1px solid ${isAvailable ? '#bbf7d0' : '#fecaca'}`, padding: '4px 10px', borderRadius: 'var(--r-pill, 999px)' }}>
+                            <label className="switch-pill" style={{ margin: 0, width: 34, height: 18, flexShrink: 0 }} title={isAvailable ? "Click to mark Out of Stock" : "Click to mark In Stock"}>
+                              <input
+                                type="checkbox"
+                                checked={isAvailable}
+                                onChange={() => handleToggle(a)}
+                              />
+                              <span className="switch-slider" style={{ backgroundColor: isAvailable ? '#16a34a' : '#cbd5e1' }}></span>
+                            </label>
+                            <span style={{ fontSize: 12, fontWeight: 700, color: isAvailable ? '#15803d' : '#dc2626' }}>
+                              {isAvailable ? 'In Stock' : 'Out of Stock'}
+                            </span>
+                          </div>
                         </td>
                         <td>
                           <div className="table-action-group" style={{ justifyContent: 'flex-end' }}>
@@ -8217,17 +8221,19 @@ function PaymentReviewView({ user, role, setActiveMenu }) {
                   <label style={{ fontSize: 13, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 6 }}>
                     Availability Status
                   </label>
-                  <label style={{ display: 'inline-flex', alignItems: 'center', gap: 10, cursor: 'pointer', background: form.is_available ? '#f0fdf4' : '#fff1f2', border: `1px solid ${form.is_available ? '#86efac' : '#fecdd3'}`, padding: '8px 14px', borderRadius: 'var(--r-sm, 8px)', width: '100%' }}>
-                    <input
-                      type="checkbox"
-                      className="toggle"
-                      checked={form.is_available}
-                      onChange={e => setForm(p => ({ ...p, is_available: e.target.checked }))}
-                    />
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: form.is_available ? '#f0fdf4' : '#fff1f2', border: `1.5px solid ${form.is_available ? '#86efac' : '#fecdd3'}`, padding: '10px 14px', borderRadius: 'var(--r-sm, 8px)' }}>
                     <span style={{ fontSize: 13, fontWeight: 700, color: form.is_available ? '#166534' : '#be123c' }}>
                       {form.is_available ? 'Available In Stock (Active in POS)' : 'Out of Stock (Disabled in POS)'}
                     </span>
-                  </label>
+                    <label className="switch-pill" style={{ margin: 0, flexShrink: 0 }}>
+                      <input
+                        type="checkbox"
+                        checked={form.is_available}
+                        onChange={e => setForm(p => ({ ...p, is_available: e.target.checked }))}
+                      />
+                      <span className="switch-slider" style={{ backgroundColor: form.is_available ? '#16a34a' : '#cbd5e1' }}></span>
+                    </label>
+                  </div>
                 </div>
               </div>
 

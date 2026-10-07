@@ -225,21 +225,21 @@
                     <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 14, paddingTop: 10, borderTop: '1px solid #f1f5f9' }}>
                       <button
                         type="button"
-                        className="btn btn-secondary btn-sm"
+                        className="btn btn-sm"
                         onClick={() => openEditModal(cat)}
                         title="Edit Category Name & Icon"
-                        style={{ padding: '6px 12px', fontSize: 12 }}
+                        style={{ padding: '5px 12px', fontSize: 12, background: '#f8fafc', color: '#334155', border: '1px solid #cbd5e1', borderRadius: 6, fontWeight: 600 }}
                       >
-                        <i className="fas fa-edit"></i> Edit
+                        <i className="fas fa-edit" style={{ marginRight: 4, color: '#0284c7' }}></i> Edit
                       </button>
                       <button
                         type="button"
-                        className="btn btn-secondary btn-sm"
+                        className="btn btn-sm"
                         onClick={() => handleDelete(cat)}
                         title="Delete Category"
-                        style={{ padding: '6px 12px', fontSize: 12, color: '#ea4335' }}
+                        style={{ padding: '5px 12px', fontSize: 12, background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca', borderRadius: 6, fontWeight: 600 }}
                       >
-                        <i className="fas fa-trash"></i> Delete
+                        <i className="fas fa-trash" style={{ marginRight: 4 }}></i> Delete
                       </button>
                     </div>
                   </div>
