@@ -420,11 +420,11 @@ function SettingsView({ user, role }) {
                 <LteCard title="Storefront details" icon="fa-shop">
                   <div className="form-group">
                     <label>Store Headline</label>
-                    <input type="text" value={form.storeHeadline || ''} onChange={e => upd('storeHeadline', e.target.value)} placeholder="Specialty Handcrafted Boba Drinks & Artisanal Coffee" />
+                    <input type="text" value={form.storeHeadline || ''} onChange={e => upd('storeHeadline', e.target.value)} placeholder="Supermarket, Kirana, Wholesale & Retail Groceries" />
                   </div>
                   <div className="form-group">
                     <label>About Text</label>
-                    <textarea rows="3" value={form.storeAbout || ''} onChange={e => upd('storeAbout', e.target.value)} placeholder="Our story, fresh tea brewing process, and ingredients..."></textarea>
+                    <textarea rows="3" value={form.storeAbout || ''} onChange={e => upd('storeAbout', e.target.value)} placeholder="Quality grocery products, wholesale pricing, and reliable service..."></textarea>
                   </div>
                   <div className="form-group">
                     <label>Hero Banner Image URL</label>

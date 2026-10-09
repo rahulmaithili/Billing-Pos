@@ -408,10 +408,10 @@ function CategoriesView({ user, role, setActiveMenu }) {
                   <h3 style={{ margin: '0 0 4px', fontSize: 16.5, color: '#0f172a', fontWeight: 800 }}>{cat.name}</h3>
 
                   <p style={{ margin: '0 0 10px', fontSize: 12.5, color: '#64748b', lineHeight: 1.4, minHeight: 34 }}>
-                    {cat.description || 'Standard menu section for beverage items & add-ons.'}
+                    {cat.description || 'Category for organizing supermarket, grocery, and retail products.'}
                   </p>
 
-                  {/* Drink Sample Pills */}
+                  {/* Product Sample Pills */}
                   {count > 0 && (
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginBottom: 12 }}>
                       {catProds.slice(0, 3).map(p => (
@@ -507,7 +507,7 @@ function CategoriesView({ user, role, setActiveMenu }) {
                     type="text"
                     required
                     autoFocus
-                    placeholder="e.g. Milk Tea & Boba, Cold Brew, Fruit Teas"
+                    placeholder="e.g. Groceries & Staples, Dairy & Ghee, Spices & Masala"
                     value={formData.name}
                     onChange={e => setFormData(p => ({ ...p, name: e.target.value }))}
                     style={{ width: '100%', padding: '9px 12px', borderRadius: 'var(--r-sm, 8px)', border: '1.5px solid #cbd5e1', fontSize: 14 }}

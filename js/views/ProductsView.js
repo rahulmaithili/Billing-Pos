@@ -371,7 +371,7 @@ function ProductsView({ user, role }) {
         </div>
 
         <div style={{ color: '#64748b', fontSize: 12 }}>
-          Showing <strong>{filteredProducts.length}</strong> of <strong>{products.length}</strong> drinks
+          Showing <strong>{filteredProducts.length}</strong> of <strong>{products.length}</strong> products
         </div>
       </div>
 

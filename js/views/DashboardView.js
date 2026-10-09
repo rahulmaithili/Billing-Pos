@@ -191,7 +191,7 @@ function DashboardView({ user, role, setActiveMenu }) {
     };
   }, [filteredSales, revenue, getSaleAmount]);
 
-  // Top 5 Selling Drinks Ranking
+  // Top 5 Selling Products Ranking
   const topProductsRanking = useMemo(() => {
     const map = {};
     filteredSales.forEach(s => {
@@ -737,7 +737,7 @@ function DashboardView({ user, role, setActiveMenu }) {
         </div>
       </div>
 
-      {/* --- INTERACTIVE CHARTS & TOP DRINKS ROW --- */}
+      {/* --- INTERACTIVE CHARTS & TOP PRODUCTS ROW --- */}
       <div className="dash-bot-grid" style={{ marginBottom: 16 }}>
         {/* Real Interactive Sales Trend Chart */}
         <div className="dash-card-box">
@@ -884,7 +884,7 @@ function DashboardView({ user, role, setActiveMenu }) {
                       </td>
                       <td>
                         <div style={{ fontSize: 12, color: '#334155', maxWidth: 280, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={itemsSummary}>
-                          {itemsSummary || `${itemsCount} drinks`}
+                          {itemsSummary || `${itemsCount} items`}
                         </div>
                       </td>
                       <td>
@@ -986,7 +986,7 @@ function DashboardView({ user, role, setActiveMenu }) {
                       <tr key={sale.id}>
                         <td>
                           <div style={{ fontWeight: 700, color: '#0f172a' }}>{sale.customerName || 'Customer'}</div>
-                          <div style={{ fontSize: 11, color: '#64748b' }}>#{inv} · {itemsCount} drink{itemsCount === 1 ? '' : 's'} · {money(amt)}</div>
+                          <div style={{ fontSize: 11, color: '#64748b' }}>#{inv} · {itemsCount} item{itemsCount === 1 ? '' : 's'} · {money(amt)}</div>
                         </td>
                         <td>
                           {isReview ? (
@@ -1049,7 +1049,7 @@ function DashboardView({ user, role, setActiveMenu }) {
           {(soldOutDrinks.length > 0 || soldOutAddons.length > 0) && (
             <div>
               <span className="dash-soldout-pill">
-                <i className="fas fa-ban"></i> {soldOutDrinks.length} drink{soldOutDrinks.length === 1 ? '' : 's'} · {soldOutAddons.length} add-on sold out
+                <i className="fas fa-ban"></i> {soldOutDrinks.length} out-of-stock item{soldOutDrinks.length === 1 ? '' : 's'} · {soldOutAddons.length} add-on sold out
               </span>
             </div>
           )}

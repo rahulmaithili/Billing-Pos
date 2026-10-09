@@ -2938,7 +2938,7 @@ function ProductsView({ user, role }) {
         </div>
 
         <div style={{ color: '#64748b', fontSize: 12 }}>
-          Showing <strong>{filteredProducts.length}</strong> of <strong>{products.length}</strong> drinks
+          Showing <strong>{filteredProducts.length}</strong> of <strong>{products.length}</strong> products
         </div>
       </div>
 
@@ -4323,10 +4323,10 @@ function CategoriesView({ user, role, setActiveMenu }) {
                   <h3 style={{ margin: '0 0 4px', fontSize: 16.5, color: '#0f172a', fontWeight: 800 }}>{cat.name}</h3>
 
                   <p style={{ margin: '0 0 10px', fontSize: 12.5, color: '#64748b', lineHeight: 1.4, minHeight: 34 }}>
-                    {cat.description || 'Standard menu section for beverage items & add-ons.'}
+                    {cat.description || 'Category for organizing supermarket, grocery, and retail products.'}
                   </p>
 
-                  {/* Drink Sample Pills */}
+                  {/* Product Sample Pills */}
                   {count > 0 && (
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginBottom: 12 }}>
                       {catProds.slice(0, 3).map(p => (
@@ -4422,7 +4422,7 @@ function CategoriesView({ user, role, setActiveMenu }) {
                     type="text"
                     required
                     autoFocus
-                    placeholder="e.g. Milk Tea & Boba, Cold Brew, Fruit Teas"
+                    placeholder="e.g. Groceries & Staples, Dairy & Ghee, Spices & Masala"
                     value={formData.name}
                     onChange={e => setFormData(p => ({ ...p, name: e.target.value }))}
                     style={{ width: '100%', padding: '9px 12px', borderRadius: 'var(--r-sm, 8px)', border: '1.5px solid #cbd5e1', fontSize: 14 }}
@@ -6473,7 +6473,7 @@ function DashboardView({ user, role, setActiveMenu }) {
     };
   }, [filteredSales, revenue, getSaleAmount]);
 
-  // Top 5 Selling Drinks Ranking
+  // Top 5 Selling Products Ranking
   const topProductsRanking = useMemo(() => {
     const map = {};
     filteredSales.forEach(s => {
@@ -7019,7 +7019,7 @@ function DashboardView({ user, role, setActiveMenu }) {
         </div>
       </div>
 
-      {/* --- INTERACTIVE CHARTS & TOP DRINKS ROW --- */}
+      {/* --- INTERACTIVE CHARTS & TOP PRODUCTS ROW --- */}
       <div className="dash-bot-grid" style={{ marginBottom: 16 }}>
         {/* Real Interactive Sales Trend Chart */}
         <div className="dash-card-box">
@@ -7166,7 +7166,7 @@ function DashboardView({ user, role, setActiveMenu }) {
                       </td>
                       <td>
                         <div style={{ fontSize: 12, color: '#334155', maxWidth: 280, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={itemsSummary}>
-                          {itemsSummary || `${itemsCount} drinks`}
+                          {itemsSummary || `${itemsCount} items`}
                         </div>
                       </td>
                       <td>
@@ -7268,7 +7268,7 @@ function DashboardView({ user, role, setActiveMenu }) {
                       <tr key={sale.id}>
                         <td>
                           <div style={{ fontWeight: 700, color: '#0f172a' }}>{sale.customerName || 'Customer'}</div>
-                          <div style={{ fontSize: 11, color: '#64748b' }}>#{inv} · {itemsCount} drink{itemsCount === 1 ? '' : 's'} · {money(amt)}</div>
+                          <div style={{ fontSize: 11, color: '#64748b' }}>#{inv} · {itemsCount} item{itemsCount === 1 ? '' : 's'} · {money(amt)}</div>
                         </td>
                         <td>
                           {isReview ? (
@@ -7331,7 +7331,7 @@ function DashboardView({ user, role, setActiveMenu }) {
           {(soldOutDrinks.length > 0 || soldOutAddons.length > 0) && (
             <div>
               <span className="dash-soldout-pill">
-                <i className="fas fa-ban"></i> {soldOutDrinks.length} drink{soldOutDrinks.length === 1 ? '' : 's'} · {soldOutAddons.length} add-on sold out
+                <i className="fas fa-ban"></i> {soldOutDrinks.length} out-of-stock item{soldOutDrinks.length === 1 ? '' : 's'} · {soldOutAddons.length} add-on sold out
               </span>
             </div>
           )}
@@ -7640,7 +7640,60 @@ function ExpensesView({ user, role }) {
       return (
         <div className="data-section">
           {load && <TopLoadingBar />}
-          <div className="section-header"><h2><i className="fas fa-money-bill-trend-up"></i> Expenses</h2><div style={{ display: 'flex', gap: '10px' }}><RefreshBtn onClick={reload} /><button className="btn btn-success" onClick={() => { setEditingId(null); setShowModal(true); }}><i className="fas fa-plus"></i> Add Expense</button></div></div>
+          <div className="section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+            <div>
+              <h2><i className="fas fa-money-bill-trend-up" style={{ color: 'var(--navy-accent)', marginRight: 8 }}></i> Expenses Management</h2>
+              <div style={{ color: '#64748b', fontSize: 13, marginTop: 4 }}>
+                Track store bills, rent, vendor payments, supplies, transport and daily operating expenses
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <RefreshBtn onClick={reload} />
+              <button className="btn btn-primary" onClick={() => { setEditingId(null); setShowModal(true); }} style={{ fontWeight: 700 }}>
+                <i className="fas fa-plus"></i> + Add Expense
+              </button>
+            </div>
+          </div>
+
+          {/* KPI Stats Grid */}
+          <div className="dash-stats-grid" style={{ marginBottom: 18, gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
+            <div className="stat-card">
+              <div className="stat-icon" style={{ background: '#fee2e2', color: '#dc2626' }}>
+                <i className="fas fa-money-bill-trend-up"></i>
+              </div>
+              <div className="stat-content">
+                <div className="stat-value">{money(total)}</div>
+                <div className="stat-label">Total Expenses</div>
+              </div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-icon" style={{ background: '#e0f2fe', color: '#0284c7' }}>
+                <i className="fas fa-receipt"></i>
+              </div>
+              <div className="stat-content">
+                <div className="stat-value">{filtered.length}</div>
+                <div className="stat-label">Total Entries</div>
+              </div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-icon" style={{ background: '#dcfce7', color: '#16a34a' }}>
+                <i className="fas fa-money-bill-wave"></i>
+              </div>
+              <div className="stat-content">
+                <div className="stat-value">{money(filtered.filter(e => String(e.paymentMethod || 'cash').toLowerCase().includes('cash')).reduce((s, e) => s + Number(e.amount || 0), 0))}</div>
+                <div className="stat-label">Paid via Cash</div>
+              </div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-icon" style={{ background: '#fef3c7', color: '#b45309' }}>
+                <i className="fas fa-building-columns"></i>
+              </div>
+              <div className="stat-content">
+                <div className="stat-value">{money(filtered.filter(e => !String(e.paymentMethod || 'cash').toLowerCase().includes('cash')).reduce((s, e) => s + Number(e.amount || 0), 0))}</div>
+                <div className="stat-label">Paid via Bank / UPI</div>
+              </div>
+            </div>
+          </div>
           {!loading && (
             <div className="filters-section">
               <div className="filters-header"><h3><i className="fas fa-filter"></i> Filters</h3><button className="btn btn-secondary btn-sm" onClick={() => setFilters({ dateFrom: '', dateTo: '', category: '' })}><i className="fas fa-times-circle"></i> Clear All</button></div>
@@ -7867,7 +7920,51 @@ function PurchaseOrdersView({ user, role }) {
       return (
         <div className="data-section">
           {load && <TopLoadingBar />}
-          <div className="section-header"><h2><i className="fas fa-file-invoice-dollar"></i> Purchase Orders</h2><div style={{ display: 'flex', gap: '10px' }}><RefreshBtn onClick={reload} /><button className="btn btn-success" disabled={loading} onClick={() => setShowModal(true)}><i className="fas fa-plus"></i> New PO</button></div></div>
+          <div className="section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+            <div>
+              <h2><i className="fas fa-file-invoice-dollar" style={{ color: 'var(--navy-accent)', marginRight: 8 }}></i> Purchase Orders (Procurement)</h2>
+              <div style={{ color: '#64748b', fontSize: 13, marginTop: 4 }}>
+                Create purchase orders, track incoming stock deliveries and receive goods directly into inventory
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <RefreshBtn onClick={reload} />
+              <button className="btn btn-primary" disabled={loading} onClick={() => setShowModal(true)} style={{ fontWeight: 700 }}>
+                <i className="fas fa-plus"></i> + New PO
+              </button>
+            </div>
+          </div>
+
+          {/* KPI Stats Grid */}
+          <div className="dash-stats-grid" style={{ marginBottom: 18, gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
+            <div className="stat-card">
+              <div className="stat-icon" style={{ background: '#e0f2fe', color: '#0284c7' }}>
+                <i className="fas fa-file-invoice-dollar"></i>
+              </div>
+              <div className="stat-content">
+                <div className="stat-value">{poSummary.count}</div>
+                <div className="stat-label">Total Orders (POs)</div>
+              </div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-icon" style={{ background: '#dcfce7', color: '#16a34a' }}>
+                <i className="fas fa-boxes-packing"></i>
+              </div>
+              <div className="stat-content">
+                <div className="stat-value">{money(poSummary.total)}</div>
+                <div className="stat-label">Total Ordered Value</div>
+              </div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-icon" style={{ background: '#fef3c7', color: '#b45309' }}>
+                <i className="fas fa-clock"></i>
+              </div>
+              <div className="stat-content">
+                <div className="stat-value">{money(poSummary.open)}</div>
+                <div className="stat-label">Pending / Unreceived</div>
+              </div>
+            </div>
+          </div>
           {loading && <TableSkeleton rows={8} columns={8} />}
           <div style={{ display: loading ? 'none' : 'block' }}><table id="poTable" className="display" style={{ width: '100%' }}></table>{pos.length > 0 && <SummaryBar items={[{ label: 'POs', value: poSummary.count }, { label: 'Total Value', value: money(poSummary.total) }, { label: 'Open (unreceived)', value: money(poSummary.open) }]} />}</div>
           {showModal && <PurchaseOrderModal suppliers={suppliers} products={products} onClose={() => setShowModal(false)} onSave={handleSave} />}
@@ -8017,6 +8114,15 @@ function UsersView({ user, role }) {
           {loading && <TableSkeleton rows={5} columns={4} />}
           <div style={{ display: loading ? 'none' : 'block' }}>
             <table id="usersTable" className="display" style={{ width: '100%' }}></table>
+            {users.length > 0 && (
+              <SummaryBar
+                items={[
+                  { label: 'Total Accounts', value: users.length },
+                  { label: 'Admins', value: adminCount },
+                  { label: 'Staff Operators', value: users.length - adminCount }
+                ]}
+              />
+            )}
           </div>
           {viewUser && <UserHubModal account={viewUser} onClose={() => setViewUser(null)} />}
           {showModal && <UserModal editUser={byId[editingId]} onClose={() => { setShowModal(false); setEditingId(null); }} onSave={handleSave} />}
@@ -8084,16 +8190,16 @@ function AboutView() {
                     <th><span className="badge badge-admin"><i className="fas fa-crown"></i> Admin</span></th>
                     <th><span className="badge badge-manager"><i className="fas fa-user-tie"></i> Manager</span></th>
                     <th><span className="badge badge-cashier"><i className="fas fa-cash-register"></i> Cashier</span></th>
-                    <th><span className="badge badge-barista"><i className="fas fa-boxes-stacked"></i> Stock Staff</span></th>
+                    <th><span className="badge badge-staff"><i className="fas fa-boxes-stacked"></i> Stock Staff</span></th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr><td>Dashboard &amp; KPIs</td><td><span className="perm-badge perm-full">Full Access</span></td><td><span className="perm-badge perm-manage">Daily Ops</span></td><td><span className="perm-badge perm-view">Shift View</span></td><td><span className="perm-badge perm-none">No Access</span></td></tr>
                   <tr><td>QR Sales / POS Checkout</td><td><span className="perm-badge perm-full">Full Control</span></td><td><span className="perm-badge perm-manage">Manage &amp; Sell</span></td><td><span className="perm-badge perm-operate">Primary Station</span></td><td><span className="perm-badge perm-none">No Access</span></td></tr>
-                  <tr><td>Dispatch &amp; Fulfillment Board</td><td><span className="perm-badge perm-view">Audit View</span></td><td><span className="perm-badge perm-manage">Manage Queue</span></td><td><span className="perm-badge perm-view">Ready Status</span></td><td><span className="perm-badge perm-operate">KDS Station</span></td></tr>
+                  <tr><td>Dispatch &amp; Fulfillment Board</td><td><span className="perm-badge perm-view">Audit View</span></td><td><span className="perm-badge perm-manage">Manage Queue</span></td><td><span className="perm-badge perm-view">Ready Status</span></td><td><span className="perm-badge perm-operate">Warehouse</span></td></tr>
                   <tr><td>Payment Review &amp; Slip Verification</td><td><span className="perm-badge perm-full">Full Control</span></td><td><span className="perm-badge perm-manage">Verify &amp; Approve</span></td><td><span className="perm-badge perm-operate">Submit Slips</span></td><td><span className="perm-badge perm-none">No Access</span></td></tr>
-                  <tr><td>Products &amp; Catalog</td><td><span className="perm-badge perm-full">Full Control</span></td><td><span className="perm-badge perm-manage">Availability</span></td><td><span className="perm-badge perm-view">Catalog View</span></td><td><span className="perm-badge perm-view">Recipes View</span></td></tr>
-                  <tr><td>Packaging &amp; Surcharges</td><td><span className="perm-badge perm-full">Full Control</span></td><td><span className="perm-badge perm-manage">Stock Toggle</span></td><td><span className="perm-badge perm-view">Select in Cart</span></td><td><span className="perm-badge perm-view">Prep Specs</span></td></tr>
+                  <tr><td>Products &amp; Catalog</td><td><span className="perm-badge perm-full">Full Control</span></td><td><span className="perm-badge perm-manage">Availability</span></td><td><span className="perm-badge perm-view">Catalog View</span></td><td><span className="perm-badge perm-view">Wholesale Specs</span></td></tr>
+                  <tr><td>Packaging &amp; Surcharges</td><td><span className="perm-badge perm-full">Full Control</span></td><td><span className="perm-badge perm-manage">Stock Toggle</span></td><td><span className="perm-badge perm-view">Select in Cart</span></td><td><span className="perm-badge perm-view">Packaging Specs</span></td></tr>
                   <tr><td>Stock In/Out Inventory</td><td><span className="perm-badge perm-full">Full Control</span></td><td><span className="perm-badge perm-manage">Receive &amp; Waste</span></td><td><span className="perm-badge perm-none">No Access</span></td><td><span className="perm-badge perm-operate">Usage Alerts</span></td></tr>
                   <tr><td>Customers &amp; CRM</td><td><span className="perm-badge perm-full">Full Access</span></td><td><span className="perm-badge perm-manage">Edit Profiles</span></td><td><span className="perm-badge perm-operate">Quick Add</span></td><td><span className="perm-badge perm-none">No Access</span></td></tr>
                   <tr><td>Reports &amp; Gross Profit</td><td><span className="perm-badge perm-full">P&amp;L Reports</span></td><td><span className="perm-badge perm-view">Sales Summary</span></td><td><span className="perm-badge perm-view">Shift Close</span></td><td><span className="perm-badge perm-none">No Access</span></td></tr>
@@ -8445,7 +8551,7 @@ function PaymentMethodsView({ user, role }) {
                         <img
                           src={pm.qrData && (pm.qrData.startsWith('data:') || pm.qrData.startsWith('http'))
                             ? pm.qrData
-                            : ('https://api.qrserver.com/v1/create-qr-code/?size=90x90&data=' + encodeURIComponent(pm.qrData || 'upi://pay?pa=shop@upi&pn=DemoDrinks'))}
+                            : ('https://api.qrserver.com/v1/create-qr-code/?size=90x90&data=' + encodeURIComponent(pm.qrData || 'upi://pay?pa=shop@upi&pn=Store'))}
                           alt="QR"
                           style={{ width: '82px', height: '82px', objectFit: 'contain' }}
                         />
@@ -8926,11 +9032,11 @@ function SettingsView({ user, role }) {
                 <LteCard title="Storefront details" icon="fa-shop">
                   <div className="form-group">
                     <label>Store Headline</label>
-                    <input type="text" value={form.storeHeadline || ''} onChange={e => upd('storeHeadline', e.target.value)} placeholder="Specialty Handcrafted Boba Drinks & Artisanal Coffee" />
+                    <input type="text" value={form.storeHeadline || ''} onChange={e => upd('storeHeadline', e.target.value)} placeholder="Supermarket, Kirana, Wholesale & Retail Groceries" />
                   </div>
                   <div className="form-group">
                     <label>About Text</label>
-                    <textarea rows="3" value={form.storeAbout || ''} onChange={e => upd('storeAbout', e.target.value)} placeholder="Our story, fresh tea brewing process, and ingredients..."></textarea>
+                    <textarea rows="3" value={form.storeAbout || ''} onChange={e => upd('storeAbout', e.target.value)} placeholder="Quality grocery products, wholesale pricing, and reliable service..."></textarea>
                   </div>
                   <div className="form-group">
                     <label>Hero Banner Image URL</label>
@@ -10134,10 +10240,10 @@ function PaymentReviewView({ user, role, setActiveMenu }) {
                     onChange={e => setForm(p => ({ ...p, category: e.target.value }))}
                     style={{ width: '100%', padding: '9px 12px', borderRadius: 'var(--r-sm, 8px)', border: '1.5px solid #cbd5e1', fontSize: 14 }}
                   >
-                    <option value="Topping">Topping (Pearls, Popping Boba, Pudding)</option>
-                    <option value="Jelly">Jelly (Coconut Jelly, Grass Jelly, Aloe)</option>
-                    <option value="Foam">Cheese Foam / Whipped Cream</option>
-                    <option value="Shot">Extra Espresso Shot / Flavor Syrup</option>
+                    <option value="Packaging">Packaging (Carry Bag, Gift Box, Master Carton)</option>
+                    <option value="Delivery">Home Delivery / Cargo Freight Surcharge</option>
+                    <option value="Handling">Labour &amp; Loading Charges</option>
+                    <option value="Service">Custom Packing &amp; Strapping</option>
                   </select>
                 </div>
 

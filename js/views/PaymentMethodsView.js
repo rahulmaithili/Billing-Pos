@@ -122,7 +122,7 @@ function PaymentMethodsView({ user, role }) {
                         <img
                           src={pm.qrData && (pm.qrData.startsWith('data:') || pm.qrData.startsWith('http'))
                             ? pm.qrData
-                            : ('https://api.qrserver.com/v1/create-qr-code/?size=90x90&data=' + encodeURIComponent(pm.qrData || 'upi://pay?pa=shop@upi&pn=DemoDrinks'))}
+                            : ('https://api.qrserver.com/v1/create-qr-code/?size=90x90&data=' + encodeURIComponent(pm.qrData || 'upi://pay?pa=shop@upi&pn=Store'))}
                           alt="QR"
                           style={{ width: '82px', height: '82px', objectFit: 'contain' }}
                         />

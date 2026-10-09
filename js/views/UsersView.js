@@ -94,6 +94,15 @@ function UsersView({ user, role }) {
           {loading && <TableSkeleton rows={5} columns={4} />}
           <div style={{ display: loading ? 'none' : 'block' }}>
             <table id="usersTable" className="display" style={{ width: '100%' }}></table>
+            {users.length > 0 && (
+              <SummaryBar
+                items={[
+                  { label: 'Total Accounts', value: users.length },
+                  { label: 'Admins', value: adminCount },
+                  { label: 'Staff Operators', value: users.length - adminCount }
+                ]}
+              />
+            )}
           </div>
           {viewUser && <UserHubModal account={viewUser} onClose={() => setViewUser(null)} />}
           {showModal && <UserModal editUser={byId[editingId]} onClose={() => { setShowModal(false); setEditingId(null); }} onSave={handleSave} />}

@@ -682,12 +682,11 @@ seedDemoData();
         const val = snap.val();
         if (!val) {
           const defaults = {
-            add_boba: { name: 'Brown Sugar Pearls', category: 'Toppings', price: 0.75, available: true },
-            add_pudding: { name: 'Egg Pudding', category: 'Toppings', price: 0.85, available: true },
-            add_jelly: { name: 'Grass Jelly', category: 'Toppings', price: 0.65, available: true },
-            add_coconut: { name: 'Coconut Jelly', category: 'Toppings', price: 0.70, available: true },
-            add_cheese: { name: 'Sea Salt Cheese Foam', category: 'Foam & Cream', price: 1.25, available: true },
-            add_espresso: { name: 'Extra Espresso Shot', category: 'Coffee Shots', price: 1.00, available: true }
+            add_bag: { name: 'Eco Carry Bag', category: 'Packaging', price: 5.00, available: true },
+            add_gift_box: { name: 'Gift Box Packaging', category: 'Packaging', price: 25.00, available: true },
+            add_express_delivery: { name: 'Express Home Delivery', category: 'Delivery', price: 30.00, available: true },
+            add_handling: { name: 'Fragile Handling & Crate', category: 'Handling', price: 15.00, available: true },
+            add_gift_wrap: { name: 'Gift Wrapping & Ribbon', category: 'Packaging', price: 20.00, available: true }
           };
           await db.ref('addons').set(defaults);
           return { success: true, data: Object.entries(defaults).map(([id, d]) => Object.assign({ id }, d)) };
@@ -701,7 +700,7 @@ seedDemoData();
         const id = data.id || ('add_' + Date.now());
         const payload = {
           name: data.name || 'New Add-on',
-          category: data.category || 'Toppings',
+          category: data.category || 'Packaging',
           price: Number(data.price) || 0,
           available: data.available !== false
         };

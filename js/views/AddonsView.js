@@ -315,10 +315,10 @@
                     onChange={e => setForm(p => ({ ...p, category: e.target.value }))}
                     style={{ width: '100%', padding: '9px 12px', borderRadius: 'var(--r-sm, 8px)', border: '1.5px solid #cbd5e1', fontSize: 14 }}
                   >
-                    <option value="Topping">Topping (Pearls, Popping Boba, Pudding)</option>
-                    <option value="Jelly">Jelly (Coconut Jelly, Grass Jelly, Aloe)</option>
-                    <option value="Foam">Cheese Foam / Whipped Cream</option>
-                    <option value="Shot">Extra Espresso Shot / Flavor Syrup</option>
+                    <option value="Packaging">Packaging (Carry Bag, Gift Box, Master Carton)</option>
+                    <option value="Delivery">Home Delivery / Cargo Freight Surcharge</option>
+                    <option value="Handling">Labour &amp; Loading Charges</option>
+                    <option value="Service">Custom Packing &amp; Strapping</option>
                   </select>
                 </div>
 

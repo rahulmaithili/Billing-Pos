@@ -67,7 +67,60 @@ function ExpensesView({ user, role }) {
       return (
         <div className="data-section">
           {load && <TopLoadingBar />}
-          <div className="section-header"><h2><i className="fas fa-money-bill-trend-up"></i> Expenses</h2><div style={{ display: 'flex', gap: '10px' }}><RefreshBtn onClick={reload} /><button className="btn btn-success" onClick={() => { setEditingId(null); setShowModal(true); }}><i className="fas fa-plus"></i> Add Expense</button></div></div>
+          <div className="section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+            <div>
+              <h2><i className="fas fa-money-bill-trend-up" style={{ color: 'var(--navy-accent)', marginRight: 8 }}></i> Expenses Management</h2>
+              <div style={{ color: '#64748b', fontSize: 13, marginTop: 4 }}>
+                Track store bills, rent, vendor payments, supplies, transport and daily operating expenses
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <RefreshBtn onClick={reload} />
+              <button className="btn btn-primary" onClick={() => { setEditingId(null); setShowModal(true); }} style={{ fontWeight: 700 }}>
+                <i className="fas fa-plus"></i> + Add Expense
+              </button>
+            </div>
+          </div>
+
+          {/* KPI Stats Grid */}
+          <div className="dash-stats-grid" style={{ marginBottom: 18, gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
+            <div className="stat-card">
+              <div className="stat-icon" style={{ background: '#fee2e2', color: '#dc2626' }}>
+                <i className="fas fa-money-bill-trend-up"></i>
+              </div>
+              <div className="stat-content">
+                <div className="stat-value">{money(total)}</div>
+                <div className="stat-label">Total Expenses</div>
+              </div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-icon" style={{ background: '#e0f2fe', color: '#0284c7' }}>
+                <i className="fas fa-receipt"></i>
+              </div>
+              <div className="stat-content">
+                <div className="stat-value">{filtered.length}</div>
+                <div className="stat-label">Total Entries</div>
+              </div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-icon" style={{ background: '#dcfce7', color: '#16a34a' }}>
+                <i className="fas fa-money-bill-wave"></i>
+              </div>
+              <div className="stat-content">
+                <div className="stat-value">{money(filtered.filter(e => String(e.paymentMethod || 'cash').toLowerCase().includes('cash')).reduce((s, e) => s + Number(e.amount || 0), 0))}</div>
+                <div className="stat-label">Paid via Cash</div>
+              </div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-icon" style={{ background: '#fef3c7', color: '#b45309' }}>
+                <i className="fas fa-building-columns"></i>
+              </div>
+              <div className="stat-content">
+                <div className="stat-value">{money(filtered.filter(e => !String(e.paymentMethod || 'cash').toLowerCase().includes('cash')).reduce((s, e) => s + Number(e.amount || 0), 0))}</div>
+                <div className="stat-label">Paid via Bank / UPI</div>
+              </div>
+            </div>
+          </div>
           {!loading && (
             <div className="filters-section">
               <div className="filters-header"><h3><i className="fas fa-filter"></i> Filters</h3><button className="btn btn-secondary btn-sm" onClick={() => setFilters({ dateFrom: '', dateTo: '', category: '' })}><i className="fas fa-times-circle"></i> Clear All</button></div>

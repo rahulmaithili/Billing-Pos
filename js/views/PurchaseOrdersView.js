@@ -88,7 +88,51 @@ function PurchaseOrdersView({ user, role }) {
       return (
         <div className="data-section">
           {load && <TopLoadingBar />}
-          <div className="section-header"><h2><i className="fas fa-file-invoice-dollar"></i> Purchase Orders</h2><div style={{ display: 'flex', gap: '10px' }}><RefreshBtn onClick={reload} /><button className="btn btn-success" disabled={loading} onClick={() => setShowModal(true)}><i className="fas fa-plus"></i> New PO</button></div></div>
+          <div className="section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+            <div>
+              <h2><i className="fas fa-file-invoice-dollar" style={{ color: 'var(--navy-accent)', marginRight: 8 }}></i> Purchase Orders (Procurement)</h2>
+              <div style={{ color: '#64748b', fontSize: 13, marginTop: 4 }}>
+                Create purchase orders, track incoming stock deliveries and receive goods directly into inventory
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <RefreshBtn onClick={reload} />
+              <button className="btn btn-primary" disabled={loading} onClick={() => setShowModal(true)} style={{ fontWeight: 700 }}>
+                <i className="fas fa-plus"></i> + New PO
+              </button>
+            </div>
+          </div>
+
+          {/* KPI Stats Grid */}
+          <div className="dash-stats-grid" style={{ marginBottom: 18, gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
+            <div className="stat-card">
+              <div className="stat-icon" style={{ background: '#e0f2fe', color: '#0284c7' }}>
+                <i className="fas fa-file-invoice-dollar"></i>
+              </div>
+              <div className="stat-content">
+                <div className="stat-value">{poSummary.count}</div>
+                <div className="stat-label">Total Orders (POs)</div>
+              </div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-icon" style={{ background: '#dcfce7', color: '#16a34a' }}>
+                <i className="fas fa-boxes-packing"></i>
+              </div>
+              <div className="stat-content">
+                <div className="stat-value">{money(poSummary.total)}</div>
+                <div className="stat-label">Total Ordered Value</div>
+              </div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-icon" style={{ background: '#fef3c7', color: '#b45309' }}>
+                <i className="fas fa-clock"></i>
+              </div>
+              <div className="stat-content">
+                <div className="stat-value">{money(poSummary.open)}</div>
+                <div className="stat-label">Pending / Unreceived</div>
+              </div>
+            </div>
+          </div>
           {loading && <TableSkeleton rows={8} columns={8} />}
           <div style={{ display: loading ? 'none' : 'block' }}><table id="poTable" className="display" style={{ width: '100%' }}></table>{pos.length > 0 && <SummaryBar items={[{ label: 'POs', value: poSummary.count }, { label: 'Total Value', value: money(poSummary.total) }, { label: 'Open (unreceived)', value: money(poSummary.open) }]} />}</div>
           {showModal && <PurchaseOrderModal suppliers={suppliers} products={products} onClose={() => setShowModal(false)} onSave={handleSave} />}
