@@ -907,6 +907,136 @@ const { useState, useEffect, useRef, useMemo, useCallback, useDeferredValue } = 
       return Math.floor(s / 86400) + 'd ago';
     };
 
+    
+    // Supermarket Barcode Scanner Sound (Web Audio API)
+    function playScannerBeep(type = 'success') {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        if (type === 'success') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(1760, ctx.currentTime);
+          gain.gain.setValueAtTime(0.25, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+          osc.start(ctx.currentTime);
+          osc.stop(ctx.currentTime + 0.08);
+        } else if (type === 'error') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, ctx.currentTime);
+          gain.gain.setValueAtTime(0.3, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.22);
+          osc.start(ctx.currentTime);
+          osc.stop(ctx.currentTime + 0.22);
+        }
+      } catch (e) {
+        // audio context muted or unsupported
+      }
+    }
+
+    // Format Digital Bill for WhatsApp Sharing
+    function formatWhatsAppInvoice(sale) {
+      if (!sale) return '';
+      const shopName = (CFG.business && CFG.business.name && CFG.business.name.trim()) || ls.get('shop_name') || 'Supermarket & Kirana Mart';
+      const shopPhone = CFG.business?.phone || ls.get('shop_phone') || '';
+      const shopAddress = CFG.business?.address || ls.get('shop_address') || '';
+      const shopGstin = CFG.gstinNumber || ls.get('shop_gstin') || '';
+      const items = sale.items || [];
+      const invoiceNo = sale.invoiceNo || String(sale.id).slice(-6).toUpperCase();
+      const dateStr = formatDateForDisplay(sale.createdAt || sale.date || nowIso());
+      const cur = CFG.currency || '₹';
+
+      let text = '🧾 *TAX INVOICE / RETAIL BILL*\n';
+      text += '🏪 *' + shopName + '*\n';
+      if (shopAddress) text += '📍 ' + shopAddress + '\n';
+      if (shopPhone) text += '📞 Contact: ' + shopPhone + '\n';
+      if (shopGstin) text += '🏛️ GSTIN: ' + shopGstin + '\n';
+      text += '--------------------------------\n';
+      text += '*Bill No:* #' + invoiceNo + '\n';
+      text += '*Date:* ' + dateStr + '\n';
+      text += '*Customer:* ' + (sale.customerName || 'Walk-in') + '\n';
+      if (sale.cashier) text += '*Cashier:* ' + sale.cashier + '\n';
+      text += '--------------------------------\n';
+      text += '🛒 *ITEMS PURCHASED:*\n';
+
+      items.forEach((it, idx) => {
+        const lineAmt = Number(it.lineTotal != null ? it.lineTotal : (it.qty * it.price)) || 0;
+        text += (idx + 1) + '. *' + it.name + '*\n   ' + it.qty + ' x ' + cur + Number(it.price || it.unitPrice || 0).toFixed(2) + ' = *' + cur + lineAmt.toFixed(2) + '*\n';
+      });
+
+      text += '--------------------------------\n';
+      text += '*Items:* ' + items.length + ' | *Total Qty:* ' + items.reduce((s, it) => s + (Number(it.qty) || 0), 0) + '\n';
+      text += '*Subtotal:* ' + cur + Number(sale.subtotal || sale.total).toFixed(2) + '\n';
+      if (Number(sale.discount || sale.discountAmount) > 0) {
+        text += '*Discount:* -' + cur + Number(sale.discount || sale.discountAmount).toFixed(2) + '\n';
+      }
+      if (Number(sale.tax || sale.taxAmount) > 0) {
+        text += '*Tax:* ' + cur + Number(sale.tax || sale.taxAmount).toFixed(2) + '\n';
+      }
+      text += '*GRAND TOTAL:* *' + cur + Number(sale.total).toFixed(2) + '*\n';
+      text += '*Payment:* ' + (sale.paymentMethod || 'Cash') + '\n';
+      if (sale.changeDue > 0) {
+        text += '*Change:* ' + cur + Number(sale.changeDue).toFixed(2) + '\n';
+      }
+      text += '--------------------------------\n';
+      const footerMsg = CFG.receiptFooter || ls.get('shop_receipt_footer') || 'Thank you for shopping with us! Visit again.';
+      text += '🙏 *' + footerMsg + '*';
+      return text;
+    }
+
+    async function shareInvoiceOnWhatsApp(sale, defaultPhone = '') {
+      if (!sale) return;
+      let phone = defaultPhone || sale.customerPhone || '';
+      if (!phone || String(phone).replace(/\D/g, '').length < 10) {
+        const { value: inputPhone } = await Swal.fire({
+          title: 'Share Bill on WhatsApp',
+          input: 'tel',
+          inputLabel: 'Customer WhatsApp Mobile Number',
+          inputPlaceholder: 'e.g. 9876543210',
+          showCancelButton: true,
+          confirmButtonText: '<i class="fab fa-whatsapp"></i> Send WhatsApp Bill',
+          confirmButtonColor: '#25D366',
+          cancelButtonText: 'Cancel',
+          inputValidator: (val) => {
+            if (!val || val.replace(/\D/g, '').length < 10) {
+              return 'Please enter a valid 10-digit mobile number';
+            }
+          }
+        });
+        if (!inputPhone) return;
+        phone = inputPhone;
+      }
+
+      let cleanPhone = String(phone).replace(/\D/g, '');
+      if (cleanPhone.length === 10) {
+        cleanPhone = '91' + cleanPhone;
+      }
+
+      const msgText = formatWhatsAppInvoice(sale);
+      const waUrl = 'https://api.whatsapp.com/send?phone=' + cleanPhone + '&text=' + encodeURIComponent(msgText);
+      window.open(waUrl, '_blank');
+    }
+
+    async function copyInvoiceText(sale) {
+      if (!sale) return;
+      const msgText = formatWhatsAppInvoice(sale);
+      try {
+        await navigator.clipboard.writeText(msgText);
+        Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 1500 })
+          .fire({ icon: 'success', title: 'Invoice text copied to clipboard!' });
+      } catch (e) {
+        Swal.fire({
+          title: 'Digital Invoice Text',
+          text: msgText
+        });
+      }
+    }
+
+
     // qty on hand = running total of a product's stock ledger (in adds, out subtracts) - never stored
     function computeQtyOnHand(productId, movements) {
       return (movements || []).reduce((qty, m) => m.productId === productId ? qty + (m.type === 'in' ? m.qty : -m.qty) : qty, 0);
@@ -921,7 +1051,7 @@ const { useState, useEffect, useRef, useMemo, useCallback, useDeferredValue } = 
     function buildCodeIndex(products) {
       const m = new Map();
       (products || []).forEach(p => {
-        const derivedCode = p.code || p.sku || ('DRK-' + (p.id ? p.id.slice(-3).toUpperCase() : '001'));
+        const derivedCode = p.code || p.sku || ('PRD-' + (p.id ? p.id.slice(-3).toUpperCase() : '001'));
         [p.id, p.sku, p.code, derivedCode, p.barcode].forEach(k => {
           if (k) m.set(String(k).trim().toLowerCase(), p);
         });

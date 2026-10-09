@@ -295,21 +295,68 @@ function StockView({ user, role }) {
       );
     }
 
-    // --- Thermal receipt print overlay (POS checkout only) ---
+    // --- Thermal receipt print overlay with WhatsApp Sharing & Fast Actions ---
     function ThermalReceiptOverlay({ sale, onClose }) {
       if (!sale) return null;
       return (
         <div className="modal-overlay" onClick={onClose}>
           <div className="modal thermal-slip-modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3><i className="fas fa-receipt"></i> Receipt</h3>
+              <h3><i className="fas fa-receipt"></i> Receipt #{sale.invoiceNo || String(sale.id).slice(-6).toUpperCase()}</h3>
               <button className="close-btn" onClick={onClose}><i className="fas fa-times"></i></button>
             </div>
             <div className="modal-body thermal-slip-modal-body">
+              <div className="receipt-quick-share-bar">
+                <button
+                  type="button"
+                  className="btn btn-whatsapp-share"
+                  onClick={() => shareInvoiceOnWhatsApp(sale)}
+                  title="Send formatted bill to customer on WhatsApp"
+                >
+                  <i className="fab fa-whatsapp"></i> Share on WhatsApp
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-copy-invoice"
+                  onClick={() => copyInvoiceText(sale)}
+                  title="Copy bill text to clipboard"
+                >
+                  <i className="fas fa-copy"></i> Copy Bill
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={() => window.print()}
+                  title="Print Thermal 80mm Receipt"
+                >
+                  <i className="fas fa-print"></i> Print Slip
+                </button>
+              </div>
+
               <ThermalSlip sale={sale} />
-              <div className="form-actions thermal-slip-actions">
-                <button type="button" className="btn btn-primary" onClick={() => window.print()}><i className="fas fa-print"></i> Print</button>
-                <button type="button" className="btn btn-secondary" onClick={onClose}><i className="fas fa-times"></i> Close</button>
+
+              <div className="form-actions thermal-slip-actions" style={{ marginTop: 14 }}>
+                <button
+                  type="button"
+                  className="btn btn-whatsapp-share"
+                  onClick={() => shareInvoiceOnWhatsApp(sale)}
+                >
+                  <i className="fab fa-whatsapp"></i> WhatsApp Bill
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={() => window.print()}
+                >
+                  <i className="fas fa-print"></i> Print
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={onClose}
+                >
+                  <i className="fas fa-times"></i> Done &amp; Next Sale
+                </button>
               </div>
             </div>
           </div>

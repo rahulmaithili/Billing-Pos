@@ -201,18 +201,72 @@ function POSView({ user, role }) {
       const resolveAndAddToCart = useCallback(async (rawCode) => {
         const code = String(rawCode || '').trim();
         if (!code) return;
-        if (!catalogReady) { Swal.fire({ icon: 'warning', title: 'Still Loading', text: 'Catalog is still loading, try again in a moment.' }); return; }
-        const local = codeIndex.get(code.toLowerCase());
-        if (local) {
-          addToCart(local, 1);
-          Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 1200 }).fire({ icon: 'success', title: `Added: ${local.name}` });
+        if (!catalogReady) {
+          playScannerBeep('error');
+          Swal.mixin({ toast: true, position: 'top', showConfirmButton: false, timer: 1500 })
+            .fire({ icon: 'warning', title: 'Catalog still loading...' });
           return;
         }
+
+        const cleanKey = code.toLowerCase();
+        let matched = codeIndex.get(cleanKey);
+        if (!matched) {
+          matched = products.find(p =>
+            (p.barcode && String(p.barcode).trim().toLowerCase() === cleanKey) ||
+            (p.sku && String(p.sku).trim().toLowerCase() === cleanKey) ||
+            (p.id && String(p.id).trim().toLowerCase() === cleanKey)
+          );
+        }
+
+        if (matched) {
+          const onHand = computeQtyOnHand(matched.id, movements);
+          const existingInCart = cart.find(c => c.productId === matched.id);
+          const nextQty = (existingInCart ? existingInCart.qty : 0) + 1;
+          if (nextQty > onHand) {
+            playScannerBeep('error');
+            Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 })
+              .fire({ icon: 'warning', title: 'Stock limit reached (' + onHand + ' available)' });
+            return;
+          }
+          addToCart(matched, 1);
+          playScannerBeep('success');
+          Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 1200 })
+            .fire({ icon: 'success', title: '⚡ Scanned: ' + matched.name + ' (x' + nextQty + ')' });
+          setScanValue('');
+          if (scanRef.current) {
+            scanRef.current.value = '';
+            scanRef.current.focus();
+          }
+          return;
+        }
+
         const res = await fbFindProductByCode(code);
-        if (!res.success) { Swal.fire({ icon: 'error', title: 'Not Found', text: res.message || `No product matches "${code}"` }); return; }
-        addToCart(res.data, 1);
-        Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 1200 }).fire({ icon: 'success', title: `Added: ${res.data.name}` });
-      }, [addToCart, catalogReady, codeIndex]);
+        if (res && res.success && res.data) {
+          const p = res.data;
+          const onHand = computeQtyOnHand(p.id, movements);
+          const existingInCart = cart.find(c => c.productId === p.id);
+          const nextQty = (existingInCart ? existingInCart.qty : 0) + 1;
+          if (nextQty > onHand) {
+            playScannerBeep('error');
+            Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 })
+              .fire({ icon: 'warning', title: 'Stock limit reached (' + onHand + ' available)' });
+            return;
+          }
+          addToCart(p, 1);
+          playScannerBeep('success');
+          Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 1200 })
+            .fire({ icon: 'success', title: '⚡ Scanned: ' + p.name });
+        } else {
+          playScannerBeep('error');
+          Swal.mixin({ toast: true, position: 'top', showConfirmButton: false, timer: 2000 })
+            .fire({ icon: 'error', title: 'Product not found for: "' + code + '"' });
+        }
+        setScanValue('');
+        if (scanRef.current) {
+          scanRef.current.value = '';
+          scanRef.current.focus();
+        }
+      }, [addToCart, catalogReady, codeIndex, products, movements, cart]);
 
       const handleScanSubmit = (e) => {
         e.preventDefault();
@@ -222,6 +276,57 @@ function POSView({ user, role }) {
       };
 
       const handleDetected = (decodedText) => { setShowCamera(false); resolveAndAddToCart(decodedText); };
+
+      // Hardware Barcode Scanner Gun Global Keystroke Listener
+      useEffect(() => {
+        let buffer = '';
+        let lastTime = 0;
+        let timer = null;
+
+        const onGlobalKey = (e) => {
+          if (showCamera || completedSale) return;
+
+          const now = Date.now();
+          const gap = now - lastTime;
+          lastTime = now;
+
+          const isBarcodeBox = e.target && e.target.classList && e.target.classList.contains('pos-barcode-input');
+
+          if (e.key === 'Enter') {
+            if (buffer.length >= 2 && (gap < 80 || isBarcodeBox)) {
+              e.preventDefault();
+              const codeToScan = buffer.trim();
+              buffer = '';
+              if (codeToScan) {
+                resolveAndAddToCart(codeToScan);
+              }
+              return;
+            }
+            buffer = '';
+            return;
+          }
+
+          if (e.ctrlKey || e.altKey || e.metaKey) return;
+
+          if (e.key && e.key.length === 1) {
+            // Scanner gun fires rapid keystrokes (< 80ms apart)
+            if (gap > 90 && !isBarcodeBox) {
+              buffer = e.key;
+            } else {
+              buffer += e.key;
+            }
+            clearTimeout(timer);
+            timer = setTimeout(() => { buffer = ''; }, 250);
+          }
+        };
+
+        window.addEventListener('keydown', onGlobalKey, true);
+        return () => {
+          window.removeEventListener('keydown', onGlobalKey, true);
+          clearTimeout(timer);
+        };
+      }, [resolveAndAddToCart, showCamera, completedSale]);
+
 
       const changeQty = (productId, delta) => {
         setCart(prev => {
@@ -323,7 +428,8 @@ function POSView({ user, role }) {
             cost: (prodById[it.productId] && Number(prodById[it.productId].cost)) || 0
           })),
           customerId: customerId || null,
-          customerName: cust ? cust.name : 'Walk-in',
+          customerName: cust ? cust.name : (walkinName.trim() || 'Walk-in'),
+          customerPhone: cust ? (cust.phone || '') : (walkinPhone.trim() || ''),
           subtotal: totals.subtotal,
           discountType,
           discountValue: Number(discountValue) || 0,
@@ -464,8 +570,11 @@ function POSView({ user, role }) {
                     />
                   </div>
                   <button type="submit" className="btn btn-primary pos-scan-add-btn" title="Add item by barcode">
-                    <i className="fas fa-arrow-right"></i>
+                    <i className="fas fa-bolt"></i> Auto-Add
                   </button>
+                  <span className="pos-scanner-live-badge" title="Hardware Scanner Gun &amp; Sound Beep Active">
+                    <i className="fas fa-barcode"></i> Gun Ready
+                  </span>
                 </form>
               </div>
 
