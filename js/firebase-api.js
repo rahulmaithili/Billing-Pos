@@ -232,6 +232,22 @@ seedDemoData();
         if (!skuRes.success) return { success: false, message: skuRes.message };
         const ref = await db.ref('products').push(Object.assign({}, data, { sku: skuRes.data, addedBy: user.email, createdAt: nowIso() }));
         await fbLogActivity('Add Product', user, data.name + ' (' + skuRes.data + ')');
+
+        // Automatically record Opening Stock if provided
+        if (data.openingStock && Number(data.openingStock) > 0) {
+          const openQty = Number(data.openingStock);
+          await db.ref('stock_movements').push({
+            productId: ref.key,
+            type: 'in',
+            qty: openQty,
+            unitCost: Number(data.cost || data.costPrice) || 0,
+            reason: 'Opening Stock',
+            reference: 'OPENING-' + skuRes.data,
+            performedBy: user.email,
+            createdAt: nowIso()
+          });
+        }
+
         return { success: true, message: 'Product added (' + skuRes.data + ')', id: ref.key };
       } catch (e) { return { success: false, message: e.message }; }
     }
