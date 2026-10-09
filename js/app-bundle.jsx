@@ -1,5 +1,146 @@
 const { useState, useEffect, useRef, useMemo, useCallback, useDeferredValue } = React;
 
+    // ============== Language System (English & Hinglish) ==============
+    window.APP_LANG = localStorage.getItem('app_lang') || 'en';
+
+    window.setAppLanguage = function(newLang) {
+      window.APP_LANG = newLang;
+      localStorage.setItem('app_lang', newLang);
+      window.dispatchEvent(new CustomEvent('app_lang_changed', { detail: newLang }));
+    };
+
+    window.LANG_DICT = {
+      // Common / Navigation
+      'home': { en: 'Home', hinglish: 'Home' },
+      'dashboard': { en: 'Dashboard', hinglish: 'Dashboard' },
+      'pos': { en: 'QR Sales', hinglish: 'Fast Billing' },
+      'products': { en: 'Products', hinglish: 'Samaan / Catalog' },
+      'categories': { en: 'Categories', hinglish: 'Categories' },
+      'customers': { en: 'Customers & Khata', hinglish: 'Grahak aur Khata' },
+      'reports': { en: 'Rojnamcha (Daily Cashbook)', hinglish: 'Daily Rojnamcha' },
+      'expenses': { en: 'Expenses', hinglish: 'Kharche' },
+      'suppliers': { en: 'Suppliers', hinglish: 'Suppliers' },
+      'settings': { en: 'Settings', hinglish: 'Settings' },
+
+      // Billing / POS
+      'pos_title': { en: 'Fast POS & QR Terminal', hinglish: 'Fast Billing aur QR POS' },
+      'pos_subtitle': { en: 'Real-time Visual Billing, Live Stock & Instant UPI Payment', hinglish: 'Seedha Bill, Live Stock aur UPI Payment' },
+      'pos_products_tab': { en: 'Products', hinglish: 'Samaan' },
+      'pos_cart_tab': { en: 'Bill & Cart', hinglish: 'Kacha Bill & Cart' },
+      'pos_all_items': { en: 'All Items', hinglish: 'Sabhi Samaan' },
+      'pos_search_items': { en: 'Search items, products, SKU, barcode...', hinglish: 'Samaan ya barcode search karein...' },
+      'pos_scan_barcode': { en: 'Scan Barcode / SKU + Enter', hinglish: 'Barcode scan karein + Enter' },
+      'pos_walkin': { en: 'Walk-in (Quick Bill)', hinglish: 'Walk-in (Seedha Bill)' },
+      'pos_walkin_hint': { en: 'Fast billing with 0 mandatory registration', hinglish: 'Bina registration seedha fast billing' },
+      'pos_khata_customer': { en: 'Khata / Regular', hinglish: 'Khata / Regular Grahak' },
+      'pos_optional_name': { en: 'Customer Name (Optional)', hinglish: 'Grahak Name (Optional)' },
+      'pos_optional_phone': { en: 'Mobile No (Optional)', hinglish: 'Mobile Number (Optional)' },
+      'pos_add_more': { en: 'Add More Items', hinglish: 'Aur Samaan Jodein' },
+      'pos_complete_sale': { en: 'Complete Sale & Print', hinglish: 'Bill Banayein aur Print Karein' },
+      'pos_floating_view_bill': { en: 'View Bill / Pay', hinglish: 'Bill Dekhein / Pay Karein' },
+      'pos_total_bill': { en: 'Total Bill', hinglish: 'Kul Bill' },
+      'pos_pending_dues': { en: 'Pending Khata Dues', hinglish: 'Pichla Baaki Udhar' },
+
+      // Customers & Khata
+      'cust_title': { en: 'Customers & Khata Ledger', hinglish: 'Grahak aur Khata Register' },
+      'cust_subtitle': { en: 'Manage regular customers, track credit balances, and collect dues via Cash or Online UPI', hinglish: 'Grahak khata manage karein, baaki udhar track karein aur Cash ya UPI se wasooli karein' },
+      'cust_collect_dues': { en: 'Collect Dues', hinglish: 'Udhar Wasooli' },
+      'cust_add_customer': { en: 'Add Customer', hinglish: 'Naya Grahak Jodein' },
+      'cust_all_customers': { en: 'All Customers', hinglish: 'Sabhi Grahak' },
+      'cust_dues_register': { en: 'Dues Collection Register', hinglish: 'Wasooli Register' },
+      'cust_market_dues': { en: 'Total Market Dues', hinglish: 'Bazaar me Kul Udhar' },
+      'cust_balance': { en: 'Balance / Dues', hinglish: 'Baaki Udhar' },
+      'cust_cleared': { en: 'Cleared (No Dues)', hinglish: 'Chukta (Koi Baaki Nahi)' },
+      'cust_wasooli_btn': { en: 'Collect Dues', hinglish: 'Wasooli' },
+      'cust_amount_to_collect': { en: 'Amount to Collect', hinglish: 'Wasooli Rashi (Amount)' },
+      'cust_payment_mode': { en: 'Payment Mode', hinglish: 'Payment Ka Madhyam' },
+      'cust_cash_drawer': { en: 'Cash (Drawer)', hinglish: 'Cash (Galla Cash)' },
+      'cust_online_bank': { en: 'Online UPI / Bank', hinglish: 'Online UPI (Bank Khata)' },
+      'cust_confirm_collection': { en: 'Confirm Collection', hinglish: 'Wasooli Jama Karein' },
+      'cust_select_customer': { en: 'Select Customer', hinglish: 'Grahak Chunein' },
+
+      // Rojnamcha
+      'roj_title': { en: 'Daily Rojnamcha & Cash Register', hinglish: 'Daily Rojnamcha & Cash Register' },
+      'roj_drawer_cash': { en: 'Drawer Cash (Galla)', hinglish: 'Galla Cash (Drawer)' },
+      'roj_bank_balance': { en: 'Bank Account Balance', hinglish: 'Bank Khata Balance' },
+      'roj_today_expenses': { en: 'Today Expenses', hinglish: 'Aaj ke Kharche' },
+      'roj_customer_dues': { en: 'Customer Dues (Udhar)', hinglish: 'Grahak Udhar (Khata)' },
+      'roj_closing_balance': { en: 'Total Closing Balance (Drawer Cash + Bank)', hinglish: 'Dukan Band Kul Balance (Galla + Bank)' },
+      'roj_opening_cash': { en: 'Opening Cash', hinglish: 'Subah ka Galla Cash' },
+      'roj_opening_bank': { en: 'Opening Bank', hinglish: 'Subah ka Bank Balance' },
+      'roj_cash_sales': { en: 'Cash Sales Today', hinglish: 'Aaj ki Cash Bikri' },
+      'roj_cash_dues': { en: 'Cash Udhar Wasooli', hinglish: 'Cash Udhar Wasooli' },
+      'roj_online_dues': { en: 'UPI/Bank Udhar Wasooli', hinglish: 'UPI Udhar Wasooli' },
+      'roj_cash_expenses': { en: 'Cash Expenses', hinglish: 'Galle se Kharche' },
+      'roj_sent_to_bank': { en: 'Sent to Bank (Deposit)', hinglish: 'Bank Bheja (Deposit)' },
+      'roj_today_new_dues': { en: 'Today New Udhar', hinglish: 'Aaj Naya Udhar Diya' },
+      'roj_today_dues_collected': { en: 'Today Wasooli', hinglish: 'Aaj ki Udhar Wasooli' },
+      'roj_total_market_dues': { en: 'Total Market Baaki', hinglish: 'Bazaar me Kul Baaki' },
+      'roj_galla_tally': { en: 'Galla Tally', hinglish: 'Galla Gin-Tally' },
+      'roj_print_slip': { en: 'Print Rojnamcha', hinglish: 'Rojnamcha Print Karein' }
+    };
+
+    window.t = function(key, defaultEn, defaultHinglish) {
+      const currentLang = window.APP_LANG || 'en';
+      if (window.LANG_DICT && window.LANG_DICT[key]) {
+        return window.LANG_DICT[key][currentLang] || window.LANG_DICT[key].en || defaultEn || key;
+      }
+      if (currentLang === 'hinglish' && defaultHinglish) return defaultHinglish;
+      return defaultEn || key;
+    };
+
+    function useLang() {
+      const [lang, setLang] = useState(() => window.APP_LANG || 'en');
+      useEffect(() => {
+        const handler = () => setLang(window.APP_LANG || 'en');
+        window.addEventListener('app_lang_changed', handler);
+        return () => window.removeEventListener('app_lang_changed', handler);
+      }, []);
+      const tFn = useCallback((key, enVal, hinglishVal) => {
+        if (window.LANG_DICT && window.LANG_DICT[key]) {
+          return window.LANG_DICT[key][lang] || window.LANG_DICT[key].en || enVal || key;
+        }
+        if (lang === 'hinglish' && hinglishVal) return hinglishVal;
+        return enVal || key;
+      }, [lang]);
+      return { lang, t: tFn };
+    }
+
+    function LanguageToggle() {
+      const [lang, setLang] = useState(() => window.APP_LANG || 'en');
+      const toggle = () => {
+        const next = lang === 'en' ? 'hinglish' : 'en';
+        setLang(next);
+        window.setAppLanguage(next);
+      };
+      return (
+        <button
+          type="button"
+          className="nav-btn nav-lang-toggle"
+          onClick={toggle}
+          title={lang === 'en' ? 'Switch to Hinglish' : 'Switch to English'}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '5px',
+            padding: '4px 10px',
+            borderRadius: '20px',
+            background: lang === 'hinglish' ? 'rgba(16, 185, 129, 0.25)' : 'rgba(255, 255, 255, 0.12)',
+            border: lang === 'hinglish' ? '1px solid #10b981' : '1px solid rgba(255, 255, 255, 0.22)',
+            color: '#ffffff',
+            fontSize: '11.5px',
+            fontWeight: 700,
+            cursor: 'pointer',
+            marginRight: '6px'
+          }}
+        >
+          <i className="fas fa-language" style={{ fontSize: '13px', color: lang === 'hinglish' ? '#34d399' : '#ffffff' }}></i>
+          <span>{lang === 'hinglish' ? 'Hinglish' : 'English'}</span>
+        </button>
+      );
+    }
+
+
     // guarded storage — private mode / blocked storage must never throw mid-render
     const ls = {
       get: (k, d = null) => { try { const v = localStorage.getItem(k); return v == null ? d : v; } catch (e) { return d; } },
@@ -1091,6 +1232,7 @@ const { useState, useEffect, useRef, useMemo, useCallback, useDeferredValue } = 
           <div className="navbar-end">
             <span className="nav-welcome"><span className="nav-welcome-hi">Welcome</span><strong>{userName}</strong></span>
             {onOpenShortcuts && <button className="nav-btn" onClick={onOpenShortcuts} title="Keyboard Shortcuts (?)"><i className="fas fa-keyboard"></i></button>}
+            <LanguageToggle />
             <HeaderThemeMenu themeMode={themeMode} onThemeToggle={onThemeToggle} />
             <NavDropdown trigger={<button className="nav-btn" title="Notifications"><i className="fas fa-bell"></i>{notifs.length > 0 && <span className="nav-badge">{notifs.length}</span>}</button>}>
               <div className="nav-dd-head"><div className="dd-title">{notifs.length} Notifications</div>{notifs[0] && <div className="dd-sub">{notifs[0].text}</div>}</div>
@@ -1841,7 +1983,7 @@ function OrderDetailsModal({ order, onClose, onReviewPayment, onPrint, onCancelO
 }
 
 
-// --- Collect Dues Modal (उधार वसूली - Cash vs Online UPI) ---
+// --- Collect Dues Modal (Cash vs Online UPI) ---
 function CollectDuesModal({ customer, customers, onClose, onCollected, user }) {
   const [selectedCustId, setSelectedCustId] = useState(customer ? customer.id : '');
   const [amount, setAmount] = useState('');
@@ -1885,11 +2027,11 @@ function CollectDuesModal({ customer, customers, onClose, onCollected, user }) {
     if (res.success) {
       Swal.fire({
         icon: 'success',
-        title: 'उधार जमा सफल!',
+        title: 'Dues Payment Received!',
         html: `<div style="text-align:left; padding:8px 4px;">
-          <p style="font-size:15px; margin-bottom:8px;"><strong>${esc(activeCustomer?.name || 'Customer')}</strong> से <strong>${CFG.currency}${payAmt.toLocaleString()}</strong> प्राप्त हुए।</p>
-          <p style="color:#475569; font-size:13px; margin-bottom:4px;">माध्यम: <strong>${paymentMode === 'Cash' ? '💵 Cash (दराज / गल्ला)' : '📱 Online UPI / Bank (बैंक खाता)'}</strong></p>
-          <p style="color:#16a34a; font-weight:700; font-size:14px; margin-top:8px;">नया बकाया बैलेंस: ${CFG.currency}${Number(res.data.remainingBalance || 0).toLocaleString()}</p>
+          <p style="font-size:15px; margin-bottom:8px;"><strong>${esc(activeCustomer?.name || 'Customer')}</strong> paid <strong>${CFG.currency}${payAmt.toLocaleString()}</strong>.</p>
+          <p style="color:#475569; font-size:13px; margin-bottom:4px;">Payment Mode: <strong>${paymentMode === 'Cash' ? '💵 Cash (Drawer)' : '📱 Online UPI / Bank'}</strong></p>
+          <p style="color:#16a34a; font-weight:700; font-size:14px; margin-top:8px;">Updated Balance: ${CFG.currency}${Number(res.data.remainingBalance || 0).toLocaleString()}</p>
         </div>`,
         timer: 3500
       });
@@ -1904,7 +2046,7 @@ function CollectDuesModal({ customer, customers, onClose, onCollected, user }) {
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal" style={{ maxWidth: '480px' }} onClick={e => e.stopPropagation()}>
         <div className="modal-header" style={{ background: '#16a34a', color: '#fff' }}>
-          <h3 style={{ color: '#fff', margin: 0 }}><i className="fas fa-hand-holding-dollar"></i> Collect Dues (उधार वसूली)</h3>
+          <h3 style={{ color: '#fff', margin: 0 }}><i className="fas fa-hand-holding-dollar"></i> Collect Dues (Wasooli)</h3>
           <button className="close-btn" onClick={onClose} style={{ color: '#fff' }}><i className="fas fa-times"></i></button>
         </div>
         <form onSubmit={handleSubmit}>
@@ -1913,7 +2055,7 @@ function CollectDuesModal({ customer, customers, onClose, onCollected, user }) {
             {!customer && (
               <div className="form-group" style={{ marginBottom: '16px' }}>
                 <label style={{ fontWeight: 600, display: 'block', marginBottom: '6px' }}>
-                  <i className="fas fa-user"></i> Select Customer (ग्राहक चुनें) *
+                  <i className="fas fa-user"></i> Select Customer *
                 </label>
                 <select
                   value={selectedCustId}
@@ -1925,12 +2067,12 @@ function CollectDuesModal({ customer, customers, onClose, onCollected, user }) {
                   <option value="">-- Choose Customer with Pending Dues --</option>
                   {(customers || []).filter(c => Number(c.amount || 0) > 0).map(c => (
                     <option key={c.id} value={c.id}>
-                      {c.name} {c.phone ? `(${c.phone})` : ''} — बकाया: {CFG.currency}{Number(c.amount || 0).toLocaleString()}
+                      {c.name} {c.phone ? `(${c.phone})` : ''} — Dues: {CFG.currency}{Number(c.amount || 0).toLocaleString()}
                     </option>
                   ))}
                   {(customers || []).filter(c => !Number(c.amount || 0) > 0).map(c => (
                     <option key={c.id} value={c.id}>
-                      {c.name} {c.phone ? `(${c.phone})` : ''} — कोई बकाया नहीं (₹0)
+                      {c.name} {c.phone ? `(${c.phone})` : ''} — No Dues (₹0)
                     </option>
                   ))}
                 </select>
@@ -1945,7 +2087,7 @@ function CollectDuesModal({ customer, customers, onClose, onCollected, user }) {
                   <div style={{ fontSize: '12px', color: '#64748b' }}><i className="fas fa-phone"></i> {activeCustomer.phone || 'No phone'}</div>
                 </div>
                 <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontSize: '11px', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>कुल बकाया उधार</div>
+                  <div style={{ fontSize: '11px', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Total Outstanding Dues</div>
                   <div style={{ fontSize: '18px', fontWeight: 800, color: currentDues > 0 ? '#dc2626' : '#16a34a' }}>
                     {CFG.currency}{currentDues.toLocaleString()}
                   </div>
@@ -1955,7 +2097,7 @@ function CollectDuesModal({ customer, customers, onClose, onCollected, user }) {
 
             {/* Amount Input & Quick Pills */}
             <div className="form-group" style={{ marginBottom: '16px' }}>
-              <label style={{ fontWeight: 600, display: 'block', marginBottom: '6px' }}>Amount to Collect (जमा राशि) *</label>
+              <label style={{ fontWeight: 600, display: 'block', marginBottom: '6px' }}>Amount to Collect *</label>
               <div style={{ position: 'relative' }}>
                 <span style={{ position: 'absolute', left: '12px', top: '10px', fontWeight: 700, color: '#64748b', fontSize: '16px' }}>{CFG.currency}</span>
                 <input
@@ -1995,7 +2137,7 @@ function CollectDuesModal({ customer, customers, onClose, onCollected, user }) {
 
             {/* Payment Mode Selection */}
             <div className="form-group" style={{ marginBottom: '16px' }}>
-              <label style={{ fontWeight: 600, display: 'block', marginBottom: '8px' }}>Payment Mode (भुगतान माध्यम) *</label>
+              <label style={{ fontWeight: 600, display: 'block', marginBottom: '8px' }}>Payment Mode *</label>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                 <button
                   type="button"
@@ -2014,8 +2156,8 @@ function CollectDuesModal({ customer, customers, onClose, onCollected, user }) {
                     gap: '4px'
                   }}
                 >
-                  <span style={{ fontSize: '16px' }}><i className="fas fa-money-bill-wave"></i> Cash (नकद)</span>
-                  <span style={{ fontSize: '11px', fontWeight: 500 }}>दराज / गल्ले में जमा होगा</span>
+                  <span style={{ fontSize: '16px' }}><i className="fas fa-money-bill-wave"></i> Cash</span>
+                  <span style={{ fontSize: '11px', fontWeight: 500 }}>Received in Cash Drawer (Galla)</span>
                 </button>
                 <button
                   type="button"
@@ -2035,14 +2177,14 @@ function CollectDuesModal({ customer, customers, onClose, onCollected, user }) {
                   }}
                 >
                   <span style={{ fontSize: '16px' }}><i className="fas fa-qrcode"></i> Online UPI / Bank</span>
-                  <span style={{ fontSize: '11px', fontWeight: 500 }}>बैंक खाते में जमा होगा</span>
+                  <span style={{ fontSize: '11px', fontWeight: 500 }}>Received in Bank Account</span>
                 </button>
               </div>
             </div>
 
             {/* Note / Reference */}
             <div className="form-group" style={{ marginBottom: '8px' }}>
-              <label style={{ fontWeight: 600, display: 'block', marginBottom: '6px' }}>Note / Reference (विवरण)</label>
+              <label style={{ fontWeight: 600, display: 'block', marginBottom: '6px' }}>Note / Reference</label>
               <input
                 type="text"
                 value={note}
@@ -2056,7 +2198,7 @@ function CollectDuesModal({ customer, customers, onClose, onCollected, user }) {
           <div className="modal-footer" style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', padding: '14px 20px', background: '#f8fafc', borderTop: '1px solid #e2e8f0' }}>
             <button type="button" className="btn btn-secondary" onClick={onClose} disabled={saving}><i className="fas fa-times"></i> Cancel</button>
             <button type="submit" className="btn btn-success" style={{ background: '#16a34a', borderColor: '#16a34a', fontWeight: 700 }} disabled={saving}>
-              {saving ? <><i className="fas fa-spinner fa-spin"></i> Processing...</> : <><i className="fas fa-check-circle"></i> Confirm Wasooli (जमा करें)</>}
+              {saving ? <><i className="fas fa-spinner fa-spin"></i> Processing...</> : <><i className="fas fa-check-circle"></i> Confirm Payment (Wasooli)</>}
             </button>
           </div>
         </form>
@@ -2121,7 +2263,7 @@ function RecordsView({ user, role }) {
           { data: 'category', title: 'Group', render: (d, t) => t === 'display' ? esc(d || '') : d },
           {
             data: 'amount',
-            title: 'Balance (उधार)',
+            title: 'Balance (Dues)',
             render: (d, t, row) => {
               if (t !== 'display') return d;
               const amt = Number(d || 0);
@@ -2141,7 +2283,7 @@ function RecordsView({ user, role }) {
             title: 'Actions',
             orderable: false,
             render: (d, t, row) => {
-              const collectBtn = Number(row.amount || 0) > 0 ? `<button class="action-icon dues-icon" data-action="collect" title="Collect Dues (उधार वसूली)" style="color:#16a34a;"><i class="fas fa-hand-holding-dollar"></i></button>` : '';
+              const collectBtn = Number(row.amount || 0) > 0 ? `<button class="action-icon dues-icon" data-action="collect" title="Collect Dues" style="color:#16a34a;"><i class="fas fa-hand-holding-dollar"></i></button>` : '';
               return `<button class="action-icon" data-action="view" title="View"><i class="fas fa-eye"></i></button><button class="action-icon edit-icon" data-action="edit" title="Edit"><i class="fas fa-edit"></i></button>${collectBtn}` + (role === 'Admin' ? `<button class="action-icon delete-icon" data-action="delete" title="Delete"><i class="fas fa-trash"></i></button>` : '');
             }
           }
@@ -2239,7 +2381,7 @@ function RecordsView({ user, role }) {
       {load && <TopLoadingBar />}
       <div className="section-header">
         <div>
-          <h2><i className="fas fa-address-book"></i> Customers &amp; Khata (ग्राहक व उधार)</h2>
+          <h2><i className="fas fa-address-book"></i> Customers &amp; Khata</h2>
           <div style={{ fontSize: '13px', color: '#64748b', marginTop: '2px' }}>
             Manage regular customers, track credit balances, and collect dues via Cash or Online UPI
           </div>
@@ -2251,7 +2393,7 @@ function RecordsView({ user, role }) {
             style={{ background: '#16a34a', borderColor: '#16a34a', fontWeight: 700 }}
             onClick={() => { setCollectTargetCust(null); setShowCollectModal(true); }}
           >
-            <i className="fas fa-hand-holding-dollar"></i> Collect Dues (उधार वसूली)
+            <i className="fas fa-hand-holding-dollar"></i> Collect Dues
           </button>
           <button
             className="btn btn-primary"
@@ -2324,7 +2466,7 @@ function RecordsView({ user, role }) {
                   { label: 'Customers', value: records.length },
                   { label: 'Active', value: records.filter(r => r.active).length },
                   {
-                    label: 'Total Market Dues (कुल बाज़ार उधार)',
+                    label: 'Total Market Dues',
                     value: money(totalMarketDues),
                     style: { color: totalMarketDues > 0 ? '#dc2626' : '#16a34a', fontWeight: 700 }
                   }
@@ -2340,7 +2482,7 @@ function RecordsView({ user, role }) {
         <div style={{ background: '#fff', borderRadius: '10px', border: '1px solid #e2e8f0', padding: '16px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
             <h3 style={{ margin: 0, fontSize: '16px', color: '#0f172a' }}>
-              <i className="fas fa-receipt" style={{ color: '#16a34a' }}></i> Recent Dues Collections (उधार वसूली रसीदें)
+              <i className="fas fa-receipt" style={{ color: '#16a34a' }}></i> Recent Dues Collections
             </h3>
             <span style={{ fontSize: '13px', color: '#64748b' }}>
               Total Recovered: <strong>{money(duesCollections.reduce((s, d) => s + (Number(d.amount) || 0), 0))}</strong>
@@ -2382,7 +2524,7 @@ function RecordsView({ user, role }) {
                           background: dc.paymentMode === 'Cash' ? '#dcfce7' : '#e0f2fe',
                           color: dc.paymentMode === 'Cash' ? '#15803d' : '#0369a1'
                         }}>
-                          {dc.paymentMode === 'Cash' ? '💵 Cash (गल्ला)' : '📱 Online UPI'}
+                          {dc.paymentMode === 'Cash' ? '💵 Cash (Drawer)' : '📱 Online UPI'}
                         </span>
                       </td>
                       <td style={{ padding: '10px', fontWeight: 600, color: Number(dc.remainingBalance) > 0 ? '#dc2626' : '#16a34a' }}>
@@ -4772,7 +4914,7 @@ function POSView({ user, role }) {
       const customers = useMemo(() => (custData && custData.success ? custData.data : []), [custData]);
       const customerOpts = useMemo(() => customers.map(c => ({
         value: c.id,
-        label: c.name + (c.phone ? ' · ' + c.phone : '') + (Number(c.amount || 0) > 0 ? ' [उधार: ' + CFG.currency + Number(c.amount).toLocaleString() + ']' : '')
+        label: c.name + (c.phone ? ' · ' + c.phone : '') + (Number(c.amount || 0) > 0 ? ' [Dues: ' + CFG.currency + Number(c.amount).toLocaleString() + ']' : '')
       })), [customers]);
       const { loading: loadingMovements, data: movementsData } = useFetch(() => fbGetStockMovements(), [reloadKey]);
       const movements = useMemo(() => (movementsData && movementsData.success ? movementsData.data : []), [movementsData]);
@@ -5138,7 +5280,7 @@ function POSView({ user, role }) {
               className={`pos-mobile-tab-btn ${mobileTab === 'catalog' ? 'active' : ''}`}
               onClick={() => setMobileTab('catalog')}
             >
-              <i className="fas fa-boxes-stacked"></i> Products (सामान)
+              <i className="fas fa-boxes-stacked"></i> Products
             </button>
             <button
               type="button"
@@ -5167,7 +5309,7 @@ function POSView({ user, role }) {
                       : products.filter(p => p.active !== false && String(p.category || '').trim().toLowerCase() === catNorm).length;
                     return (
                       <option key={cat} value={cat}>
-                        {cat === 'ALL' ? `📦 All Categories / सभी सामान (${count})` : `${cat} (${count})`}
+                        {cat === 'ALL' ? `📦 All Categories (${count})` : `${cat} (${count})`}
                       </option>
                     );
                   })}
@@ -5333,7 +5475,7 @@ function POSView({ user, role }) {
                     cursor: 'pointer'
                   }}
                 >
-                  <i className="fas fa-arrow-left"></i> Add More Items (सामान और जोड़ें)
+                  <i className="fas fa-arrow-left"></i> Add More Items
                 </button>
               </div>
               {/* Cart Top Header */}
@@ -5405,7 +5547,7 @@ function POSView({ user, role }) {
                         color: customerMode === 'walkin' ? '#fff' : '#475569'
                       }}
                     >
-                      <i className="fas fa-person-walking"></i> Walk-in (सीधा बिल)
+                      <i className="fas fa-person-walking"></i> Walk-in (Quick Bill)
                     </button>
                     <button
                       type="button"
@@ -5429,7 +5571,7 @@ function POSView({ user, role }) {
                 {customerMode === 'walkin' ? (
                   <div>
                     <div style={{ fontSize: '11px', color: '#16a34a', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '6px' }}>
-                      <i className="fas fa-bolt"></i> बिना रजिस्ट्रेशन सीधा बिलिंग (0 Mandatory Fields - Fast Checkout)
+                      <i className="fas fa-bolt"></i> Fast Walk-in Billing (0 Mandatory Fields - Direct Bill)
                     </div>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
                       <input
@@ -8211,6 +8353,14 @@ function PaymentMethodsView({ user, role }) {
     // --- Settings (Admin) - Exact 2-Column Layout matching Screenshot 1 ---
 
 
+const PRESET_LOGOS = [
+  { name: 'Supermarket Cart', url: 'https://cdn-icons-png.flaticon.com/512/3081/3081840.png' },
+  { name: 'Kirana Grocery', url: 'https://cdn-icons-png.flaticon.com/512/372/372627.png' },
+  { name: 'Fresh Mart Green', url: 'https://cdn-icons-png.flaticon.com/512/2981/2981297.png' },
+  { name: 'Shree Ganesh Mart', url: 'https://cdn-icons-png.flaticon.com/512/3759/3759041.png' },
+  { name: 'Departmental Store', url: 'https://cdn-icons-png.flaticon.com/512/1170/1170678.png' },
+  { name: 'Wholesale Trade', url: 'https://cdn-icons-png.flaticon.com/512/2897/2897818.png' }
+];
 function SettingsView({ user, role }) {
       const { settings, categories, refreshConfig } = useConfig();
       const [form, setForm] = useState(settings || {});
@@ -10042,7 +10192,7 @@ Generated by Kirana & Supermarket POS`;
           </div>
           <h2 style={{ margin: 0, fontSize: 20, display: 'flex', alignItems: 'center', gap: 8 }}>
             <i className="fas fa-book-journal-whills" style={{ color: 'var(--navy-accent)' }}></i>
-            {activeTab === 'rojnamcha' ? 'Daily Rojnamcha & Cash Drawer' : (activeTab === 'profile' ? 'Shop Profile & Logo' : 'Financial Analytics')}
+            {activeTab === 'rojnamcha' ? 'Daily Rojnamcha & Cash Drawer' : 'Financial Analytics'}
           </h2>
         </div>
 
@@ -10055,14 +10205,6 @@ Generated by Kirana & Supermarket POS`;
             style={{ fontWeight: 700, fontSize: 12.5 }}
           >
             <i className="fas fa-book-journal-whills" style={{ marginRight: 6 }}></i> Rojnamcha (Day Book)
-          </button>
-          <button
-            type="button"
-            className={`btn btn-sm ${activeTab === 'profile' ? 'btn-primary' : 'btn-secondary'}`}
-            onClick={() => setActiveTab('profile')}
-            style={{ fontWeight: 700, fontSize: 12.5 }}
-          >
-            <i className="fas fa-store" style={{ marginRight: 6 }}></i> Shop Profile &amp; Logo
           </button>
           <button
             type="button"
@@ -10294,7 +10436,7 @@ Generated by Kirana & Supermarket POS`;
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 6 }}>
                   <button type="button" onClick={() => setShowCollectDuesModal(true)} style={{ background: '#dcfce7', border: '1px solid #86efac', color: '#15803d', fontSize: 11, fontWeight: 700, borderRadius: 4, padding: '3px 8px', cursor: 'pointer' }}>
-                    <i className="fas fa-hand-holding-dollar"></i> Collect Dues (वसूली)
+                    <i className="fas fa-hand-holding-dollar"></i> Collect Dues (Wasooli)
                   </button>
                   <button type="button" onClick={() => setActiveMenu && setActiveMenu('records')} style={{ background: 'none', border: 'none', color: '#0284c7', fontSize: 11.5, fontWeight: 700, cursor: 'pointer', padding: 0 }}>
                     Khata Register &gt;
@@ -10418,7 +10560,7 @@ Generated by Kirana & Supermarket POS`;
                       <tr key={'dues-' + dc.id} style={{ background: '#f0fdf4' }}>
                         <td>{time}</td>
                         <td><span style={{ background: '#dcfce7', color: '#15803d', padding: '2px 8px', borderRadius: 4, fontSize: 11, fontWeight: 700 }}>WASOOLI</span></td>
-                        <td>उधार वसूली: {dc.customerName} {dc.note ? `(${dc.note})` : ''}</td>
+                        <td>Dues Collected (Wasooli): {dc.customerName} {dc.note ? `(${dc.note})` : ''}</td>
                         <td><span style={{ fontWeight: 600 }}>{isCash ? '💵 Cash' : '📱 Online UPI'}</span></td>
                         <td style={{ textAlign: 'right', color: isCash ? '#16a34a' : '#94a3b8', fontWeight: isCash ? 700 : 400 }}>
                           {isCash ? '+' + money(amt) : '—'}
@@ -10459,181 +10601,6 @@ Generated by Kirana & Supermarket POS`;
               </table>
             </div>
           </div>
-        </div>
-      )}
-
-      {/* ======================================================== */}
-      {/* TAB 2: SHOP PROFILE & LOGO MANAGEMENT */}
-      {/* ======================================================== */}
-      {activeTab === 'profile' && (
-        <div style={{ background: '#ffffff', padding: 24, borderRadius: 10, border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-          <form onSubmit={handleSaveProfile}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 24, marginBottom: 20 }}>
-              
-              {/* Left Column: Logo Preview & Upload */}
-              <div>
-                <h4 style={{ margin: '0 0 12px', fontSize: 15, fontWeight: 700, color: '#0f172a' }}>
-                  <i className="fas fa-image" style={{ color: 'var(--navy-accent)', marginRight: 6 }}></i>
-                  Shop Logo
-                </h4>
-
-                <div style={{ textAlign: 'center', padding: 20, background: '#f8fafc', borderRadius: 10, border: '2px dashed #cbd5e1', marginBottom: 14 }}>
-                  <img
-                    src={shopLogoUrl}
-                    alt="Shop Logo"
-                    style={{ width: 110, height: 110, borderRadius: 12, objectFit: 'contain', background: '#ffffff', padding: 4, boxShadow: '0 2px 6px rgba(0,0,0,0.1)', marginBottom: 12 }}
-                  />
-                  <div style={{ fontSize: 13, fontWeight: 700, color: '#0f172a' }}>{shopName}</div>
-                  <div style={{ fontSize: 11, color: '#64748b', marginBottom: 12 }}>Shown in Header, Sidebar &amp; Receipts</div>
-
-                  <label className="btn btn-primary btn-sm" style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6, fontWeight: 700 }}>
-                    <i className="fas fa-upload"></i> Upload Logo
-                    <input type="file" accept="image/*" onChange={handleLogoUpload} style={{ display: 'none' }} />
-                  </label>
-                </div>
-
-                {/* Preset Kirana Logos */}
-                <div>
-                  <label style={{ fontSize: 12, fontWeight: 700, color: '#475569', display: 'block', marginBottom: 6 }}>
-                    Or Pick a Ready-Made Supermarket Logo:
-                  </label>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
-                    {PRESET_LOGOS.map((pl, idx) => (
-                      <button
-                        key={idx}
-                        type="button"
-                        onClick={() => { setShopLogoUrl(pl.url); ls.set('shop_logo_url', pl.url); }}
-                        style={{ padding: 6, borderRadius: 6, border: '1px solid #cbd5e1', background: shopLogoUrl === pl.url ? '#e0f2fe' : '#ffffff', cursor: 'pointer', textAlign: 'center' }}
-                      >
-                        <img src={pl.url} alt="" style={{ width: 32, height: 32, objectFit: 'contain', display: 'block', margin: '0 auto 2px' }} />
-                        <span style={{ fontSize: 9.5, color: '#334155', fontWeight: 600, display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{pl.name}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Column: Shop Information Form */}
-              <div>
-                <h4 style={{ margin: '0 0 12px', fontSize: 15, fontWeight: 700, color: '#0f172a' }}>
-                  <i className="fas fa-store" style={{ color: 'var(--navy-accent)', marginRight: 6 }}></i>
-                  Shop Identity &amp; Information
-                </h4>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 14 }}>
-                  <div className="form-group" style={{ margin: 0 }}>
-                    <label style={{ fontSize: 12.5, fontWeight: 600, color: '#334155', marginBottom: 4, display: 'block' }}>Shop / Store Name *</label>
-                    <input
-                      type="text"
-                      value={shopName}
-                      onChange={e => setShopName(e.target.value)}
-                      required
-                      placeholder="e.g. Shree Ram Kirana & Supermarket"
-                      style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #cbd5e1', fontSize: 13, fontWeight: 700 }}
-                    />
-                  </div>
-
-                  <div className="form-group" style={{ margin: 0 }}>
-                    <label style={{ fontSize: 12.5, fontWeight: 600, color: '#334155', marginBottom: 4, display: 'block' }}>Owner / Manager Name</label>
-                    <input
-                      type="text"
-                      value={shopOwner}
-                      onChange={e => setShopOwner(e.target.value)}
-                      placeholder="e.g. Rahul Sharma"
-                      style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #cbd5e1', fontSize: 13 }}
-                    />
-                  </div>
-                </div>
-
-                <div className="form-group" style={{ marginBottom: 14 }}>
-                  <label style={{ fontSize: 12.5, fontWeight: 600, color: '#334155', marginBottom: 4, display: 'block' }}>Tagline / Slogan</label>
-                  <input
-                    type="text"
-                    value={shopTagline}
-                    onChange={e => setShopTagline(e.target.value)}
-                    placeholder="e.g. Pure Desi Ghee, Chakki Atta & Daily Grocery at Lowest Prices"
-                    style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #cbd5e1', fontSize: 13 }}
-                  />
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 14 }}>
-                  <div className="form-group" style={{ margin: 0 }}>
-                    <label style={{ fontSize: 12.5, fontWeight: 600, color: '#334155', marginBottom: 4, display: 'block' }}>Mobile &amp; WhatsApp Number</label>
-                    <input
-                      type="text"
-                      value={shopPhone}
-                      onChange={e => setShopPhone(e.target.value)}
-                      placeholder="+91 98765 43210"
-                      style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #cbd5e1', fontSize: 13 }}
-                    />
-                  </div>
-
-                  <div className="form-group" style={{ margin: 0 }}>
-                    <label style={{ fontSize: 12.5, fontWeight: 600, color: '#334155', marginBottom: 4, display: 'block' }}>Store UPI ID (for QR)</label>
-                    <input
-                      type="text"
-                      value={shopUpiId}
-                      onChange={e => setShopUpiId(e.target.value)}
-                      placeholder="e.g. 9876543210@paytm"
-                      style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #cbd5e1', fontSize: 13 }}
-                    />
-                  </div>
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 14 }}>
-                  <div className="form-group" style={{ margin: 0 }}>
-                    <label style={{ fontSize: 12.5, fontWeight: 600, color: '#334155', marginBottom: 4, display: 'block' }}>GSTIN Number</label>
-                    <input
-                      type="text"
-                      value={shopGstin}
-                      onChange={e => setShopGstin(e.target.value)}
-                      placeholder="e.g. 07AAAAA0000A1Z5"
-                      style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #cbd5e1', fontSize: 13 }}
-                    />
-                  </div>
-
-                  <div className="form-group" style={{ margin: 0 }}>
-                    <label style={{ fontSize: 12.5, fontWeight: 600, color: '#334155', marginBottom: 4, display: 'block' }}>FSSAI / Trade License</label>
-                    <input
-                      type="text"
-                      value={shopFssai}
-                      onChange={e => setShopFssai(e.target.value)}
-                      placeholder="e.g. 10020000000001"
-                      style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #cbd5e1', fontSize: 13 }}
-                    />
-                  </div>
-                </div>
-
-                <div className="form-group" style={{ marginBottom: 14 }}>
-                  <label style={{ fontSize: 12.5, fontWeight: 600, color: '#334155', marginBottom: 4, display: 'block' }}>Shop Full Address</label>
-                  <textarea
-                    rows="2"
-                    value={shopAddress}
-                    onChange={e => setShopAddress(e.target.value)}
-                    placeholder="Shop No. 12, Main Market, City, State - PIN"
-                    style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #cbd5e1', fontSize: 13 }}
-                  ></textarea>
-                </div>
-
-                <div className="form-group" style={{ marginBottom: 18 }}>
-                  <label style={{ fontSize: 12.5, fontWeight: 600, color: '#334155', marginBottom: 4, display: 'block' }}>Bill Receipt Footer Message</label>
-                  <input
-                    type="text"
-                    value={receiptFooter}
-                    onChange={e => setReceiptFooter(e.target.value)}
-                    placeholder="e.g. Bika hua maal wapas nahi hoga · Thank you!"
-                    style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #cbd5e1', fontSize: 13 }}
-                  />
-                </div>
-
-                <div style={{ display: 'flex', gap: 10 }}>
-                  <button type="submit" className="btn btn-primary" style={{ padding: '9px 24px', fontWeight: 800 }}>
-                    <i className="fas fa-save" style={{ marginRight: 6 }}></i> Save Shop Profile &amp; Logo
-                  </button>
-                </div>
-              </div>
-            </div>
-          </form>
         </div>
       )}
 

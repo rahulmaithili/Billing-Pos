@@ -1,5 +1,146 @@
 const { useState, useEffect, useRef, useMemo, useCallback, useDeferredValue } = React;
 
+    // ============== Language System (English & Hinglish) ==============
+    window.APP_LANG = localStorage.getItem('app_lang') || 'en';
+
+    window.setAppLanguage = function(newLang) {
+      window.APP_LANG = newLang;
+      localStorage.setItem('app_lang', newLang);
+      window.dispatchEvent(new CustomEvent('app_lang_changed', { detail: newLang }));
+    };
+
+    window.LANG_DICT = {
+      // Common / Navigation
+      'home': { en: 'Home', hinglish: 'Home' },
+      'dashboard': { en: 'Dashboard', hinglish: 'Dashboard' },
+      'pos': { en: 'QR Sales', hinglish: 'Fast Billing' },
+      'products': { en: 'Products', hinglish: 'Samaan / Catalog' },
+      'categories': { en: 'Categories', hinglish: 'Categories' },
+      'customers': { en: 'Customers & Khata', hinglish: 'Grahak aur Khata' },
+      'reports': { en: 'Rojnamcha (Daily Cashbook)', hinglish: 'Daily Rojnamcha' },
+      'expenses': { en: 'Expenses', hinglish: 'Kharche' },
+      'suppliers': { en: 'Suppliers', hinglish: 'Suppliers' },
+      'settings': { en: 'Settings', hinglish: 'Settings' },
+
+      // Billing / POS
+      'pos_title': { en: 'Fast POS & QR Terminal', hinglish: 'Fast Billing aur QR POS' },
+      'pos_subtitle': { en: 'Real-time Visual Billing, Live Stock & Instant UPI Payment', hinglish: 'Seedha Bill, Live Stock aur UPI Payment' },
+      'pos_products_tab': { en: 'Products', hinglish: 'Samaan' },
+      'pos_cart_tab': { en: 'Bill & Cart', hinglish: 'Kacha Bill & Cart' },
+      'pos_all_items': { en: 'All Items', hinglish: 'Sabhi Samaan' },
+      'pos_search_items': { en: 'Search items, products, SKU, barcode...', hinglish: 'Samaan ya barcode search karein...' },
+      'pos_scan_barcode': { en: 'Scan Barcode / SKU + Enter', hinglish: 'Barcode scan karein + Enter' },
+      'pos_walkin': { en: 'Walk-in (Quick Bill)', hinglish: 'Walk-in (Seedha Bill)' },
+      'pos_walkin_hint': { en: 'Fast billing with 0 mandatory registration', hinglish: 'Bina registration seedha fast billing' },
+      'pos_khata_customer': { en: 'Khata / Regular', hinglish: 'Khata / Regular Grahak' },
+      'pos_optional_name': { en: 'Customer Name (Optional)', hinglish: 'Grahak Name (Optional)' },
+      'pos_optional_phone': { en: 'Mobile No (Optional)', hinglish: 'Mobile Number (Optional)' },
+      'pos_add_more': { en: 'Add More Items', hinglish: 'Aur Samaan Jodein' },
+      'pos_complete_sale': { en: 'Complete Sale & Print', hinglish: 'Bill Banayein aur Print Karein' },
+      'pos_floating_view_bill': { en: 'View Bill / Pay', hinglish: 'Bill Dekhein / Pay Karein' },
+      'pos_total_bill': { en: 'Total Bill', hinglish: 'Kul Bill' },
+      'pos_pending_dues': { en: 'Pending Khata Dues', hinglish: 'Pichla Baaki Udhar' },
+
+      // Customers & Khata
+      'cust_title': { en: 'Customers & Khata Ledger', hinglish: 'Grahak aur Khata Register' },
+      'cust_subtitle': { en: 'Manage regular customers, track credit balances, and collect dues via Cash or Online UPI', hinglish: 'Grahak khata manage karein, baaki udhar track karein aur Cash ya UPI se wasooli karein' },
+      'cust_collect_dues': { en: 'Collect Dues', hinglish: 'Udhar Wasooli' },
+      'cust_add_customer': { en: 'Add Customer', hinglish: 'Naya Grahak Jodein' },
+      'cust_all_customers': { en: 'All Customers', hinglish: 'Sabhi Grahak' },
+      'cust_dues_register': { en: 'Dues Collection Register', hinglish: 'Wasooli Register' },
+      'cust_market_dues': { en: 'Total Market Dues', hinglish: 'Bazaar me Kul Udhar' },
+      'cust_balance': { en: 'Balance / Dues', hinglish: 'Baaki Udhar' },
+      'cust_cleared': { en: 'Cleared (No Dues)', hinglish: 'Chukta (Koi Baaki Nahi)' },
+      'cust_wasooli_btn': { en: 'Collect Dues', hinglish: 'Wasooli' },
+      'cust_amount_to_collect': { en: 'Amount to Collect', hinglish: 'Wasooli Rashi (Amount)' },
+      'cust_payment_mode': { en: 'Payment Mode', hinglish: 'Payment Ka Madhyam' },
+      'cust_cash_drawer': { en: 'Cash (Drawer)', hinglish: 'Cash (Galla Cash)' },
+      'cust_online_bank': { en: 'Online UPI / Bank', hinglish: 'Online UPI (Bank Khata)' },
+      'cust_confirm_collection': { en: 'Confirm Collection', hinglish: 'Wasooli Jama Karein' },
+      'cust_select_customer': { en: 'Select Customer', hinglish: 'Grahak Chunein' },
+
+      // Rojnamcha
+      'roj_title': { en: 'Daily Rojnamcha & Cash Register', hinglish: 'Daily Rojnamcha & Cash Register' },
+      'roj_drawer_cash': { en: 'Drawer Cash (Galla)', hinglish: 'Galla Cash (Drawer)' },
+      'roj_bank_balance': { en: 'Bank Account Balance', hinglish: 'Bank Khata Balance' },
+      'roj_today_expenses': { en: 'Today Expenses', hinglish: 'Aaj ke Kharche' },
+      'roj_customer_dues': { en: 'Customer Dues (Udhar)', hinglish: 'Grahak Udhar (Khata)' },
+      'roj_closing_balance': { en: 'Total Closing Balance (Drawer Cash + Bank)', hinglish: 'Dukan Band Kul Balance (Galla + Bank)' },
+      'roj_opening_cash': { en: 'Opening Cash', hinglish: 'Subah ka Galla Cash' },
+      'roj_opening_bank': { en: 'Opening Bank', hinglish: 'Subah ka Bank Balance' },
+      'roj_cash_sales': { en: 'Cash Sales Today', hinglish: 'Aaj ki Cash Bikri' },
+      'roj_cash_dues': { en: 'Cash Udhar Wasooli', hinglish: 'Cash Udhar Wasooli' },
+      'roj_online_dues': { en: 'UPI/Bank Udhar Wasooli', hinglish: 'UPI Udhar Wasooli' },
+      'roj_cash_expenses': { en: 'Cash Expenses', hinglish: 'Galle se Kharche' },
+      'roj_sent_to_bank': { en: 'Sent to Bank (Deposit)', hinglish: 'Bank Bheja (Deposit)' },
+      'roj_today_new_dues': { en: 'Today New Udhar', hinglish: 'Aaj Naya Udhar Diya' },
+      'roj_today_dues_collected': { en: 'Today Wasooli', hinglish: 'Aaj ki Udhar Wasooli' },
+      'roj_total_market_dues': { en: 'Total Market Baaki', hinglish: 'Bazaar me Kul Baaki' },
+      'roj_galla_tally': { en: 'Galla Tally', hinglish: 'Galla Gin-Tally' },
+      'roj_print_slip': { en: 'Print Rojnamcha', hinglish: 'Rojnamcha Print Karein' }
+    };
+
+    window.t = function(key, defaultEn, defaultHinglish) {
+      const currentLang = window.APP_LANG || 'en';
+      if (window.LANG_DICT && window.LANG_DICT[key]) {
+        return window.LANG_DICT[key][currentLang] || window.LANG_DICT[key].en || defaultEn || key;
+      }
+      if (currentLang === 'hinglish' && defaultHinglish) return defaultHinglish;
+      return defaultEn || key;
+    };
+
+    function useLang() {
+      const [lang, setLang] = useState(() => window.APP_LANG || 'en');
+      useEffect(() => {
+        const handler = () => setLang(window.APP_LANG || 'en');
+        window.addEventListener('app_lang_changed', handler);
+        return () => window.removeEventListener('app_lang_changed', handler);
+      }, []);
+      const tFn = useCallback((key, enVal, hinglishVal) => {
+        if (window.LANG_DICT && window.LANG_DICT[key]) {
+          return window.LANG_DICT[key][lang] || window.LANG_DICT[key].en || enVal || key;
+        }
+        if (lang === 'hinglish' && hinglishVal) return hinglishVal;
+        return enVal || key;
+      }, [lang]);
+      return { lang, t: tFn };
+    }
+
+    function LanguageToggle() {
+      const [lang, setLang] = useState(() => window.APP_LANG || 'en');
+      const toggle = () => {
+        const next = lang === 'en' ? 'hinglish' : 'en';
+        setLang(next);
+        window.setAppLanguage(next);
+      };
+      return (
+        <button
+          type="button"
+          className="nav-btn nav-lang-toggle"
+          onClick={toggle}
+          title={lang === 'en' ? 'Switch to Hinglish' : 'Switch to English'}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '5px',
+            padding: '4px 10px',
+            borderRadius: '20px',
+            background: lang === 'hinglish' ? 'rgba(16, 185, 129, 0.25)' : 'rgba(255, 255, 255, 0.12)',
+            border: lang === 'hinglish' ? '1px solid #10b981' : '1px solid rgba(255, 255, 255, 0.22)',
+            color: '#ffffff',
+            fontSize: '11.5px',
+            fontWeight: 700,
+            cursor: 'pointer',
+            marginRight: '6px'
+          }}
+        >
+          <i className="fas fa-language" style={{ fontSize: '13px', color: lang === 'hinglish' ? '#34d399' : '#ffffff' }}></i>
+          <span>{lang === 'hinglish' ? 'Hinglish' : 'English'}</span>
+        </button>
+      );
+    }
+
+
     // guarded storage — private mode / blocked storage must never throw mid-render
     const ls = {
       get: (k, d = null) => { try { const v = localStorage.getItem(k); return v == null ? d : v; } catch (e) { return d; } },
@@ -1091,6 +1232,7 @@ const { useState, useEffect, useRef, useMemo, useCallback, useDeferredValue } = 
           <div className="navbar-end">
             <span className="nav-welcome"><span className="nav-welcome-hi">Welcome</span><strong>{userName}</strong></span>
             {onOpenShortcuts && <button className="nav-btn" onClick={onOpenShortcuts} title="Keyboard Shortcuts (?)"><i className="fas fa-keyboard"></i></button>}
+            <LanguageToggle />
             <HeaderThemeMenu themeMode={themeMode} onThemeToggle={onThemeToggle} />
             <NavDropdown trigger={<button className="nav-btn" title="Notifications"><i className="fas fa-bell"></i>{notifs.length > 0 && <span className="nav-badge">{notifs.length}</span>}</button>}>
               <div className="nav-dd-head"><div className="dd-title">{notifs.length} Notifications</div>{notifs[0] && <div className="dd-sub">{notifs[0].text}</div>}</div>

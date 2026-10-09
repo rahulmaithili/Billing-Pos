@@ -32,7 +32,7 @@ function POSView({ user, role }) {
       const customers = useMemo(() => (custData && custData.success ? custData.data : []), [custData]);
       const customerOpts = useMemo(() => customers.map(c => ({
         value: c.id,
-        label: c.name + (c.phone ? ' · ' + c.phone : '') + (Number(c.amount || 0) > 0 ? ' [उधार: ' + CFG.currency + Number(c.amount).toLocaleString() + ']' : '')
+        label: c.name + (c.phone ? ' · ' + c.phone : '') + (Number(c.amount || 0) > 0 ? ' [Dues: ' + CFG.currency + Number(c.amount).toLocaleString() + ']' : '')
       })), [customers]);
       const { loading: loadingMovements, data: movementsData } = useFetch(() => fbGetStockMovements(), [reloadKey]);
       const movements = useMemo(() => (movementsData && movementsData.success ? movementsData.data : []), [movementsData]);
@@ -398,7 +398,7 @@ function POSView({ user, role }) {
               className={`pos-mobile-tab-btn ${mobileTab === 'catalog' ? 'active' : ''}`}
               onClick={() => setMobileTab('catalog')}
             >
-              <i className="fas fa-boxes-stacked"></i> Products (सामान)
+              <i className="fas fa-boxes-stacked"></i> Products
             </button>
             <button
               type="button"
@@ -427,7 +427,7 @@ function POSView({ user, role }) {
                       : products.filter(p => p.active !== false && String(p.category || '').trim().toLowerCase() === catNorm).length;
                     return (
                       <option key={cat} value={cat}>
-                        {cat === 'ALL' ? `📦 All Categories / सभी सामान (${count})` : `${cat} (${count})`}
+                        {cat === 'ALL' ? `📦 All Categories (${count})` : `${cat} (${count})`}
                       </option>
                     );
                   })}
@@ -593,7 +593,7 @@ function POSView({ user, role }) {
                     cursor: 'pointer'
                   }}
                 >
-                  <i className="fas fa-arrow-left"></i> Add More Items (सामान और जोड़ें)
+                  <i className="fas fa-arrow-left"></i> Add More Items
                 </button>
               </div>
               {/* Cart Top Header */}
@@ -665,7 +665,7 @@ function POSView({ user, role }) {
                         color: customerMode === 'walkin' ? '#fff' : '#475569'
                       }}
                     >
-                      <i className="fas fa-person-walking"></i> Walk-in (सीधा बिल)
+                      <i className="fas fa-person-walking"></i> Walk-in (Quick Bill)
                     </button>
                     <button
                       type="button"
@@ -689,7 +689,7 @@ function POSView({ user, role }) {
                 {customerMode === 'walkin' ? (
                   <div>
                     <div style={{ fontSize: '11px', color: '#16a34a', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '6px' }}>
-                      <i className="fas fa-bolt"></i> बिना रजिस्ट्रेशन सीधा बिलिंग (0 Mandatory Fields - Fast Checkout)
+                      <i className="fas fa-bolt"></i> Fast Walk-in Billing (0 Mandatory Fields - Direct Bill)
                     </div>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
                       <input

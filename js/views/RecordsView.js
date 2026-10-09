@@ -1,4 +1,4 @@
-// --- Collect Dues Modal (उधार वसूली - Cash vs Online UPI) ---
+// --- Collect Dues Modal (Cash vs Online UPI) ---
 function CollectDuesModal({ customer, customers, onClose, onCollected, user }) {
   const [selectedCustId, setSelectedCustId] = useState(customer ? customer.id : '');
   const [amount, setAmount] = useState('');
@@ -42,11 +42,11 @@ function CollectDuesModal({ customer, customers, onClose, onCollected, user }) {
     if (res.success) {
       Swal.fire({
         icon: 'success',
-        title: 'उधार जमा सफल!',
+        title: 'Dues Payment Received!',
         html: `<div style="text-align:left; padding:8px 4px;">
-          <p style="font-size:15px; margin-bottom:8px;"><strong>${esc(activeCustomer?.name || 'Customer')}</strong> से <strong>${CFG.currency}${payAmt.toLocaleString()}</strong> प्राप्त हुए।</p>
-          <p style="color:#475569; font-size:13px; margin-bottom:4px;">माध्यम: <strong>${paymentMode === 'Cash' ? '💵 Cash (दराज / गल्ला)' : '📱 Online UPI / Bank (बैंक खाता)'}</strong></p>
-          <p style="color:#16a34a; font-weight:700; font-size:14px; margin-top:8px;">नया बकाया बैलेंस: ${CFG.currency}${Number(res.data.remainingBalance || 0).toLocaleString()}</p>
+          <p style="font-size:15px; margin-bottom:8px;"><strong>${esc(activeCustomer?.name || 'Customer')}</strong> paid <strong>${CFG.currency}${payAmt.toLocaleString()}</strong>.</p>
+          <p style="color:#475569; font-size:13px; margin-bottom:4px;">Payment Mode: <strong>${paymentMode === 'Cash' ? '💵 Cash (Drawer)' : '📱 Online UPI / Bank'}</strong></p>
+          <p style="color:#16a34a; font-weight:700; font-size:14px; margin-top:8px;">Updated Balance: ${CFG.currency}${Number(res.data.remainingBalance || 0).toLocaleString()}</p>
         </div>`,
         timer: 3500
       });
@@ -61,7 +61,7 @@ function CollectDuesModal({ customer, customers, onClose, onCollected, user }) {
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal" style={{ maxWidth: '480px' }} onClick={e => e.stopPropagation()}>
         <div className="modal-header" style={{ background: '#16a34a', color: '#fff' }}>
-          <h3 style={{ color: '#fff', margin: 0 }}><i className="fas fa-hand-holding-dollar"></i> Collect Dues (उधार वसूली)</h3>
+          <h3 style={{ color: '#fff', margin: 0 }}><i className="fas fa-hand-holding-dollar"></i> Collect Dues (Wasooli)</h3>
           <button className="close-btn" onClick={onClose} style={{ color: '#fff' }}><i className="fas fa-times"></i></button>
         </div>
         <form onSubmit={handleSubmit}>
@@ -70,7 +70,7 @@ function CollectDuesModal({ customer, customers, onClose, onCollected, user }) {
             {!customer && (
               <div className="form-group" style={{ marginBottom: '16px' }}>
                 <label style={{ fontWeight: 600, display: 'block', marginBottom: '6px' }}>
-                  <i className="fas fa-user"></i> Select Customer (ग्राहक चुनें) *
+                  <i className="fas fa-user"></i> Select Customer *
                 </label>
                 <select
                   value={selectedCustId}
@@ -82,12 +82,12 @@ function CollectDuesModal({ customer, customers, onClose, onCollected, user }) {
                   <option value="">-- Choose Customer with Pending Dues --</option>
                   {(customers || []).filter(c => Number(c.amount || 0) > 0).map(c => (
                     <option key={c.id} value={c.id}>
-                      {c.name} {c.phone ? `(${c.phone})` : ''} — बकाया: {CFG.currency}{Number(c.amount || 0).toLocaleString()}
+                      {c.name} {c.phone ? `(${c.phone})` : ''} — Dues: {CFG.currency}{Number(c.amount || 0).toLocaleString()}
                     </option>
                   ))}
                   {(customers || []).filter(c => !Number(c.amount || 0) > 0).map(c => (
                     <option key={c.id} value={c.id}>
-                      {c.name} {c.phone ? `(${c.phone})` : ''} — कोई बकाया नहीं (₹0)
+                      {c.name} {c.phone ? `(${c.phone})` : ''} — No Dues (₹0)
                     </option>
                   ))}
                 </select>
@@ -102,7 +102,7 @@ function CollectDuesModal({ customer, customers, onClose, onCollected, user }) {
                   <div style={{ fontSize: '12px', color: '#64748b' }}><i className="fas fa-phone"></i> {activeCustomer.phone || 'No phone'}</div>
                 </div>
                 <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontSize: '11px', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>कुल बकाया उधार</div>
+                  <div style={{ fontSize: '11px', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Total Outstanding Dues</div>
                   <div style={{ fontSize: '18px', fontWeight: 800, color: currentDues > 0 ? '#dc2626' : '#16a34a' }}>
                     {CFG.currency}{currentDues.toLocaleString()}
                   </div>
@@ -112,7 +112,7 @@ function CollectDuesModal({ customer, customers, onClose, onCollected, user }) {
 
             {/* Amount Input & Quick Pills */}
             <div className="form-group" style={{ marginBottom: '16px' }}>
-              <label style={{ fontWeight: 600, display: 'block', marginBottom: '6px' }}>Amount to Collect (जमा राशि) *</label>
+              <label style={{ fontWeight: 600, display: 'block', marginBottom: '6px' }}>Amount to Collect *</label>
               <div style={{ position: 'relative' }}>
                 <span style={{ position: 'absolute', left: '12px', top: '10px', fontWeight: 700, color: '#64748b', fontSize: '16px' }}>{CFG.currency}</span>
                 <input
@@ -152,7 +152,7 @@ function CollectDuesModal({ customer, customers, onClose, onCollected, user }) {
 
             {/* Payment Mode Selection */}
             <div className="form-group" style={{ marginBottom: '16px' }}>
-              <label style={{ fontWeight: 600, display: 'block', marginBottom: '8px' }}>Payment Mode (भुगतान माध्यम) *</label>
+              <label style={{ fontWeight: 600, display: 'block', marginBottom: '8px' }}>Payment Mode *</label>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                 <button
                   type="button"
@@ -171,8 +171,8 @@ function CollectDuesModal({ customer, customers, onClose, onCollected, user }) {
                     gap: '4px'
                   }}
                 >
-                  <span style={{ fontSize: '16px' }}><i className="fas fa-money-bill-wave"></i> Cash (नकद)</span>
-                  <span style={{ fontSize: '11px', fontWeight: 500 }}>दराज / गल्ले में जमा होगा</span>
+                  <span style={{ fontSize: '16px' }}><i className="fas fa-money-bill-wave"></i> Cash</span>
+                  <span style={{ fontSize: '11px', fontWeight: 500 }}>Received in Cash Drawer (Galla)</span>
                 </button>
                 <button
                   type="button"
@@ -192,14 +192,14 @@ function CollectDuesModal({ customer, customers, onClose, onCollected, user }) {
                   }}
                 >
                   <span style={{ fontSize: '16px' }}><i className="fas fa-qrcode"></i> Online UPI / Bank</span>
-                  <span style={{ fontSize: '11px', fontWeight: 500 }}>बैंक खाते में जमा होगा</span>
+                  <span style={{ fontSize: '11px', fontWeight: 500 }}>Received in Bank Account</span>
                 </button>
               </div>
             </div>
 
             {/* Note / Reference */}
             <div className="form-group" style={{ marginBottom: '8px' }}>
-              <label style={{ fontWeight: 600, display: 'block', marginBottom: '6px' }}>Note / Reference (विवरण)</label>
+              <label style={{ fontWeight: 600, display: 'block', marginBottom: '6px' }}>Note / Reference</label>
               <input
                 type="text"
                 value={note}
@@ -213,7 +213,7 @@ function CollectDuesModal({ customer, customers, onClose, onCollected, user }) {
           <div className="modal-footer" style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', padding: '14px 20px', background: '#f8fafc', borderTop: '1px solid #e2e8f0' }}>
             <button type="button" className="btn btn-secondary" onClick={onClose} disabled={saving}><i className="fas fa-times"></i> Cancel</button>
             <button type="submit" className="btn btn-success" style={{ background: '#16a34a', borderColor: '#16a34a', fontWeight: 700 }} disabled={saving}>
-              {saving ? <><i className="fas fa-spinner fa-spin"></i> Processing...</> : <><i className="fas fa-check-circle"></i> Confirm Wasooli (जमा करें)</>}
+              {saving ? <><i className="fas fa-spinner fa-spin"></i> Processing...</> : <><i className="fas fa-check-circle"></i> Confirm Payment (Wasooli)</>}
             </button>
           </div>
         </form>
@@ -278,7 +278,7 @@ function RecordsView({ user, role }) {
           { data: 'category', title: 'Group', render: (d, t) => t === 'display' ? esc(d || '') : d },
           {
             data: 'amount',
-            title: 'Balance (उधार)',
+            title: 'Balance (Dues)',
             render: (d, t, row) => {
               if (t !== 'display') return d;
               const amt = Number(d || 0);
@@ -298,7 +298,7 @@ function RecordsView({ user, role }) {
             title: 'Actions',
             orderable: false,
             render: (d, t, row) => {
-              const collectBtn = Number(row.amount || 0) > 0 ? `<button class="action-icon dues-icon" data-action="collect" title="Collect Dues (उधार वसूली)" style="color:#16a34a;"><i class="fas fa-hand-holding-dollar"></i></button>` : '';
+              const collectBtn = Number(row.amount || 0) > 0 ? `<button class="action-icon dues-icon" data-action="collect" title="Collect Dues" style="color:#16a34a;"><i class="fas fa-hand-holding-dollar"></i></button>` : '';
               return `<button class="action-icon" data-action="view" title="View"><i class="fas fa-eye"></i></button><button class="action-icon edit-icon" data-action="edit" title="Edit"><i class="fas fa-edit"></i></button>${collectBtn}` + (role === 'Admin' ? `<button class="action-icon delete-icon" data-action="delete" title="Delete"><i class="fas fa-trash"></i></button>` : '');
             }
           }
@@ -396,7 +396,7 @@ function RecordsView({ user, role }) {
       {load && <TopLoadingBar />}
       <div className="section-header">
         <div>
-          <h2><i className="fas fa-address-book"></i> Customers &amp; Khata (ग्राहक व उधार)</h2>
+          <h2><i className="fas fa-address-book"></i> Customers &amp; Khata</h2>
           <div style={{ fontSize: '13px', color: '#64748b', marginTop: '2px' }}>
             Manage regular customers, track credit balances, and collect dues via Cash or Online UPI
           </div>
@@ -408,7 +408,7 @@ function RecordsView({ user, role }) {
             style={{ background: '#16a34a', borderColor: '#16a34a', fontWeight: 700 }}
             onClick={() => { setCollectTargetCust(null); setShowCollectModal(true); }}
           >
-            <i className="fas fa-hand-holding-dollar"></i> Collect Dues (उधार वसूली)
+            <i className="fas fa-hand-holding-dollar"></i> Collect Dues
           </button>
           <button
             className="btn btn-primary"
@@ -481,7 +481,7 @@ function RecordsView({ user, role }) {
                   { label: 'Customers', value: records.length },
                   { label: 'Active', value: records.filter(r => r.active).length },
                   {
-                    label: 'Total Market Dues (कुल बाज़ार उधार)',
+                    label: 'Total Market Dues',
                     value: money(totalMarketDues),
                     style: { color: totalMarketDues > 0 ? '#dc2626' : '#16a34a', fontWeight: 700 }
                   }
@@ -497,7 +497,7 @@ function RecordsView({ user, role }) {
         <div style={{ background: '#fff', borderRadius: '10px', border: '1px solid #e2e8f0', padding: '16px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
             <h3 style={{ margin: 0, fontSize: '16px', color: '#0f172a' }}>
-              <i className="fas fa-receipt" style={{ color: '#16a34a' }}></i> Recent Dues Collections (उधार वसूली रसीदें)
+              <i className="fas fa-receipt" style={{ color: '#16a34a' }}></i> Recent Dues Collections
             </h3>
             <span style={{ fontSize: '13px', color: '#64748b' }}>
               Total Recovered: <strong>{money(duesCollections.reduce((s, d) => s + (Number(d.amount) || 0), 0))}</strong>
@@ -539,7 +539,7 @@ function RecordsView({ user, role }) {
                           background: dc.paymentMode === 'Cash' ? '#dcfce7' : '#e0f2fe',
                           color: dc.paymentMode === 'Cash' ? '#15803d' : '#0369a1'
                         }}>
-                          {dc.paymentMode === 'Cash' ? '💵 Cash (गल्ला)' : '📱 Online UPI'}
+                          {dc.paymentMode === 'Cash' ? '💵 Cash (Drawer)' : '📱 Online UPI'}
                         </span>
                       </td>
                       <td style={{ padding: '10px', fontWeight: 600, color: Number(dc.remainingBalance) > 0 ? '#dc2626' : '#16a34a' }}>

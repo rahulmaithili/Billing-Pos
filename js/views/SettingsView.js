@@ -1,3 +1,11 @@
+const PRESET_LOGOS = [
+  { name: 'Supermarket Cart', url: 'https://cdn-icons-png.flaticon.com/512/3081/3081840.png' },
+  { name: 'Kirana Grocery', url: 'https://cdn-icons-png.flaticon.com/512/372/372627.png' },
+  { name: 'Fresh Mart Green', url: 'https://cdn-icons-png.flaticon.com/512/2981/2981297.png' },
+  { name: 'Shree Ganesh Mart', url: 'https://cdn-icons-png.flaticon.com/512/3759/3759041.png' },
+  { name: 'Departmental Store', url: 'https://cdn-icons-png.flaticon.com/512/1170/1170678.png' },
+  { name: 'Wholesale Trade', url: 'https://cdn-icons-png.flaticon.com/512/2897/2897818.png' }
+];
 function SettingsView({ user, role }) {
       const { settings, categories, refreshConfig } = useConfig();
       const [form, setForm] = useState(settings || {});

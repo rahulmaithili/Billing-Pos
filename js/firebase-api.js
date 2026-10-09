@@ -337,7 +337,7 @@ seedDemoData();
       } catch (e) { return { success: false, message: e.message }; }
     }
 
-    // Customer Dues Collection (उधार वसूली - Cash या Online UPI)
+    // Customer Dues Collection (Cash vs Online UPI)
     async function fbCollectCustomerDues(customerId, amount, paymentMode, note, user) {
       try {
         const custSnap = await db.ref('records/' + customerId).once('value');
@@ -364,7 +364,7 @@ seedDemoData();
           createdAt: nowIso()
         };
         const ref = await db.ref('dues_collections').push(paymentRecord);
-        const modeLabel = paymentMode === 'Cash' ? 'Cash (दराज / गल्ला)' : 'Online UPI / Bank (बैंक खाता)';
+        const modeLabel = paymentMode === 'Cash' ? 'Cash (Drawer)' : 'Online UPI / Bank';
         await fbLogActivity('Collect Dues', user, 'Collected ' + CFG.currency + payAmt + ' from ' + cust.name + ' via ' + modeLabel + ' (Remaining: ' + CFG.currency + newBalance + ')');
         return { success: true, message: 'Collected ' + CFG.currency + payAmt + ' successfully!', id: ref.key, data: Object.assign({ id: ref.key }, paymentRecord) };
       } catch (e) {
