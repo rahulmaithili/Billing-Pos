@@ -93,7 +93,7 @@ function MySettingsView({ user, role }) {
                 </div>
                 <div className="tp-content">
                   <div className="tp-kpis">
-                    {[['128', 'RECORDS', pvTheme.primary, '#fff'], ['$9.4k', 'SALES', pvTheme.secondary, '#fff'], ['+18%', 'PROFIT', pvTheme.accent, pvTheme.onAccent]].map(([n, l, bg, c], i) => (
+                    {[['128', 'RECORDS', pvTheme.primary, '#fff'], ['₹9.4k', 'SALES', pvTheme.secondary, '#fff'], ['+18%', 'PROFIT', pvTheme.accent, pvTheme.onAccent]].map(([n, l, bg, c], i) => (
                       <div key={i} className="tp-kpi" style={{ background: bg, color: c }}>
                         <span className="tp-kpi-n">{n}</span>
                         <span className="tp-kpi-l">{l}</span>

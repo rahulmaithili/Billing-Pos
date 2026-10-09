@@ -46,8 +46,8 @@ function SettingsView({ user, role }) {
           gstinNumber: form.gstinNumber || '',
           defaultHsn: form.defaultHsn || '',
           availableUnits: form.availableUnits || 'Pcs, Box, Carton, Kg, Gram, Pack, Dozen, Ltr, Meter, Bundle',
-          currencySymbol: form.currencySymbol || '$',
-          currencyCode: form.currencyCode || 'USD',
+          currencySymbol: form.currencySymbol || '₹',
+          currencyCode: form.currencyCode || 'INR',
           currencyDecimals: Number(form.currencyDecimals) || 2,
           taxRate: Number(form.taxRate) || 0,
           taxInclusive: !!form.taxInclusive,
@@ -370,19 +370,19 @@ function SettingsView({ user, role }) {
                   <div className="form-grid">
                     <div className="form-group">
                       <label>Currency Symbol</label>
-                      <input type="text" value={form.currencySymbol || '$'} onChange={e => upd('currencySymbol', e.target.value)} placeholder="$" />
+                      <input type="text" value={form.currencySymbol || '₹'} onChange={e => upd('currencySymbol', e.target.value)} placeholder="₹" />
                     </div>
                     <div className="form-group">
                       <label>Currency Code</label>
-                      <input type="text" value={form.currencyCode || 'USD'} onChange={e => upd('currencyCode', e.target.value)} placeholder="USD" />
+                      <input type="text" value={form.currencyCode || 'INR'} onChange={e => upd('currencyCode', e.target.value)} placeholder="INR" />
                     </div>
                   </div>
                   <div className="form-grid">
                     <div className="form-group">
                       <label>Currency Decimals</label>
                       <select value={form.currencyDecimals ?? 2} onChange={e => upd('currencyDecimals', Number(e.target.value))}>
-                        <option value={2}>2 Decimals ($10.50)</option>
-                        <option value={0}>0 Decimals (Whole NT$ 100, Rs 500)</option>
+                        <option value={2}>2 Decimals (₹10.50)</option>
+                        <option value={0}>0 Decimals (Whole ₹500)</option>
                       </select>
                     </div>
                     <div className="form-group">

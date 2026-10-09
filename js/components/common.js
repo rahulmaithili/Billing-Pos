@@ -657,11 +657,11 @@ const { useState, useEffect, useRef, useMemo, useCallback, useDeferredValue } = 
 
     // app-wide config mirror - lets non-component code (money(), datatable renders, exports) read settings synchronously
     const CFG = {
-      currency: '$', currencyCode: 'USD', currencyDecimals: 2, taxRate: 0, taxInclusive: false,
-      invoicePrefix: 'INV-', lowStockDefault: 5, receiptHeader: '', receiptFooter: 'Thank you for your purchase!',
+      currency: '₹', currencyCode: 'INR', currencyDecimals: 2, taxRate: 0, taxInclusive: false,
+      invoicePrefix: 'INV-', lowStockDefault: 5, receiptHeader: '', receiptFooter: 'Thank you for shopping with us! Visit again.',
       receiptRollWidth: '80mm', dateFormat: 'DD/MM/YYYY',
       upiId: 'shop@upi', upiPayeeName: 'Store',
-      business: { name: 'My Business', address: '', phone: '', email: '' }, logoUrl: ''
+      business: { name: 'Kirana & Supermarket Mart', address: 'Main Market, Kirana & Supermarket Complex', phone: '+91 98765 43210', email: '' }, logoUrl: ''
     };
     function applySettings(s) {
       if (!s) return;

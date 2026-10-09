@@ -6,6 +6,9 @@ function POSView({ user, role }) {
       const [load, setLoad] = useState('');
       const [reloadKey, setReloadKey] = useState(0);
       const [customerId, setCustomerId] = useState('');
+      const [customerMode, setCustomerMode] = useState('walkin'); // 'walkin' | 'registered'
+      const [walkinName, setWalkinName] = useState('');
+      const [walkinPhone, setWalkinPhone] = useState('');
       const [discountType, setDiscountType] = useState('flat');
       const [discountValue, setDiscountValue] = useState('');
       const [paymentMethod, setPaymentMethod] = useState('Cash');
@@ -26,7 +29,10 @@ function POSView({ user, role }) {
       const codeIndex = useMemo(() => buildCodeIndex(products), [products]);
       const { data: custData } = useFetch(() => fbGetCustomers(), []);
       const customers = useMemo(() => (custData && custData.success ? custData.data : []), [custData]);
-      const customerOpts = useMemo(() => customers.map(c => ({ value: c.id, label: c.name + (c.phone ? ' · ' + c.phone : '') })), [customers]);
+      const customerOpts = useMemo(() => customers.map(c => ({
+        value: c.id,
+        label: c.name + (c.phone ? ' · ' + c.phone : '') + (Number(c.amount || 0) > 0 ? ' [उधार: ' + CFG.currency + Number(c.amount).toLocaleString() + ']' : '')
+      })), [customers]);
       const { loading: loadingMovements, data: movementsData } = useFetch(() => fbGetStockMovements(), [reloadKey]);
       const movements = useMemo(() => (movementsData && movementsData.success ? movementsData.data : []), [movementsData]);
       const { data: catData } = useFetch(() => fbGetCategories(), [reloadKey]);
@@ -570,16 +576,90 @@ function POSView({ user, role }) {
                 )}
               </div>
 
-              {/* Customer Selector */}
-              <div className="pos-customer-wrap">
-                <SearchableDropdown
-                  label="Customer (Walk-in / Account)"
-                  icon="fas fa-user"
-                  options={customerOpts}
-                  value={customerId}
-                  onChange={setCustomerId}
-                  placeholder="Walk-in Customer"
-                />
+                            {/* Customer Selection: Walk-in (0 registration) vs Registered / Khata */}
+              <div className="pos-customer-wrap" style={{ background: '#f8fafc', padding: '10px', borderRadius: '8px', border: '1px solid #e2e8f0', marginBottom: '12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                  <label style={{ fontSize: '11px', fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.4px', margin: 0 }}>
+                    <i className="fas fa-user-tag" style={{ color: 'var(--navy-accent)', marginRight: 4 }}></i> Grahak / Customer
+                  </label>
+                  <div style={{ display: 'flex', gap: '4px', background: '#e2e8f0', padding: '2px', borderRadius: '6px' }}>
+                    <button
+                      type="button"
+                      onClick={() => { setCustomerMode('walkin'); setCustomerId(''); }}
+                      style={{
+                        padding: '3px 8px',
+                        fontSize: '11px',
+                        fontWeight: 700,
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        background: customerMode === 'walkin' ? '#16a34a' : 'transparent',
+                        color: customerMode === 'walkin' ? '#fff' : '#475569'
+                      }}
+                    >
+                      <i className="fas fa-person-walking"></i> Walk-in (सीधा बिल)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setCustomerMode('registered')}
+                      style={{
+                        padding: '3px 8px',
+                        fontSize: '11px',
+                        fontWeight: 700,
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        background: customerMode === 'registered' ? 'var(--navy-primary)' : 'transparent',
+                        color: customerMode === 'registered' ? '#fff' : '#475569'
+                      }}
+                    >
+                      <i className="fas fa-book-bookmark"></i> Khata / Regular
+                    </button>
+                  </div>
+                </div>
+
+                {customerMode === 'walkin' ? (
+                  <div>
+                    <div style={{ fontSize: '11px', color: '#16a34a', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '6px' }}>
+                      <i className="fas fa-bolt"></i> बिना रजिस्ट्रेशन सीधा बिलिंग (0 Mandatory Fields - Fast Checkout)
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
+                      <input
+                        type="text"
+                        placeholder="Grahak Name (Optional)"
+                        value={walkinName}
+                        onChange={e => setWalkinName(e.target.value)}
+                        style={{ padding: '6px 8px', fontSize: '11.5px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
+                      />
+                      <input
+                        type="tel"
+                        placeholder="Mobile No (Optional)"
+                        value={walkinPhone}
+                        onChange={e => setWalkinPhone(e.target.value)}
+                        style={{ padding: '6px 8px', fontSize: '11.5px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <SearchableDropdown
+                      label="Select Khata Customer"
+                      icon="fas fa-user"
+                      options={customerOpts}
+                      value={customerId}
+                      onChange={setCustomerId}
+                      placeholder="Select regular customer..."
+                    />
+                    {customerId && (
+                      <div style={{ marginTop: '6px', fontSize: '12px', display: 'flex', justifyContent: 'space-between', background: '#fff', padding: '6px 8px', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+                        <span>Customer Khata Dues:</span>
+                        <strong style={{ color: Number(customers.find(c => c.id === customerId)?.amount || 0) > 0 ? '#dc2626' : '#16a34a' }}>
+                          {money(customers.find(c => c.id === customerId)?.amount || 0)}
+                        </strong>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* Discount Section */}

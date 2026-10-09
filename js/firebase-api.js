@@ -34,7 +34,7 @@ async function seedDemoData() {
         const setSnap = await db.ref('settings').once('value');
         if (!setSnap.exists()) {
           await db.ref('settings').set({
-            businessName: 'My Business', currencySymbol: '$', currencyCode: 'USD', taxRate: 0, taxInclusive: false,
+            businessName: 'Kirana & Supermarket Mart', currencySymbol: '₹', currencyCode: 'INR', taxRate: 0, taxInclusive: false,
             invoicePrefix: 'INV-', lowStockDefault: 5, receiptHeader: '', receiptFooter: 'Thank you for your purchase!',
             address: '', phone: '', email: '', logoUrl: ''
           });
@@ -317,9 +317,76 @@ seedDemoData();
         await Promise.all(sale.items.map(function (it) {
           return fbAddStockMovement({ productId: it.productId, type: 'out', qty: it.qty, reason: 'Sale', reference: saleId }, it.name, user);
         }));
+        if ((sale.paymentMethod === 'Credit' || sale.paymentMethod === 'Khata') && sale.customerId) {
+          try {
+            const cSnap = await db.ref('records/' + sale.customerId).once('value');
+            if (cSnap.exists()) {
+              const curBal = Number(cSnap.val().amount || 0);
+              await db.ref('records/' + sale.customerId).update({
+                amount: curBal + Number(sale.total || 0),
+                lastCreditDate: nowIso()
+              });
+            }
+          } catch (errBal) {
+            console.error('Failed to update customer credit balance', errBal);
+          }
+        }
         const totalStr = CFG.currency + Number(sale.total || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         await fbLogActivity('Sale', user, invoiceNo + ' — Total ' + totalStr + ' (' + sale.items.length + ' item' + (sale.items.length === 1 ? '' : 's') + ')');
         return { success: true, message: 'Sale completed', id: saleId, data: Object.assign({ id: saleId }, payload) };
+      } catch (e) { return { success: false, message: e.message }; }
+    }
+
+    // Customer Dues Collection (उधार वसूली - Cash या Online UPI)
+    async function fbCollectCustomerDues(customerId, amount, paymentMode, note, user) {
+      try {
+        const custSnap = await db.ref('records/' + customerId).once('value');
+        if (!custSnap.exists()) return { success: false, message: 'Customer not found' };
+        const cust = custSnap.val();
+        const currentBalance = Number(cust.amount || 0);
+        const payAmt = Number(amount || 0);
+        if (payAmt <= 0) return { success: false, message: 'Invalid payment amount' };
+
+        const newBalance = Math.max(0, currentBalance - payAmt);
+        await db.ref('records/' + customerId).update({ amount: newBalance, lastPaymentDate: nowIso() });
+
+        const paymentRecord = {
+          customerId: customerId,
+          customerName: cust.name || 'Customer',
+          customerPhone: cust.phone || '',
+          amount: payAmt,
+          previousBalance: currentBalance,
+          remainingBalance: newBalance,
+          paymentMode: paymentMode || 'Cash', // 'Cash' | 'Online'
+          note: note || '',
+          collectedBy: (user && (user.name || user.email)) || 'Cashier',
+          date: nowIso().slice(0, 10),
+          createdAt: nowIso()
+        };
+        const ref = await db.ref('dues_collections').push(paymentRecord);
+        const modeLabel = paymentMode === 'Cash' ? 'Cash (दराज / गल्ला)' : 'Online UPI / Bank (बैंक खाता)';
+        await fbLogActivity('Collect Dues', user, 'Collected ' + CFG.currency + payAmt + ' from ' + cust.name + ' via ' + modeLabel + ' (Remaining: ' + CFG.currency + newBalance + ')');
+        return { success: true, message: 'Collected ' + CFG.currency + payAmt + ' successfully!', id: ref.key, data: Object.assign({ id: ref.key }, paymentRecord) };
+      } catch (e) {
+        return { success: false, message: e.message };
+      }
+    }
+
+    async function fbGetDuesCollections() {
+      try {
+        const snap = await db.ref('dues_collections').once('value');
+        const val = snap.val() || {};
+        const arr = Object.entries(val).map(function (e) { return Object.assign({ id: e[0] }, e[1]); });
+        arr.sort(function (a, b) { return new Date(b.createdAt) - new Date(a.createdAt); });
+        return { success: true, data: arr };
+      } catch (e) { return { success: false, message: e.message, data: [] }; }
+    }
+
+    async function fbDeleteDuesCollection(id, user) {
+      try {
+        await db.ref('dues_collections/' + id).remove();
+        await fbLogActivity('Delete Dues Entry', user, 'Removed dues record ' + id);
+        return { success: true, message: 'Record deleted' };
       } catch (e) { return { success: false, message: e.message }; }
     }
 
@@ -349,7 +416,7 @@ seedDemoData();
         await Promise.all(items.map(function (it) {
           return fbAddStockMovement({ productId: it.productId, type: 'in', qty: it.qty, reason: 'Return', reference: saleId }, it.name, user);
         }));
-        const refundStr = '$' + Number(totalRefund || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        const refundStr = CFG.currency + Number(totalRefund || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         await fbLogActivity('Return', user, 'Refund ' + refundStr + ' (' + items.length + ' item' + (items.length === 1 ? '' : 's') + ') for sale ' + saleId);
         return { success: true, message: 'Return processed', id: ref.key };
       } catch (e) { return { success: false, message: e.message }; }

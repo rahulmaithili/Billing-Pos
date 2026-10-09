@@ -142,7 +142,7 @@ function PaymentMethodsView({ user, role }) {
 
                   <div className="pm-box-stats">
                     <i className="fas fa-receipt"></i>
-                    <span>{idx === 0 ? '48' : idx === 1 ? '67' : '0'} orders · {idx === 0 ? '$773.90' : idx === 1 ? '$760.70' : '$0.00'} approved (30 days)</span>
+                    <span>{idx === 0 ? '48' : idx === 1 ? '67' : '0'} orders · {idx === 0 ? '₹7,739.00' : idx === 1 ? '₹7,607.00' : '₹0.00'} approved (30 days)</span>
                   </div>
 
                   <div className="pm-box-footer">
