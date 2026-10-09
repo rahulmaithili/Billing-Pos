@@ -8780,6 +8780,50 @@ function SettingsView({ user, role }) {
               {/* 6. Currency */}
               {activeTab === 'currency' && (
                 <LteCard title="Currency & Pricing Configuration" icon="fa-coins">
+                  {/* Quick Preset Buttons */}
+                  <div style={{ marginBottom: 18, background: '#f8fafc', padding: 14, borderRadius: 8, border: '1px solid #e2e8f0' }}>
+                    <label style={{ fontSize: 12, fontWeight: 700, color: '#475569', display: 'block', marginBottom: 8 }}>
+                      <i className="fas fa-bolt" style={{ color: '#eab308', marginRight: 6 }}></i>
+                      Quick Currency Presets (1-Click Set):
+                    </label>
+                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                      {[
+                        { code: 'INR', sym: '₹', label: 'INR (₹ - Indian Rupee)' },
+                        { code: 'USD', sym: '$', label: 'USD ($ - US Dollar)' },
+                        { code: 'EUR', sym: '€', label: 'EUR (€ - Euro)' },
+                        { code: 'GBP', sym: '£', label: 'GBP (£ - British Pound)' },
+                        { code: 'AED', sym: 'AED', label: 'AED (Dirham)' },
+                        { code: 'NPR', sym: 'Rs.', label: 'NPR (Rs - Nepal)' },
+                        { code: 'BDT', sym: '৳', label: 'BDT (৳ - Bangladesh)' }
+                      ].map(cur => (
+                        <button
+                          key={cur.code}
+                          type="button"
+                          onClick={() => { upd('currencySymbol', cur.sym); upd('currencyCode', cur.code); }}
+                          style={{
+                            padding: '6px 12px',
+                            fontSize: 12,
+                            fontWeight: 700,
+                            borderRadius: 6,
+                            border: (form.currencyCode === cur.code) ? '2px solid var(--navy-accent)' : '1px solid #cbd5e1',
+                            background: (form.currencyCode === cur.code) ? '#e0f2fe' : '#ffffff',
+                            color: (form.currencyCode === cur.code) ? '#0369a1' : '#334155',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          {cur.label}
+                        </button>
+                      ))}
+                    </div>
+                    {/* Live Preview */}
+                    <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 10, fontSize: 13 }}>
+                      <span style={{ color: '#64748b', fontWeight: 600 }}>Live Bill Display Preview:</span>
+                      <strong style={{ fontSize: 16, color: '#16a34a' }}>
+                        {form.currencySymbol || '₹'} {Number(1450.5).toLocaleString('en-US', { minimumFractionDigits: form.currencyDecimals ?? 2, maximumFractionDigits: form.currencyDecimals ?? 2 })}
+                      </strong>
+                    </div>
+                  </div>
+
                   <div className="form-grid">
                     <div className="form-group">
                       <label>Currency Symbol</label>
@@ -8917,8 +8961,6 @@ function SettingsView({ user, role }) {
         </div>
       );
     }
-
-    // --- Order Board (Kitchen / Barista Live Queue Kanban) ---
 
 
 function OrderBoardView({ user, role }) {
