@@ -687,7 +687,7 @@ const { useState, useEffect, useRef, useMemo, useCallback, useDeferredValue } = 
     // category dropdown options - live list from DB, falls back to the seed defaults while loading
     const useCategoryOpts = () => { const { categories } = useConfig(); return useMemo(() => categories.length ? categories.map(c => ({ value: c.name, label: c.name })) : CATEGORY_OPTS, [categories]); };
 
-    const LOGO_URL = 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiGXxCe0WNNedmFqSWeF761f7Kshhc-NP5ChRQKz9fr97cO8VaarvD0KlCwqHojJVBWv-RAxfOqMI5rD4H78KnARyOc6QgwL1nRRFWf5xNQ1d9F9HfAoLPPGlTyP0GwNl4n-INMEsWLQ4Y7zJtz5bOdAnc2ePH9-uCRgshlo6BsS6gJEz6fhrxL-5U5O3sX/s160/channels4_profile.jpg';
+    const LOGO_URL = ls.get('shop_logo_url') || 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiGXxCe0WNNedmFqSWeF761f7Kshhc-NP5ChRQKz9fr97cO8VaarvD0KlCwqHojJVBWv-RAxfOqMI5rD4H78KnARyOc6QgwL1nRRFWf5xNQ1d9F9HfAoLPPGlTyP0GwNl4n-INMEsWLQ4Y7zJtz5bOdAnc2ePH9-uCRgshlo6BsS6gJEz6fhrxL-5U5O3sX/s160/channels4_profile.jpg';
 
     const CATEGORY_OPTS = [
       { value: 'Electronics', label: 'Electronics' },
@@ -1114,7 +1114,7 @@ const { useState, useEffect, useRef, useMemo, useCallback, useDeferredValue } = 
           <div className="sidebar-brand">
             <img src={LOGO_URL} alt="" className="sidebar-brand-logo" />
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-              <span className="sidebar-brand-name">Kirana &amp; Supermarket POS</span>
+              <span className="sidebar-brand-name">{ls.get('shop_name') || 'Kirana & Supermarket POS'}</span>
               <span style={{ fontSize: '10px', background: 'rgba(255,255,255,0.18)', color: '#fff', padding: '2px 8px', borderRadius: '4px', fontWeight: 700, letterSpacing: '0.8px', marginTop: '2px' }}>ADMIN</span>
             </div>
           </div>
@@ -1156,7 +1156,7 @@ const { useState, useEffect, useRef, useMemo, useCallback, useDeferredValue } = 
               <div className="sidebar-group-title">Sales</div>
               <ul className="sidebar-menu">
                 <li><button className={activeMenu === 'records' ? 'active' : ''} onClick={() => setActiveMenu('records')}><i className="fas fa-user-group"></i><span>Customers</span></button></li>
-                <li><button className={activeMenu === 'reports' ? 'active' : ''} onClick={() => setActiveMenu('reports')}><i className="fas fa-chart-column"></i><span>Reports</span></button></li>
+                <li><button className={activeMenu === 'reports' ? 'active' : ''} onClick={() => setActiveMenu('reports')}><i className="fas fa-book-journal-whills"></i><span>Rojnamcha</span><em className="nav-badge-pill" style={{ background: '#16a34a' }}>Day Book</em></button></li>
                 {isAdmin && <li><button className={activeMenu === 'expenses' ? 'active' : ''} onClick={() => setActiveMenu('expenses')}><i className="fas fa-money-bill-trend-up"></i><span>Expenses</span></button></li>}
                 {isAdmin && <li><button className={activeMenu === 'suppliers' ? 'active' : ''} onClick={() => setActiveMenu('suppliers')}><i className="fas fa-truck-field"></i><span>Suppliers</span></button></li>}
                 {isAdmin && <li><button className={activeMenu === 'purchase-orders' ? 'active' : ''} onClick={() => setActiveMenu('purchase-orders')}><i className="fas fa-file-invoice-dollar"></i><span>Purchase Orders</span></button></li>}

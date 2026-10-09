@@ -11,7 +11,7 @@
         case 'addons': return <AddonsView user={user} role={role} />;
         case 'stock': return <StockView user={user} role={role} />;
         case 'records': return <RecordsView user={user} role={role} />;
-        case 'reports': return <ReportsView user={user} role={role} />;
+        case 'reports': return <ReportsView user={user} role={role} setActiveMenu={setActiveMenu} />;
         case 'expenses': return <ExpensesView user={user} role={role} />;
         case 'suppliers': return <SuppliersView user={user} role={role} />;
         case 'purchase-orders': return <PurchaseOrdersView user={user} role={role} />;
@@ -67,7 +67,7 @@
         addons: 'Add-ons',
         stock: 'Stock In/Out',
         records: 'Customers',
-        reports: 'Reports',
+        reports: 'Rojnamcha (Daily Cashbook)',
         expenses: 'Expenses',
         suppliers: 'Suppliers',
         'purchase-orders': 'Purchase Orders',
@@ -92,7 +92,7 @@
         addons: 'fa-box-archive',
         stock: 'fa-dolly',
         records: 'fa-user-group',
-        reports: 'fa-chart-column',
+        reports: 'fa-book-journal-whills',
         expenses: 'fa-money-bill-trend-up',
         suppliers: 'fa-truck-field',
         'purchase-orders': 'fa-file-invoice-dollar',
