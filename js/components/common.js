@@ -983,6 +983,20 @@ const { useState, useEffect, useRef, useMemo, useCallback, useDeferredValue } = 
         text += '*Change:* ' + cur + Number(sale.changeDue).toFixed(2) + '\n';
       }
       text += '--------------------------------\n';
+      if (sale.loyaltyPointsEarned > 0 || sale.loyaltyPointsRedeemed > 0) {
+        text += '--------------------------------\n';
+        text += '🎁 *CUSTOMER REWARD POINTS:*\n';
+        if (sale.loyaltyPointsRedeemed > 0) {
+          text += '*Points Redeemed:* ' + sale.loyaltyPointsRedeemed + ' pts (-' + cur + sale.loyaltyPointsRedeemed + ')\n';
+        }
+        if (sale.loyaltyPointsEarned > 0) {
+          text += '*Points Earned Today:* +' + sale.loyaltyPointsEarned + ' pts\n';
+        }
+        if (sale.loyaltyPointsBalance != null) {
+          text += '*Points Balance:* *' + sale.loyaltyPointsBalance + ' pts* (' + cur + sale.loyaltyPointsBalance + ' discount next time!)\n';
+        }
+      }
+      text += '--------------------------------\n';
       const footerMsg = CFG.receiptFooter || ls.get('shop_receipt_footer') || 'Thank you for shopping with us! Visit again.';
       text += '🙏 *' + footerMsg + '*';
       return text;

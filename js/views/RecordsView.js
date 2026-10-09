@@ -277,6 +277,15 @@ function RecordsView({ user, role }) {
           { data: 'customerType', title: 'Type', render: (d, t) => t === 'display' ? '<span class="type-chip">' + esc(d || 'Retail') + '</span>' : d },
           { data: 'category', title: 'Group', render: (d, t) => t === 'display' ? esc(d || '') : d },
           {
+            data: 'loyaltyPoints',
+            title: '🎁 Loyalty Points',
+            render: (d, t) => {
+              if (t !== 'display') return d || 0;
+              const pts = Number(d || 0);
+              return '<span style="background:#ecfdf5; color:#059669; border:1px solid #a7f3d0; font-weight:700; padding:2px 8px; border-radius:6px; font-size:12px;">🎁 ' + pts + ' pts (' + money(pts) + ')</span>';
+            }
+          },
+          {
             data: 'amount',
             title: 'Balance (Dues)',
             render: (d, t, row) => {

@@ -70,6 +70,8 @@ function ProductsView({ user, role }) {
         wholesalePrice: Number(p.wholesalePrice != null ? p.wholesalePrice : p.wholesale_price || (p.base_price || p.price || 0)),
         costPrice: Number(p.costPrice != null ? p.costPrice : p.cost || 0),
         unit: p.unit || 'Pcs',
+        expiryDate: p.expiryDate || null,
+        minStockAlert: p.minStockAlert != null ? Number(p.minStockAlert) : 5,
         hsnCode: p.hsnCode || p.hsn || '',
         sizes: p.sizes || [],
         addonIds: p.addon_ids || p.addons || []
@@ -83,6 +85,12 @@ function ProductsView({ user, role }) {
   const countSoldOut = products.filter(p => !p.isArchived && !p.isAvailable).length;
   const countPopular = products.filter(p => !p.isArchived && p.isPopular).length;
   const countArchived = products.filter(p => p.isArchived).length;
+  const countLowStock = products.filter(p => !p.isArchived && p.stockQty <= (p.minStockAlert ?? 5)).length;
+  const countExpiring = products.filter(p => {
+    if (!p.expiryDate || p.isArchived) return false;
+    const diffDays = Math.ceil((new Date(p.expiryDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+    return diffDays <= 30;
+  }).length;
 
   // Filtered products list
   const filteredProducts = useMemo(() => {
@@ -92,6 +100,8 @@ function ProductsView({ user, role }) {
       if (pipeFilter === 'sold_out' && (p.isArchived || p.isAvailable)) return false;
       if (pipeFilter === 'popular' && (p.isArchived || !p.isPopular)) return false;
       if (pipeFilter === 'archived' && !p.isArchived) return false;
+      if (pipeFilter === 'low_stock' && (p.isArchived || p.stockQty > (p.minStockAlert ?? 5))) return false;
+      if (pipeFilter === 'expiring' && (p.isArchived || !p.expiryDate || Math.ceil((new Date(p.expiryDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)) > 30)) return false;
 
       // Category Filter
       if (selectedCategory && p.category !== selectedCategory) return false;
@@ -619,6 +629,7 @@ function AddDrinkModal({ product, categories, addons, movements, onClose, onSave
   const currentStockQty = useMemo(() => product ? computeQtyOnHand(product.id, movements) : 0, [product, movements]);
   const [openingStock, setOpeningStock] = useState('');
   const [minStockAlert, setMinStockAlert] = useState(product ? (product.minStockAlert ?? 5) : 5);
+  const [expiryDate, setExpiryDate] = useState(product ? (product.expiryDate || '') : '');
   const [stockAdjustment, setStockAdjustment] = useState('');
   const [stockAdjReason, setStockAdjReason] = useState('Stock In / Purchase');
   
@@ -688,6 +699,7 @@ function AddDrinkModal({ product, categories, addons, movements, onClose, onSave
       costPrice: cPrice,
       cost: cPrice,
       minStockAlert: Number(minStockAlert) || 5,
+      expiryDate: expiryDate ? expiryDate.trim() : null,
       minWholesaleQty: Number(minWholesaleQty) || 1,
       sizes: sizes || [],
       addon_ids: selectedAddons || [],
@@ -778,7 +790,7 @@ function AddDrinkModal({ product, categories, addons, movements, onClose, onSave
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr', gap: 12, marginBottom: 12 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 12, marginBottom: 12 }}>
               <div className="form-group" style={{ margin: 0 }}>
                 <label style={{ fontSize: 12.5, fontWeight: 600, color: '#334155', marginBottom: 4, display: 'block' }}>Category *</label>
                 <select
@@ -821,6 +833,19 @@ function AddDrinkModal({ product, categories, addons, movements, onClose, onSave
                   onChange={e => setHsnCode(e.target.value)}
                   style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #cbd5e1', fontSize: 13 }}
                 />
+              </div>
+
+              <div className="form-group" style={{ margin: 0 }}>
+                <label style={{ fontSize: 12.5, fontWeight: 600, color: '#334155', marginBottom: 4, display: 'block' }}>
+                  <i className="fas fa-calendar-alt" style={{ color: '#d97706', marginRight: 4 }}></i> Expiry Date (Optional)
+                </label>
+                <input
+                  type="date"
+                  value={expiryDate}
+                  onChange={e => setExpiryDate(e.target.value)}
+                  style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #cbd5e1', fontSize: 13 }}
+                />
+                <small style={{ fontSize: 11, color: '#64748b' }}>For packaged foods, dairy, groceries with expiry</small>
               </div>
             </div>
 

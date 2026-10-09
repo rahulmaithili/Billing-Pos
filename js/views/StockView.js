@@ -272,6 +272,20 @@ function StockView({ user, role }) {
             )}
             {Number(sale.changeDue) > 0 ? <div className="ts-row"><span>Change</span><span>{money(sale.changeDue)}</span></div> : null}
             {sale.status === 'credit' ? <div className="ts-row" style={{ color: '#dc2626', fontWeight: 'bold' }}><span>Status</span><span>CREDIT / UNPAID</span></div> : null}
+            {(sale.loyaltyPointsEarned > 0 || sale.loyaltyPointsRedeemed > 0) && (
+              <div style={{ borderTop: '1px dashed #475569', paddingTop: 6, marginTop: 6, fontSize: 11 }}>
+                <div style={{ fontWeight: 700, textAlign: 'center', marginBottom: 2 }}>🎁 CUSTOMER REWARD POINTS</div>
+                {sale.loyaltyPointsRedeemed > 0 && (
+                  <div className="ts-row"><span>Points Redeemed</span><span>-{sale.loyaltyPointsRedeemed} pts ({money(sale.loyaltyPointsRedeemed)})</span></div>
+                )}
+                {sale.loyaltyPointsEarned > 0 && (
+                  <div className="ts-row"><span>Earned Today (+1 pt/₹100)</span><span>+{sale.loyaltyPointsEarned} pts</span></div>
+                )}
+                {sale.loyaltyPointsBalance != null && (
+                  <div className="ts-row" style={{ fontWeight: 700 }}><span>Points Balance</span><span>{sale.loyaltyPointsBalance} pts ({money(sale.loyaltyPointsBalance)})</span></div>
+                )}
+              </div>
+            )}
           </div>
           {/* Dynamic Payment / Verification QR on Thermal Receipt */}
           {(sale.paymentMethod === 'Online' || sale.paymentMethod === 'Split' || sale.status === 'credit') && (

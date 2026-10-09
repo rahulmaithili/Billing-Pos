@@ -926,6 +926,144 @@ function DashboardView({ user, role, setActiveMenu }) {
         )}
       </div>
 
+      
+      {/* Smart Inventory & Quality Control Alert Center */}
+      {(() => {
+        const lowStockItems = products.filter(p => {
+          if (p.status === 'archived' || p.active === false) return false;
+          const onHand = computeQtyOnHand(p.id, movements);
+          const limit = Number(p.minStockAlert != null ? p.minStockAlert : 5);
+          return onHand <= limit;
+        });
+
+        const expiringItems = products.filter(p => {
+          if (!p.expiryDate || p.status === 'archived' || p.active === false) return false;
+          const expTime = new Date(p.expiryDate).getTime();
+          if (isNaN(expTime)) return false;
+          const daysLeft = Math.ceil((expTime - Date.now()) / (1000 * 60 * 60 * 24));
+          return daysLeft <= 30; // Expired or expiring within 30 days
+        }).map(p => {
+          const expTime = new Date(p.expiryDate).getTime();
+          const daysLeft = Math.ceil((expTime - Date.now()) / (1000 * 60 * 60 * 24));
+          return { ...p, daysLeft };
+        }).sort((a, b) => a.daysLeft - b.daysLeft);
+
+        if (lowStockItems.length === 0 && expiringItems.length === 0) return null;
+
+        return (
+          <div className="dash-alerts-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px', marginBottom: '20px' }}>
+            {/* Low Stock Alert Card */}
+            <div className="dash-card-box" style={{ borderLeft: '4px solid #ef4444' }}>
+              <div className="dash-card-box-header">
+                <div>
+                  <div className="dash-card-box-title" style={{ color: '#b91c1c' }}>
+                    <i className="fas fa-triangle-exclamation"></i> Low Stock &amp; Reorder Alert
+                  </div>
+                  <div className="dash-card-box-sub">{lowStockItems.length} products at or below minimum threshold</div>
+                </div>
+                <button
+                  type="button"
+                  className="dash-sales-open-btn"
+                  onClick={() => setActiveMenu && setActiveMenu('stock')}
+                  title="Open Stock Ledger"
+                >
+                  <i className="fas fa-arrow-right"></i>
+                </button>
+              </div>
+
+              <div style={{ maxHeight: 220, overflowY: 'auto' }}>
+                <table className="dash-attention-table" style={{ fontSize: '12px' }}>
+                  <thead>
+                    <tr>
+                      <th>Product</th>
+                      <th>Category</th>
+                      <th>In Stock</th>
+                      <th>Alert Limit</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {lowStockItems.slice(0, 6).map(p => {
+                      const qty = computeQtyOnHand(p.id, movements);
+                      const limit = p.minStockAlert ?? 5;
+                      return (
+                        <tr key={p.id}>
+                          <td><strong>{p.name}</strong></td>
+                          <td style={{ color: '#64748b' }}>{p.category || 'General'}</td>
+                          <td>
+                            <span style={{ background: qty <= 0 ? '#fee2e2' : '#fef3c7', color: qty <= 0 ? '#b91c1c' : '#b45309', padding: '2px 8px', borderRadius: 6, fontWeight: 700 }}>
+                              {qty} {p.unit || 'Pcs'}
+                            </span>
+                          </td>
+                          <td style={{ color: '#64748b' }}>{limit} {p.unit || 'Pcs'}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Expiring Soon Alert Card */}
+            <div className="dash-card-box" style={{ borderLeft: '4px solid #f97316' }}>
+              <div className="dash-card-box-header">
+                <div>
+                  <div className="dash-card-box-title" style={{ color: '#c2410c' }}>
+                    <i className="fas fa-clock"></i> Expiry Date &amp; Quality Control
+                  </div>
+                  <div className="dash-card-box-sub">{expiringItems.length} products expiring soon or already expired</div>
+                </div>
+                <button
+                  type="button"
+                  className="dash-sales-open-btn"
+                  onClick={() => setActiveMenu && setActiveMenu('products')}
+                  title="View Products Catalog"
+                >
+                  <i className="fas fa-arrow-right"></i>
+                </button>
+              </div>
+
+              <div style={{ maxHeight: 220, overflowY: 'auto' }}>
+                <table className="dash-attention-table" style={{ fontSize: '12px' }}>
+                  <thead>
+                    <tr>
+                      <th>Product</th>
+                      <th>Expiry Date</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {expiringItems.length === 0 ? (
+                      <tr><td colSpan="3" style={{ textAlign: 'center', padding: '20px', color: '#16a34a' }}>✓ All stock fresh and within shelf life!</td></tr>
+                    ) : (
+                      expiringItems.slice(0, 6).map(p => {
+                        const isExpired = p.daysLeft < 0;
+                        return (
+                          <tr key={p.id}>
+                            <td><strong>{p.name}</strong></td>
+                            <td style={{ color: '#64748b' }}>{p.expiryDate}</td>
+                            <td>
+                              <span style={{
+                                background: isExpired ? '#fee2e2' : '#ffedd5',
+                                color: isExpired ? '#b91c1c' : '#c2410c',
+                                padding: '2px 8px',
+                                borderRadius: 6,
+                                fontWeight: 700
+                              }}>
+                                {isExpired ? '⚠️ EXPIRED' : `⏳ ${p.daysLeft} day${p.daysLeft === 1 ? '' : 's'} left`}
+                              </span>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
       {/* Middle Row: Attention Required & Recent Activity */}
       <div className="dash-mid-grid">
         {/* Attention Required */}

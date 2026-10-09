@@ -11,6 +11,8 @@ function POSView({ user, role }) {
       const [walkinPhone, setWalkinPhone] = useState('');
       const [discountType, setDiscountType] = useState('flat');
       const [discountValue, setDiscountValue] = useState('');
+      const [useLoyaltyPoints, setUseLoyaltyPoints] = useState(false);
+      const [pointsToRedeem, setPointsToRedeem] = useState(0);
       const [paymentMethod, setPaymentMethod] = useState('Cash');
       const [tendered, setTendered] = useState('');
       const [splitCash, setSplitCash] = useState('');
@@ -103,6 +105,21 @@ function POSView({ user, role }) {
       }, [catalogReady, completedSale, showCamera]);
 
       const totals = useMemo(() => computeSaleTotals(cart, prodById, { type: discountType, value: discountValue }), [cart, prodById, discountType, discountValue]);
+      // Customer Loyalty Points Available
+      const activeLoyaltyCustomer = useMemo(() => {
+        if (customerId) return customers.find(c => c.id === customerId);
+        if (walkinPhone && walkinPhone.trim().length >= 10) {
+          const clean = walkinPhone.replace(/\D/g, '');
+          return customers.find(c => c.phone && c.phone.replace(/\D/g, '') === clean);
+        }
+        return null;
+      }, [customerId, walkinPhone, customers]);
+
+      const availableLoyaltyPoints = Number(activeLoyaltyCustomer?.loyaltyPoints || 0);
+      const loyaltyDiscountAmount = useLoyaltyPoints ? Math.min(Number(pointsToRedeem) || 0, availableLoyaltyPoints, Math.floor(totals.grand)) : 0;
+      const finalGrandTotal = Math.max(0, round2(totals.grand - loyaltyDiscountAmount));
+      const pointsEarnedToday = Math.floor(finalGrandTotal / 100); // 1 point per ₹100
+
 
       // Kirana & Supermarket Total Customer Savings (MRP vs Selling Price + Discount)
       const customerSavings = useMemo(() => {
@@ -435,7 +452,12 @@ function POSView({ user, role }) {
           discountValue: Number(discountValue) || 0,
           discountAmount: totals.discount,
           taxAmount: totals.tax,
-          total: totals.grand,
+          total: finalGrandTotal,
+          originalTotal: totals.grand,
+          loyaltyPointsRedeemed: loyaltyDiscountAmount,
+          loyaltyDiscount: loyaltyDiscountAmount,
+          loyaltyPointsEarned: pointsEarnedToday,
+          loyaltyPointsBalance: activeLoyaltyCustomer ? (Math.max(0, availableLoyaltyPoints - loyaltyDiscountAmount) + pointsEarnedToday) : null,
           paymentMethod,
           tendered: paymentMethod === 'Cash' ? (Number(tendered) || totals.grand) : (paymentMethod === 'Split' ? (Number(tendered) || sC) : totals.grand),
           change: changeDue,
@@ -467,6 +489,10 @@ function POSView({ user, role }) {
           }, user);
         }
 
+        if (activeLoyaltyCustomer && activeLoyaltyCustomer.id) {
+          const newBalance = Math.max(0, availableLoyaltyPoints - loyaltyDiscountAmount) + pointsEarnedToday;
+          fbUpdateCustomerPoints(activeLoyaltyCustomer.id, newBalance, user);
+        }
         const completed = { ...sale, id: res.id, date: nowIso() };
         resetSale();
         setReloadKey(k => k + 1);
@@ -839,6 +865,47 @@ function POSView({ user, role }) {
                 )}
               </div>
 
+              
+              {/* Customer Loyalty Points Redemption Widget */}
+              {availableLoyaltyPoints > 0 && (
+                <div className="pos-loyalty-box" style={{ background: '#ecfdf5', border: '1.5px solid #a7f3d0', borderRadius: '8px', padding: '10px', marginBottom: '12px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <label style={{ fontSize: '12px', fontWeight: 700, color: '#065f46', display: 'flex', alignItems: 'center', gap: '6px', margin: 0, cursor: 'pointer' }}>
+                      <input
+                        type="checkbox"
+                        checked={useLoyaltyPoints}
+                        onChange={e => {
+                          setUseLoyaltyPoints(e.target.checked);
+                          if (e.target.checked) setPointsToRedeem(Math.min(availableLoyaltyPoints, Math.floor(totals.grand)));
+                          else setPointsToRedeem(0);
+                        }}
+                      />
+                      <span><i className="fas fa-gift" style={{ color: '#059669' }}></i> Redeem Loyalty Points</span>
+                    </label>
+                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#059669' }}>
+                      Available: {availableLoyaltyPoints} pts ({money(availableLoyaltyPoints)})
+                    </span>
+                  </div>
+                  {useLoyaltyPoints && (
+                    <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                      <span style={{ fontSize: '12px', color: '#047857' }}>Redeem:</span>
+                      <input
+                        type="number"
+                        min="1"
+                        max={Math.min(availableLoyaltyPoints, Math.floor(totals.grand))}
+                        value={pointsToRedeem}
+                        onChange={e => {
+                          const val = Math.max(0, Math.min(Number(e.target.value) || 0, availableLoyaltyPoints, Math.floor(totals.grand)));
+                          setPointsToRedeem(val);
+                        }}
+                        style={{ width: '80px', padding: '4px 8px', borderRadius: '6px', border: '1px solid #10b981', fontWeight: 700, fontSize: '12px' }}
+                      />
+                      <span style={{ fontSize: '12px', fontWeight: 700, color: '#047857' }}>pts = -{money(pointsToRedeem)} Discount</span>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* Discount Section */}
               <div className="pos-discount-box">
                 <div className="pos-field-header">
@@ -1111,7 +1178,7 @@ function POSView({ user, role }) {
                 >
                   <div className="checkout-btn-inner">
                     <span><i className="fas fa-check-circle"></i> Complete Sale &amp; Print</span>
-                    <span className="checkout-total-pill">{money(totals.grand)}</span>
+                    <span className="checkout-total-pill">{money(finalGrandTotal)}</span>
                   </div>
                 </button>
               </div>

@@ -193,6 +193,19 @@ seedDemoData();
         return { success: true, message: 'Customer deleted' };
       } catch (e) { return { success: false, message: e.message }; }
     }
+    
+    // Update Customer Loyalty Points
+    async function fbUpdateCustomerPoints(customerId, newPoints, user) {
+      try {
+        const pts = Math.max(0, Number(newPoints) || 0);
+        await db.ref('records/' + customerId).update({ loyaltyPoints: pts });
+        await fbLogActivity('Loyalty Points Updated', user, 'Customer #' + customerId + ' -> ' + pts + ' pts');
+        return { success: true, message: 'Points updated', loyaltyPoints: pts };
+      } catch (e) {
+        return { success: false, message: e.message };
+      }
+    }
+
     const fbGetCustomers = fbGetRecords;
 
     function toggleActive(id, val) {

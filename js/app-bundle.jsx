@@ -983,6 +983,20 @@ const { useState, useEffect, useRef, useMemo, useCallback, useDeferredValue } = 
         text += '*Change:* ' + cur + Number(sale.changeDue).toFixed(2) + '\n';
       }
       text += '--------------------------------\n';
+      if (sale.loyaltyPointsEarned > 0 || sale.loyaltyPointsRedeemed > 0) {
+        text += '--------------------------------\n';
+        text += '🎁 *CUSTOMER REWARD POINTS:*\n';
+        if (sale.loyaltyPointsRedeemed > 0) {
+          text += '*Points Redeemed:* ' + sale.loyaltyPointsRedeemed + ' pts (-' + cur + sale.loyaltyPointsRedeemed + ')\n';
+        }
+        if (sale.loyaltyPointsEarned > 0) {
+          text += '*Points Earned Today:* +' + sale.loyaltyPointsEarned + ' pts\n';
+        }
+        if (sale.loyaltyPointsBalance != null) {
+          text += '*Points Balance:* *' + sale.loyaltyPointsBalance + ' pts* (' + cur + sale.loyaltyPointsBalance + ' discount next time!)\n';
+        }
+      }
+      text += '--------------------------------\n';
       const footerMsg = CFG.receiptFooter || ls.get('shop_receipt_footer') || 'Thank you for shopping with us! Visit again.';
       text += '🙏 *' + footerMsg + '*';
       return text;
@@ -2398,6 +2412,15 @@ function RecordsView({ user, role }) {
           { data: 'customerType', title: 'Type', render: (d, t) => t === 'display' ? '<span class="type-chip">' + esc(d || 'Retail') + '</span>' : d },
           { data: 'category', title: 'Group', render: (d, t) => t === 'display' ? esc(d || '') : d },
           {
+            data: 'loyaltyPoints',
+            title: '🎁 Loyalty Points',
+            render: (d, t) => {
+              if (t !== 'display') return d || 0;
+              const pts = Number(d || 0);
+              return '<span style="background:#ecfdf5; color:#059669; border:1px solid #a7f3d0; font-weight:700; padding:2px 8px; border-radius:6px; font-size:12px;">🎁 ' + pts + ' pts (' + money(pts) + ')</span>';
+            }
+          },
+          {
             data: 'amount',
             title: 'Balance (Dues)',
             render: (d, t, row) => {
@@ -2767,6 +2790,8 @@ function ProductsView({ user, role }) {
         wholesalePrice: Number(p.wholesalePrice != null ? p.wholesalePrice : p.wholesale_price || (p.base_price || p.price || 0)),
         costPrice: Number(p.costPrice != null ? p.costPrice : p.cost || 0),
         unit: p.unit || 'Pcs',
+        expiryDate: p.expiryDate || null,
+        minStockAlert: p.minStockAlert != null ? Number(p.minStockAlert) : 5,
         hsnCode: p.hsnCode || p.hsn || '',
         sizes: p.sizes || [],
         addonIds: p.addon_ids || p.addons || []
@@ -2780,6 +2805,12 @@ function ProductsView({ user, role }) {
   const countSoldOut = products.filter(p => !p.isArchived && !p.isAvailable).length;
   const countPopular = products.filter(p => !p.isArchived && p.isPopular).length;
   const countArchived = products.filter(p => p.isArchived).length;
+  const countLowStock = products.filter(p => !p.isArchived && p.stockQty <= (p.minStockAlert ?? 5)).length;
+  const countExpiring = products.filter(p => {
+    if (!p.expiryDate || p.isArchived) return false;
+    const diffDays = Math.ceil((new Date(p.expiryDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+    return diffDays <= 30;
+  }).length;
 
   // Filtered products list
   const filteredProducts = useMemo(() => {
@@ -2789,6 +2820,8 @@ function ProductsView({ user, role }) {
       if (pipeFilter === 'sold_out' && (p.isArchived || p.isAvailable)) return false;
       if (pipeFilter === 'popular' && (p.isArchived || !p.isPopular)) return false;
       if (pipeFilter === 'archived' && !p.isArchived) return false;
+      if (pipeFilter === 'low_stock' && (p.isArchived || p.stockQty > (p.minStockAlert ?? 5))) return false;
+      if (pipeFilter === 'expiring' && (p.isArchived || !p.expiryDate || Math.ceil((new Date(p.expiryDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)) > 30)) return false;
 
       // Category Filter
       if (selectedCategory && p.category !== selectedCategory) return false;
@@ -3316,6 +3349,7 @@ function AddDrinkModal({ product, categories, addons, movements, onClose, onSave
   const currentStockQty = useMemo(() => product ? computeQtyOnHand(product.id, movements) : 0, [product, movements]);
   const [openingStock, setOpeningStock] = useState('');
   const [minStockAlert, setMinStockAlert] = useState(product ? (product.minStockAlert ?? 5) : 5);
+  const [expiryDate, setExpiryDate] = useState(product ? (product.expiryDate || '') : '');
   const [stockAdjustment, setStockAdjustment] = useState('');
   const [stockAdjReason, setStockAdjReason] = useState('Stock In / Purchase');
   
@@ -3385,6 +3419,7 @@ function AddDrinkModal({ product, categories, addons, movements, onClose, onSave
       costPrice: cPrice,
       cost: cPrice,
       minStockAlert: Number(minStockAlert) || 5,
+      expiryDate: expiryDate ? expiryDate.trim() : null,
       minWholesaleQty: Number(minWholesaleQty) || 1,
       sizes: sizes || [],
       addon_ids: selectedAddons || [],
@@ -3475,7 +3510,7 @@ function AddDrinkModal({ product, categories, addons, movements, onClose, onSave
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr', gap: 12, marginBottom: 12 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 12, marginBottom: 12 }}>
               <div className="form-group" style={{ margin: 0 }}>
                 <label style={{ fontSize: 12.5, fontWeight: 600, color: '#334155', marginBottom: 4, display: 'block' }}>Category *</label>
                 <select
@@ -3518,6 +3553,19 @@ function AddDrinkModal({ product, categories, addons, movements, onClose, onSave
                   onChange={e => setHsnCode(e.target.value)}
                   style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #cbd5e1', fontSize: 13 }}
                 />
+              </div>
+
+              <div className="form-group" style={{ margin: 0 }}>
+                <label style={{ fontSize: 12.5, fontWeight: 600, color: '#334155', marginBottom: 4, display: 'block' }}>
+                  <i className="fas fa-calendar-alt" style={{ color: '#d97706', marginRight: 4 }}></i> Expiry Date (Optional)
+                </label>
+                <input
+                  type="date"
+                  value={expiryDate}
+                  onChange={e => setExpiryDate(e.target.value)}
+                  style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #cbd5e1', fontSize: 13 }}
+                />
+                <small style={{ fontSize: 11, color: '#64748b' }}>For packaged foods, dairy, groceries with expiry</small>
               </div>
             </div>
 
@@ -4987,6 +5035,20 @@ function StockView({ user, role }) {
             )}
             {Number(sale.changeDue) > 0 ? <div className="ts-row"><span>Change</span><span>{money(sale.changeDue)}</span></div> : null}
             {sale.status === 'credit' ? <div className="ts-row" style={{ color: '#dc2626', fontWeight: 'bold' }}><span>Status</span><span>CREDIT / UNPAID</span></div> : null}
+            {(sale.loyaltyPointsEarned > 0 || sale.loyaltyPointsRedeemed > 0) && (
+              <div style={{ borderTop: '1px dashed #475569', paddingTop: 6, marginTop: 6, fontSize: 11 }}>
+                <div style={{ fontWeight: 700, textAlign: 'center', marginBottom: 2 }}>🎁 CUSTOMER REWARD POINTS</div>
+                {sale.loyaltyPointsRedeemed > 0 && (
+                  <div className="ts-row"><span>Points Redeemed</span><span>-{sale.loyaltyPointsRedeemed} pts ({money(sale.loyaltyPointsRedeemed)})</span></div>
+                )}
+                {sale.loyaltyPointsEarned > 0 && (
+                  <div className="ts-row"><span>Earned Today (+1 pt/₹100)</span><span>+{sale.loyaltyPointsEarned} pts</span></div>
+                )}
+                {sale.loyaltyPointsBalance != null && (
+                  <div className="ts-row" style={{ fontWeight: 700 }}><span>Points Balance</span><span>{sale.loyaltyPointsBalance} pts ({money(sale.loyaltyPointsBalance)})</span></div>
+                )}
+              </div>
+            )}
           </div>
           {/* Dynamic Payment / Verification QR on Thermal Receipt */}
           {(sale.paymentMethod === 'Online' || sale.paymentMethod === 'Split' || sale.status === 'credit') && (
@@ -5221,6 +5283,8 @@ function POSView({ user, role }) {
       const [walkinPhone, setWalkinPhone] = useState('');
       const [discountType, setDiscountType] = useState('flat');
       const [discountValue, setDiscountValue] = useState('');
+      const [useLoyaltyPoints, setUseLoyaltyPoints] = useState(false);
+      const [pointsToRedeem, setPointsToRedeem] = useState(0);
       const [paymentMethod, setPaymentMethod] = useState('Cash');
       const [tendered, setTendered] = useState('');
       const [splitCash, setSplitCash] = useState('');
@@ -5313,6 +5377,21 @@ function POSView({ user, role }) {
       }, [catalogReady, completedSale, showCamera]);
 
       const totals = useMemo(() => computeSaleTotals(cart, prodById, { type: discountType, value: discountValue }), [cart, prodById, discountType, discountValue]);
+      // Customer Loyalty Points Available
+      const activeLoyaltyCustomer = useMemo(() => {
+        if (customerId) return customers.find(c => c.id === customerId);
+        if (walkinPhone && walkinPhone.trim().length >= 10) {
+          const clean = walkinPhone.replace(/\D/g, '');
+          return customers.find(c => c.phone && c.phone.replace(/\D/g, '') === clean);
+        }
+        return null;
+      }, [customerId, walkinPhone, customers]);
+
+      const availableLoyaltyPoints = Number(activeLoyaltyCustomer?.loyaltyPoints || 0);
+      const loyaltyDiscountAmount = useLoyaltyPoints ? Math.min(Number(pointsToRedeem) || 0, availableLoyaltyPoints, Math.floor(totals.grand)) : 0;
+      const finalGrandTotal = Math.max(0, round2(totals.grand - loyaltyDiscountAmount));
+      const pointsEarnedToday = Math.floor(finalGrandTotal / 100); // 1 point per ₹100
+
 
       // Kirana & Supermarket Total Customer Savings (MRP vs Selling Price + Discount)
       const customerSavings = useMemo(() => {
@@ -5645,7 +5724,12 @@ function POSView({ user, role }) {
           discountValue: Number(discountValue) || 0,
           discountAmount: totals.discount,
           taxAmount: totals.tax,
-          total: totals.grand,
+          total: finalGrandTotal,
+          originalTotal: totals.grand,
+          loyaltyPointsRedeemed: loyaltyDiscountAmount,
+          loyaltyDiscount: loyaltyDiscountAmount,
+          loyaltyPointsEarned: pointsEarnedToday,
+          loyaltyPointsBalance: activeLoyaltyCustomer ? (Math.max(0, availableLoyaltyPoints - loyaltyDiscountAmount) + pointsEarnedToday) : null,
           paymentMethod,
           tendered: paymentMethod === 'Cash' ? (Number(tendered) || totals.grand) : (paymentMethod === 'Split' ? (Number(tendered) || sC) : totals.grand),
           change: changeDue,
@@ -5677,6 +5761,10 @@ function POSView({ user, role }) {
           }, user);
         }
 
+        if (activeLoyaltyCustomer && activeLoyaltyCustomer.id) {
+          const newBalance = Math.max(0, availableLoyaltyPoints - loyaltyDiscountAmount) + pointsEarnedToday;
+          fbUpdateCustomerPoints(activeLoyaltyCustomer.id, newBalance, user);
+        }
         const completed = { ...sale, id: res.id, date: nowIso() };
         resetSale();
         setReloadKey(k => k + 1);
@@ -6049,6 +6137,47 @@ function POSView({ user, role }) {
                 )}
               </div>
 
+              
+              {/* Customer Loyalty Points Redemption Widget */}
+              {availableLoyaltyPoints > 0 && (
+                <div className="pos-loyalty-box" style={{ background: '#ecfdf5', border: '1.5px solid #a7f3d0', borderRadius: '8px', padding: '10px', marginBottom: '12px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <label style={{ fontSize: '12px', fontWeight: 700, color: '#065f46', display: 'flex', alignItems: 'center', gap: '6px', margin: 0, cursor: 'pointer' }}>
+                      <input
+                        type="checkbox"
+                        checked={useLoyaltyPoints}
+                        onChange={e => {
+                          setUseLoyaltyPoints(e.target.checked);
+                          if (e.target.checked) setPointsToRedeem(Math.min(availableLoyaltyPoints, Math.floor(totals.grand)));
+                          else setPointsToRedeem(0);
+                        }}
+                      />
+                      <span><i className="fas fa-gift" style={{ color: '#059669' }}></i> Redeem Loyalty Points</span>
+                    </label>
+                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#059669' }}>
+                      Available: {availableLoyaltyPoints} pts ({money(availableLoyaltyPoints)})
+                    </span>
+                  </div>
+                  {useLoyaltyPoints && (
+                    <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                      <span style={{ fontSize: '12px', color: '#047857' }}>Redeem:</span>
+                      <input
+                        type="number"
+                        min="1"
+                        max={Math.min(availableLoyaltyPoints, Math.floor(totals.grand))}
+                        value={pointsToRedeem}
+                        onChange={e => {
+                          const val = Math.max(0, Math.min(Number(e.target.value) || 0, availableLoyaltyPoints, Math.floor(totals.grand)));
+                          setPointsToRedeem(val);
+                        }}
+                        style={{ width: '80px', padding: '4px 8px', borderRadius: '6px', border: '1px solid #10b981', fontWeight: 700, fontSize: '12px' }}
+                      />
+                      <span style={{ fontSize: '12px', fontWeight: 700, color: '#047857' }}>pts = -{money(pointsToRedeem)} Discount</span>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* Discount Section */}
               <div className="pos-discount-box">
                 <div className="pos-field-header">
@@ -6321,7 +6450,7 @@ function POSView({ user, role }) {
                 >
                   <div className="checkout-btn-inner">
                     <span><i className="fas fa-check-circle"></i> Complete Sale &amp; Print</span>
-                    <span className="checkout-total-pill">{money(totals.grand)}</span>
+                    <span className="checkout-total-pill">{money(finalGrandTotal)}</span>
                   </div>
                 </button>
               </div>
@@ -7493,6 +7622,144 @@ function DashboardView({ user, role, setActiveMenu }) {
           </div>
         )}
       </div>
+
+      
+      {/* Smart Inventory & Quality Control Alert Center */}
+      {(() => {
+        const lowStockItems = products.filter(p => {
+          if (p.status === 'archived' || p.active === false) return false;
+          const onHand = computeQtyOnHand(p.id, movements);
+          const limit = Number(p.minStockAlert != null ? p.minStockAlert : 5);
+          return onHand <= limit;
+        });
+
+        const expiringItems = products.filter(p => {
+          if (!p.expiryDate || p.status === 'archived' || p.active === false) return false;
+          const expTime = new Date(p.expiryDate).getTime();
+          if (isNaN(expTime)) return false;
+          const daysLeft = Math.ceil((expTime - Date.now()) / (1000 * 60 * 60 * 24));
+          return daysLeft <= 30; // Expired or expiring within 30 days
+        }).map(p => {
+          const expTime = new Date(p.expiryDate).getTime();
+          const daysLeft = Math.ceil((expTime - Date.now()) / (1000 * 60 * 60 * 24));
+          return { ...p, daysLeft };
+        }).sort((a, b) => a.daysLeft - b.daysLeft);
+
+        if (lowStockItems.length === 0 && expiringItems.length === 0) return null;
+
+        return (
+          <div className="dash-alerts-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px', marginBottom: '20px' }}>
+            {/* Low Stock Alert Card */}
+            <div className="dash-card-box" style={{ borderLeft: '4px solid #ef4444' }}>
+              <div className="dash-card-box-header">
+                <div>
+                  <div className="dash-card-box-title" style={{ color: '#b91c1c' }}>
+                    <i className="fas fa-triangle-exclamation"></i> Low Stock &amp; Reorder Alert
+                  </div>
+                  <div className="dash-card-box-sub">{lowStockItems.length} products at or below minimum threshold</div>
+                </div>
+                <button
+                  type="button"
+                  className="dash-sales-open-btn"
+                  onClick={() => setActiveMenu && setActiveMenu('stock')}
+                  title="Open Stock Ledger"
+                >
+                  <i className="fas fa-arrow-right"></i>
+                </button>
+              </div>
+
+              <div style={{ maxHeight: 220, overflowY: 'auto' }}>
+                <table className="dash-attention-table" style={{ fontSize: '12px' }}>
+                  <thead>
+                    <tr>
+                      <th>Product</th>
+                      <th>Category</th>
+                      <th>In Stock</th>
+                      <th>Alert Limit</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {lowStockItems.slice(0, 6).map(p => {
+                      const qty = computeQtyOnHand(p.id, movements);
+                      const limit = p.minStockAlert ?? 5;
+                      return (
+                        <tr key={p.id}>
+                          <td><strong>{p.name}</strong></td>
+                          <td style={{ color: '#64748b' }}>{p.category || 'General'}</td>
+                          <td>
+                            <span style={{ background: qty <= 0 ? '#fee2e2' : '#fef3c7', color: qty <= 0 ? '#b91c1c' : '#b45309', padding: '2px 8px', borderRadius: 6, fontWeight: 700 }}>
+                              {qty} {p.unit || 'Pcs'}
+                            </span>
+                          </td>
+                          <td style={{ color: '#64748b' }}>{limit} {p.unit || 'Pcs'}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Expiring Soon Alert Card */}
+            <div className="dash-card-box" style={{ borderLeft: '4px solid #f97316' }}>
+              <div className="dash-card-box-header">
+                <div>
+                  <div className="dash-card-box-title" style={{ color: '#c2410c' }}>
+                    <i className="fas fa-clock"></i> Expiry Date &amp; Quality Control
+                  </div>
+                  <div className="dash-card-box-sub">{expiringItems.length} products expiring soon or already expired</div>
+                </div>
+                <button
+                  type="button"
+                  className="dash-sales-open-btn"
+                  onClick={() => setActiveMenu && setActiveMenu('products')}
+                  title="View Products Catalog"
+                >
+                  <i className="fas fa-arrow-right"></i>
+                </button>
+              </div>
+
+              <div style={{ maxHeight: 220, overflowY: 'auto' }}>
+                <table className="dash-attention-table" style={{ fontSize: '12px' }}>
+                  <thead>
+                    <tr>
+                      <th>Product</th>
+                      <th>Expiry Date</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {expiringItems.length === 0 ? (
+                      <tr><td colSpan="3" style={{ textAlign: 'center', padding: '20px', color: '#16a34a' }}>✓ All stock fresh and within shelf life!</td></tr>
+                    ) : (
+                      expiringItems.slice(0, 6).map(p => {
+                        const isExpired = p.daysLeft < 0;
+                        return (
+                          <tr key={p.id}>
+                            <td><strong>{p.name}</strong></td>
+                            <td style={{ color: '#64748b' }}>{p.expiryDate}</td>
+                            <td>
+                              <span style={{
+                                background: isExpired ? '#fee2e2' : '#ffedd5',
+                                color: isExpired ? '#b91c1c' : '#c2410c',
+                                padding: '2px 8px',
+                                borderRadius: 6,
+                                fontWeight: 700
+                              }}>
+                                {isExpired ? '⚠️ EXPIRED' : `⏳ ${p.daysLeft} day${p.daysLeft === 1 ? '' : 's'} left`}
+                              </span>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Middle Row: Attention Required & Recent Activity */}
       <div className="dash-mid-grid">
