@@ -103,20 +103,23 @@ seedDemoData();
       } catch (e) { return { success: false, message: e.message }; }
     }
 
-    async function fbSeedRetailCategories(user) {
+        async function fbSeedKiranaCategories(user) {
       try {
         const defaults = [
-          { name: 'Groceries & Staples', icon: 'fa-basket-shopping', description: 'Grains, pulses, oils, spices & kitchen staples' },
-          { name: 'Packaged Foods & Snacks', icon: 'fa-box-archive', description: 'Biscuits, noodles, chips & ready-to-eat packs' },
-          { name: 'Beverages & Cold Drinks', icon: 'fa-bottle-water', description: 'Packaged juices, soft drinks, water & sodas' },
-          { name: 'Personal Care & Hygiene', icon: 'fa-pump-soap', description: 'Soaps, shampoos, oral care, creams & lotions' },
-          { name: 'Electronics & Accessories', icon: 'fa-plug', description: 'Cables, chargers, earphones & mobile accessories' },
-          { name: 'Clothing & Apparel', icon: 'fa-shirt', description: 'Readymade garments, hosiery & fashion wear' },
-          { name: 'Home & Kitchenware', icon: 'fa-kitchen-set', description: 'Cookware, plastic containers & household utensils' },
-          { name: 'Hardware & Tools', icon: 'fa-wrench', description: 'Tools, electrical fixtures & fasteners' },
-          { name: 'Stationery & Office Supplies', icon: 'fa-pen-ruler', description: 'Notebooks, pens, office papers & supplies' },
-          { name: 'Wholesale Bulk Cartons', icon: 'fa-boxes-packing', description: 'Bulk cartons, master cases & wholesale trade packs' },
-          { name: 'General Merchandise', icon: 'fa-tags', description: 'Seasonal products & assorted retail goods' }
+          { name: 'Atta, Flours & Sooji', icon: 'fa-wheat-awn', description: 'Chakki fresh wheat atta, maida, besan, sooji & grains' },
+          { name: 'Dals & Pulses', icon: 'fa-seedling', description: 'Toor dal, moong, chana, urad, rajma, chhole & pulses' },
+          { name: 'Rice, Basmati & Poha', icon: 'fa-bowl-rice', description: 'Daily rice, premium basmati, kolam, poha & murmura' },
+          { name: 'Edible Oils & Pure Ghee', icon: 'fa-droplet', description: 'Mustard oil, refined sunflower, groundnut oil & desi ghee' },
+          { name: 'Spices & Whole Masalas', icon: 'fa-pepper-hot', description: 'Haldi, mirch, dhaniya, jeera, rai, hing & whole spices' },
+          { name: 'Salt, Sugar & Jaggery', icon: 'fa-cubes', description: 'Tata salt, white sugar, brown sugar & pure gur (jaggery)' },
+          { name: 'Snacks, Biscuits & Namkeen', icon: 'fa-cookie-bite', description: 'Biscuits, chips, bhujia, namkeen & instant noodles' },
+          { name: 'Dairy & Bakery', icon: 'fa-cheese', description: 'Butter, paneer, cheese, bread, rusks & breakfast items' },
+          { name: 'Tea, Coffee & Cold Drinks', icon: 'fa-bottle-water', description: 'Tea leaves, instant coffee, juices & cold soft drinks' },
+          { name: 'Personal Care & Soaps', icon: 'fa-pump-soap', description: 'Bathing soaps, shampoos, toothpastes & hair oils' },
+          { name: 'Cleaning & Detergents', icon: 'fa-spray-can-sparkles', description: 'Detergent powder, dishwash bars, floor cleaners & liquids' },
+          { name: 'Dry Fruits & Nuts', icon: 'fa-cubes-stacked', description: 'Almonds (badam), cashews (kaju), raisins & walnuts' },
+          { name: 'Pooja Needs & Agarbatti', icon: 'fa-bell', description: 'Incense sticks, dhoop, kapoor, diya batti & matches' },
+          { name: 'Wholesale Cartons & Boras', icon: 'fa-boxes-packing', description: 'Wholesale trade cartons, 25kg/50kg bori & bulk cases' }
         ];
         let added = 0;
         for (const item of defaults) {
@@ -126,11 +129,12 @@ seedDemoData();
             added++;
           }
         }
-        await fbLogActivity('Seed Categories', user, `${added} retail & wholesale categories seeded`);
-        return { success: true, message: `${added} categories created successfully!`, count: added };
+        await fbLogActivity('Seed Categories', user, `${added} Kirana & Supermarket categories seeded`);
+        return { success: true, message: `${added} Kirana & Supermarket categories created!`, count: added };
       } catch (e) { return { success: false, message: e.message }; }
     }
-    const fbSeedBeverageCategories = fbSeedRetailCategories;
+    const fbSeedRetailCategories = fbSeedKiranaCategories;
+    const fbSeedBeverageCategories = fbSeedKiranaCategories;
     async function fbDeleteCategory(id, name, user) {
       try {
         await db.ref('categories/' + id).remove();
@@ -617,27 +621,23 @@ seedDemoData();
       } catch (e) { return { success: false, message: e.message }; }
     }
 
-    // Seed Demo Products (Retail & Wholesale catalog)
-    async function fbSeedDemoProducts(user) {
+        // Seed Demo Products (Kirana & Supermarket catalog)
+    async function fbSeedKiranaProducts(user) {
       try {
         const demoItems = [
-          { name: 'Basmati Rice Premium (5 Kg Bag)', sku: 'RTL-RIC-01', price: 420.00, wholesalePrice: 380.00, cost: 350.00, category: 'Groceries & Staples', unit: 'Bag', status: 'active', qty: 50, hsnCode: '1006' },
-          { name: 'Pure Refined Sunflower Oil (1 Litre)', sku: 'RTL-OIL-02', price: 135.00, wholesalePrice: 122.00, cost: 115.00, category: 'Groceries & Staples', unit: 'Pcs', status: 'active', qty: 120, hsnCode: '1512' },
-          { name: 'Packaged Cream Biscuits (Box of 24)', sku: 'RTL-BIS-03', price: 240.00, wholesalePrice: 200.00, cost: 180.00, category: 'Packaged Foods & Snacks', unit: 'Box', status: 'active', qty: 40, hsnCode: '1905' },
-          { name: 'USB Fast Charging Cable Type-C (1.5m)', sku: 'RTL-ELC-04', price: 199.00, wholesalePrice: 120.00, cost: 90.00, category: 'Electronics & Accessories', unit: 'Pcs', status: 'active', qty: 75, hsnCode: '8544' },
-          { name: 'Antibacterial Hand Soap (Pack of 4)', sku: 'RTL-SOP-05', price: 160.00, wholesalePrice: 135.00, cost: 120.00, category: 'Personal Care & Hygiene', unit: 'Pack', status: 'active', qty: 60, hsnCode: '3401' },
-          { name: 'Round Neck Cotton T-Shirt (Assorted)', sku: 'RTL-APP-06', price: 399.00, wholesalePrice: 260.00, cost: 220.00, category: 'Clothing & Apparel', unit: 'Pcs', status: 'active', qty: 85, hsnCode: '6109' },
-          { name: 'Wholesale Master Carton - Instant Noodles (72 Pcs)', sku: 'WHS-NDL-07', price: 864.00, wholesalePrice: 720.00, cost: 650.00, category: 'Wholesale Bulk Cartons', unit: 'Carton', status: 'active', qty: 25, hsnCode: '1902' },
-          { name: 'Heavy Duty Packaging Box 5-Ply', sku: 'WHS-BOX-08', price: 35.00, wholesalePrice: 24.00, cost: 18.00, category: 'Wholesale Bulk Cartons', unit: 'Pcs', status: 'active', qty: 200, hsnCode: '4819' }
+          { name: 'Aashirvaad Shudh Chakki Atta (10 Kg Bag)', sku: 'KIR-ATTA-10K', price: 425.00, mrp: 460.00, retailPrice: 425.00, wholesalePrice: 405.00, cost: 385.00, category: 'Atta, Flours & Sooji', unit: 'Bag', status: 'active', qty: 40, hsnCode: '1101' },
+          { name: 'Fortune Sunlite Refined Sunflower Oil (1 Litre)', sku: 'KIR-OIL-1L', price: 132.00, mrp: 145.00, retailPrice: 132.00, wholesalePrice: 124.00, cost: 116.00, category: 'Edible Oils & Pure Ghee', unit: 'Pcs', status: 'active', qty: 100, hsnCode: '1512' },
+          { name: 'Tata Salt Vacuum Evaporated (1 Kg)', sku: 'KIR-SALT-1K', price: 25.00, mrp: 28.00, retailPrice: 25.00, wholesalePrice: 22.00, cost: 20.00, category: 'Salt, Sugar & Jaggery', unit: 'Pcs', status: 'active', qty: 150, hsnCode: '2501' },
+          { name: 'Premium Unpolished Toor Dal (1 Kg)', sku: 'KIR-DAL-1K', price: 165.00, mrp: 180.00, retailPrice: 165.00, wholesalePrice: 152.00, cost: 142.00, category: 'Dals & Pulses', unit: 'Kg', status: 'active', qty: 80, hsnCode: '0713' },
+          { name: 'India Gate Basmati Rice Feast Rozzana (5 Kg)', sku: 'KIR-RIC-5K', price: 380.00, mrp: 425.00, retailPrice: 380.00, wholesalePrice: 355.00, cost: 330.00, category: 'Rice, Basmati & Poha', unit: 'Bag', status: 'active', qty: 50, hsnCode: '1006' },
+          { name: 'Maggi 2-Minute Masala Noodles (Pack of 12)', sku: 'KIR-MAG-12P', price: 150.00, mrp: 168.00, retailPrice: 150.00, wholesalePrice: 138.00, cost: 128.00, category: 'Snacks, Biscuits & Namkeen', unit: 'Pack', status: 'active', qty: 60, hsnCode: '1902' },
+          { name: 'Surf Excel Easy Wash Detergent Powder (1 Kg)', sku: 'KIR-SRF-1K', price: 130.00, mrp: 145.00, retailPrice: 130.00, wholesalePrice: 120.00, cost: 112.00, category: 'Cleaning & Detergents', unit: 'Pcs', status: 'active', qty: 70, hsnCode: '3402' },
+          { name: 'Dettol Original Bathing Soap (Pack of 4 x 125g)', sku: 'KIR-DET-4P', price: 195.00, mrp: 220.00, retailPrice: 195.00, wholesalePrice: 180.00, cost: 168.00, category: 'Personal Care & Hygiene', unit: 'Pack', status: 'active', qty: 65, hsnCode: '3401' },
+          { name: 'Amul Pasteurised Butter (500g Pack)', sku: 'KIR-BTR-500G', price: 265.00, mrp: 275.00, retailPrice: 265.00, wholesalePrice: 255.00, cost: 245.00, category: 'Dairy & Bakery', unit: 'Pcs', status: 'active', qty: 45, hsnCode: '0405' },
+          { name: 'Fine White Sugar (Loose per Kg)', sku: 'KIR-SGR-1K', price: 44.00, mrp: 48.00, retailPrice: 44.00, wholesalePrice: 41.00, cost: 38.00, category: 'Salt, Sugar & Jaggery', unit: 'Kg', status: 'active', qty: 200, hsnCode: '1701' },
+          { name: 'Premium Sabut Jeera / Cumin Seeds (per Kg)', sku: 'KIR-JRA-1K', price: 340.00, mrp: 380.00, retailPrice: 340.00, wholesalePrice: 310.00, cost: 285.00, category: 'Spices & Whole Masalas', unit: 'Kg', status: 'active', qty: 60, hsnCode: '0909' },
+          { name: 'California Almonds Badam Giri (500g Pack)', sku: 'KIR-BDM-500G', price: 399.00, mrp: 450.00, retailPrice: 399.00, wholesalePrice: 365.00, cost: 340.00, category: 'Dry Fruits & Nuts', unit: 'Pack', status: 'active', qty: 40, hsnCode: '0802' }
         ];
-
-        const cats = ['Groceries & Staples', 'Packaged Foods & Snacks', 'Electronics & Accessories', 'Personal Care & Hygiene', 'Clothing & Apparel', 'Wholesale Bulk Cartons'];
-        for (const c of cats) {
-          const snap = await db.ref('categories').orderByChild('name').equalTo(c).once('value');
-          if (!snap.exists()) {
-            await db.ref('categories').push({ name: c, icon: 'fa-box', createdAt: nowIso() });
-          }
-        }
 
         let added = 0;
         for (const d of demoItems) {
@@ -647,6 +647,7 @@ seedDemoData();
               name: d.name,
               sku: d.sku,
               price: d.price,
+              mrp: d.mrp,
               retailPrice: d.price,
               wholesalePrice: d.wholesalePrice,
               wholesale_price: d.wholesalePrice,
@@ -662,19 +663,20 @@ seedDemoData();
                 productId: res.id,
                 type: 'in',
                 qty: d.qty,
-                reason: 'Opening stock (Retail & Wholesale Seeder)',
-                reference: 'RETAIL-SEED',
+                reason: 'Opening stock (Kirana Supermarket Seeder)',
+                reference: 'KIRANA-SEED',
                 unitCost: d.cost
               }, d.name, user);
               added++;
             }
           }
         }
-        await fbLogActivity('Seed Demo Products', user, `Seeded ${added} retail/wholesale products`);
-        return { success: true, message: `Successfully seeded ${added} retail & wholesale demo items!` };
+        await fbLogActivity('Seed Demo Products', user, `Seeded ${added} Kirana supermarket products`);
+        return { success: true, message: `Successfully seeded ${added} top Kirana & Supermarket items!` };
       } catch (e) { return { success: false, message: e.message }; }
     }
-    const fbSeedDemoDrinks = fbSeedDemoProducts;
+    const fbSeedDemoProducts = fbSeedKiranaProducts;
+    const fbSeedDemoDrinks = fbSeedKiranaProducts;
 
     // Database Backup & Restore
     async function fbExportDatabase() {

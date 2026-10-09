@@ -96,6 +96,21 @@ function POSView({ user, role }) {
       }, [catalogReady, completedSale, showCamera]);
 
       const totals = useMemo(() => computeSaleTotals(cart, prodById, { type: discountType, value: discountValue }), [cart, prodById, discountType, discountValue]);
+
+      // Kirana & Supermarket Total Customer Savings (MRP vs Selling Price + Discount)
+      const customerSavings = useMemo(() => {
+        let totalMrp = 0;
+        let totalSell = 0;
+        cart.forEach(item => {
+          const prod = prodById[item.productId];
+          const mrp = Number(prod && (prod.mrp || prod.retailPrice || prod.price)) || item.price;
+          const sellPrice = item.price;
+          totalMrp += mrp * item.qty;
+          totalSell += sellPrice * item.qty;
+        });
+        const savings = Math.max(0, round2((totalMrp - totalSell) + (totals.discount || 0)));
+        return savings;
+      }, [cart, prodById, totals.discount]);
       const itemCount = useMemo(() => cart.reduce((s, l) => s + l.qty, 0), [cart]);
 
       // Initialize split values when switching to Split or when cart grand total changes

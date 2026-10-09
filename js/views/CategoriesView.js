@@ -133,7 +133,7 @@ function CategoriesView({ user, role, setActiveMenu }) {
 
   const handleSeedRetail = async () => {
     const confirm = await Swal.fire({
-      title: 'Seed Retail & Wholesale Categories?',
+      title: 'Seed Kirana Supermarket Categories?',
       text: 'This will automatically load standard Retail & Wholesale categories (Groceries, Packaged Goods, Electronics, Apparel, Wholesale Cartons...) to your catalog.',
       icon: 'question',
       showCancelButton: true,
@@ -154,19 +154,21 @@ function CategoriesView({ user, role, setActiveMenu }) {
     }
   };
 
-  const iconOptions = [
-    { label: 'Boba & Milk Tea', icon: 'fa-box' },
-    { label: 'Hot Coffee / Espresso', icon: 'fa-coffee' },
-    { label: 'Cold Brew / Frappe', icon: 'fa-blender' },
-    { label: 'Fruit Tea / Citrus', icon: 'fa-lemon' },
-    { label: 'Soft Drink / Soda', icon: 'fa-bottle-water' },
-    { label: 'Dessert / Ice Cream', icon: 'fa-ice-cream' },
-    { label: 'Bakery & Cookies', icon: 'fa-cookie' },
-    { label: 'Cake & Pastries', icon: 'fa-cake-candles' },
-    { label: 'Burgers & Fast Food', icon: 'fa-burger' },
-    { label: 'Pizza & Snacks', icon: 'fa-pizza-slice' },
-    { label: 'Combos & Groups', icon: 'fa-layer-group' },
-    { label: 'General / Tag', icon: 'fa-tag' }
+    const iconOptions = [
+    { label: 'Atta & Grains', icon: 'fa-wheat-awn' },
+    { label: 'Dals & Pulses', icon: 'fa-seedling' },
+    { label: 'Rice & Basmati', icon: 'fa-bowl-rice' },
+    { label: 'Oils & Desi Ghee', icon: 'fa-droplet' },
+    { label: 'Spices & Masalas', icon: 'fa-pepper-hot' },
+    { label: 'Salt, Sugar & Gur', icon: 'fa-cubes' },
+    { label: 'Biscuits & Snacks', icon: 'fa-cookie-bite' },
+    { label: 'Dairy & Butter', icon: 'fa-cheese' },
+    { label: 'Tea, Coffee & Cold Drink', icon: 'fa-bottle-water' },
+    { label: 'Soaps & Hygiene', icon: 'fa-pump-soap' },
+    { label: 'Detergents & Cleaners', icon: 'fa-spray-can-sparkles' },
+    { label: 'Dry Fruits & Nuts', icon: 'fa-cubes-stacked' },
+    { label: 'Pooja Needs & Agarbatti', icon: 'fa-bell' },
+    { label: 'Wholesale Bori / Peti', icon: 'fa-boxes-packing' }
   ];
 
   const getCatColor = (icon = '') => {
@@ -199,7 +201,7 @@ function CategoriesView({ user, role, setActiveMenu }) {
             Categories Management
           </h2>
           <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: 13 }}>
-            Organize store products &amp; inventory into clean categories for POS Billing, Wholesale Orders and Invoices
+            Organize Kirana, Supermarket &amp; Grocery products into clean categories for fast barcode billing and inventory
           </p>
         </div>
 

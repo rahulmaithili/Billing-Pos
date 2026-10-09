@@ -6,8 +6,8 @@ window.CFG = window.CFG || {
   upiId: 'shop@upi',
   upiPayeeName: 'My Store',
   business: {
-    name: 'Retail & Wholesale Store',
-    address: 'Main Market, Wholesale Complex',
+    name: 'Kirana & Supermarket Mart',
+    address: 'Main Market, Kirana & Supermarket Complex',
     phone: '+91 98765 43210',
     receiptFooter: 'Thank you for your business! Visit again.'
   }

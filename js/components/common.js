@@ -1114,7 +1114,7 @@ const { useState, useEffect, useRef, useMemo, useCallback, useDeferredValue } = 
           <div className="sidebar-brand">
             <img src={LOGO_URL} alt="" className="sidebar-brand-logo" />
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-              <span className="sidebar-brand-name">Retail &amp; Wholesale POS</span>
+              <span className="sidebar-brand-name">Kirana &amp; Supermarket POS</span>
               <span style={{ fontSize: '10px', background: 'rgba(255,255,255,0.18)', color: '#fff', padding: '2px 8px', borderRadius: '4px', fontWeight: 700, letterSpacing: '0.8px', marginTop: '2px' }}>ADMIN</span>
             </div>
           </div>
