@@ -87,15 +87,43 @@ seedDemoData();
       try { const snap = await db.ref('categories').once('value'); const val = snap.val() || {}; return { success: true, data: Object.entries(val).map(function (e) { return Object.assign({ id: e[0] }, e[1]); }) }; }
       catch (e) { return { success: false, message: e.message, data: [] }; }
     }
-    async function fbAddCategory(name, user) {
+    async function fbAddCategory(nameOrData, user) {
       try {
-        const nm = String(name || '').trim();
+        const isObj = typeof nameOrData === 'object' && nameOrData !== null;
+        const nm = String(isObj ? (nameOrData.name || '') : (nameOrData || '')).trim();
         if (!nm) return { success: false, message: 'Category name required' };
         const dupe = await db.ref('categories').orderByChild('name').equalTo(nm).once('value');
         if (dupe.exists()) return { success: false, message: 'That category already exists' };
-        const ref = await db.ref('categories').push({ name: nm, createdAt: nowIso() });
+        const payload = isObj
+          ? Object.assign({ createdAt: nowIso(), icon: 'fa-mug-hot', description: '' }, nameOrData, { name: nm })
+          : { name: nm, icon: 'fa-tag', description: '', createdAt: nowIso() };
+        const ref = await db.ref('categories').push(payload);
         await fbLogActivity('Add Category', user, nm);
         return { success: true, message: 'Category added', id: ref.key };
+      } catch (e) { return { success: false, message: e.message }; }
+    }
+
+    async function fbSeedBeverageCategories(user) {
+      try {
+        const defaults = [
+          { name: 'Milk Tea & Boba', icon: 'fa-mug-hot', description: 'Freshly brewed bubble milk tea, pearls & brown sugar' },
+          { name: 'Cold Brew & Iced Coffee', icon: 'fa-blender', description: 'Cold drip coffee, iced lattes & frappes' },
+          { name: 'Hot Coffee & Espresso', icon: 'fa-coffee', description: 'Single origin espresso, cappuccino & americano' },
+          { name: 'Fruit Teas & Refreshers', icon: 'fa-lemon', description: 'Fresh fruit infused green teas & lemonades' },
+          { name: 'Smoothies & Frappes', icon: 'fa-blender', description: 'Real fruit smoothies, yogurt shakes & crushes' },
+          { name: 'Bakery & Snacks', icon: 'fa-cookie', description: 'Pastries, muffins, cookies & light cafe bites' },
+          { name: 'Desserts & Ice Cream', icon: 'fa-ice-cream', description: 'Soft serve, sundaes & sweet toppings' }
+        ];
+        let added = 0;
+        for (const item of defaults) {
+          const snap = await db.ref('categories').orderByChild('name').equalTo(item.name).once('value');
+          if (!snap.exists()) {
+            await db.ref('categories').push(Object.assign({ createdAt: nowIso() }, item));
+            added++;
+          }
+        }
+        await fbLogActivity('Seed Categories', user, `${added} beverage categories seeded`);
+        return { success: true, message: `${added} categories created successfully!`, count: added };
       } catch (e) { return { success: false, message: e.message }; }
     }
     async function fbDeleteCategory(id, name, user) {

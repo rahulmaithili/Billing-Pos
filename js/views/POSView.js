@@ -28,16 +28,30 @@ function POSView({ user, role }) {
       const customerOpts = useMemo(() => customers.map(c => ({ value: c.id, label: c.name + (c.phone ? ' · ' + c.phone : '') })), [customers]);
       const { loading: loadingMovements, data: movementsData } = useFetch(() => fbGetStockMovements(), [reloadKey]);
       const movements = useMemo(() => (movementsData && movementsData.success ? movementsData.data : []), [movementsData]);
+      const { data: catData } = useFetch(() => fbGetCategories(), [reloadKey]);
+      const rawCategories = useMemo(() => (catData && catData.success ? catData.data : []), [catData]);
       const catalogReady = !loadingProducts && !loadingMovements;
 
-      // Extract unique categories
+      // Map category name to icon
+      const catIconMap = useMemo(() => {
+        const map = {};
+        rawCategories.forEach(c => {
+          if (c && c.name) map[String(c.name).trim().toLowerCase()] = c.icon || 'fas fa-tag';
+        });
+        return map;
+      }, [rawCategories]);
+
+      // Extract unique categories merged from DB and products
       const categories = useMemo(() => {
         const set = new Set();
+        rawCategories.forEach(c => {
+          if (c && c.name && String(c.name).trim()) set.add(String(c.name).trim());
+        });
         products.forEach(p => {
           if (p.category && String(p.category).trim()) set.add(String(p.category).trim());
         });
         return ['ALL', ...Array.from(set).sort()];
-      }, [products]);
+      }, [products, rawCategories]);
 
       // Stock on-hand map
       const qtyOnHandMap = useMemo(() => {
@@ -404,7 +418,7 @@ function POSView({ user, role }) {
                       className={`pos-cat-pill ${selectedCategory === cat ? 'active' : ''}`}
                       onClick={() => setSelectedCategory(cat)}
                     >
-                      <i className={cat === 'ALL' ? 'fas fa-border-all' : 'fas fa-tag'}></i>
+                      <i className={cat === 'ALL' ? 'fas fa-border-all' : (catIconMap[cat.toLowerCase()] || 'fas fa-tag')}></i>
                       <span>{cat === 'ALL' ? 'All Items' : cat}</span>
                       <span className="cat-pill-count">{count}</span>
                     </button>

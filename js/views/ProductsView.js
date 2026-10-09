@@ -566,8 +566,18 @@ function ProductsView({ user, role }) {
 
 // --- Rich Add / Edit Drink Modal Component (Screenshots 3 & 4) ---
 function AddDrinkModal({ product, categories, addons, onClose, onSaved, user }) {
-  const [name, setName] = useState(product ? product.name || '' : '');
-  const [category, setCategory] = useState(product ? product.category || '' : (categories[0]?.name || ''));
+  const categoryOptions = useMemo(() => {
+    const names = new Set((categories || []).map(c => c && c.name).filter(Boolean));
+    if (product && product.category && !names.has(product.category)) {
+      names.add(product.category);
+    }
+    if (names.size === 0) {
+      ['Coffee', 'Tea & Milk Tea', 'Specialty Drinks', 'Pastries & Bakery', 'Snacks', 'Beverages'].forEach(n => names.add(n));
+    }
+    return Array.from(names);
+  }, [categories, product]);
+
+  const [category, setCategory] = useState(product ? product.category || '' : (categoryOptions[0] || 'Coffee'));
   const [description, setDescription] = useState(product ? product.description || '' : '');
   const [imageUrl, setImageUrl] = useState(product ? (product.imageUrl || product.image_url || '') : '');
   const [basePrice, setBasePrice] = useState(product ? String(product.basePrice || product.base_price || product.price || '') : '');
@@ -699,8 +709,8 @@ function AddDrinkModal({ product, categories, addons, onClose, onSaved, user }) 
                   onChange={e => setCategory(e.target.value)}
                   style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #cbd5e1', fontSize: 13, background: '#fff' }}
                 >
-                  {categories.map(c => (
-                    <option key={c.id} value={c.name}>{c.name}</option>
+                  {categoryOptions.map(catName => (
+                    <option key={catName} value={catName}>{catName}</option>
                   ))}
                 </select>
               </div>

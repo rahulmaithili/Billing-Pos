@@ -2,12 +2,12 @@
     function MainContent({ activeMenu, user, role, setActiveMenu }) {
       switch (activeMenu) {
         case 'dashboard': return <DashboardView user={user} role={role} setActiveMenu={setActiveMenu} />;
-        case 'pos': return <POSView user={user} role={role} />;
+        case 'pos': return <POSView user={user} role={role} setActiveMenu={setActiveMenu} />;
         case 'board': return <OrderBoardView user={user} role={role} setActiveMenu={setActiveMenu} />;
         case 'review': return <PaymentReviewView user={user} role={role} setActiveMenu={setActiveMenu} />;
         case 'sales-history': return <SalesHistoryView user={user} role={role} setActiveMenu={setActiveMenu} />;
-        case 'products': return <ProductsView user={user} role={role} />;
-        case 'categories': return <CategoriesView user={user} role={role} />;
+        case 'products': return <ProductsView user={user} role={role} setActiveMenu={setActiveMenu} />;
+        case 'categories': return <CategoriesView user={user} role={role} setActiveMenu={setActiveMenu} />;
         case 'addons': return <AddonsView user={user} role={role} />;
         case 'stock': return <StockView user={user} role={role} />;
         case 'records': return <RecordsView user={user} role={role} />;
