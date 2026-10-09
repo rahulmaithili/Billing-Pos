@@ -1331,7 +1331,6 @@ const { useState, useEffect, useRef, useMemo, useCallback, useDeferredValue } = 
               <div className="sidebar-group-title">System</div>
               <ul className="sidebar-menu">
                 {isAdmin && <li><button className={activeMenu === 'users' ? 'active' : ''} onClick={() => setActiveMenu('users')}><i className="fas fa-users"></i><span>Users</span></button></li>}
-                {isAdmin && <li><button className={activeMenu === 'permissions' ? 'active' : ''} onClick={() => setActiveMenu('permissions')}><i className="fas fa-user-shield"></i><span>Permissions</span></button></li>}
                 {isAdmin && <li><button className={activeMenu === 'logs' ? 'active' : ''} onClick={() => setActiveMenu('logs')}><i className="fas fa-clock-rotate-left"></i><span>Activity Logs</span></button></li>}
                 <li><button className={activeMenu === 'my-settings' ? 'active' : ''} onClick={() => setActiveMenu('my-settings')}><i className="fas fa-palette"></i><span>My Settings</span></button></li>
                 <li><button className={activeMenu === 'my-account' ? 'active' : ''} onClick={() => setActiveMenu('my-account')}><i className="fas fa-user-circle"></i><span>My Account</span></button></li>

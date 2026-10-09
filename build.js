@@ -38,7 +38,6 @@ function runBuild() {
     'PaymentReviewView.js',
     'AddonsView.js',
     'ReportsView.js',
-    'PermissionsView.js',
     'MySettingsView.js',
     'MyAccountView.js'
   ];

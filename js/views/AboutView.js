@@ -46,7 +46,7 @@ function AboutView() {
           </div>
           <div className="about-card">
             <h2><i className="fas fa-users-cog"></i> Role-Based Access Control (RBAC) Permissions</h2>
-            <p className="mb-24">Security permissions and functional capabilities assigned across store staff roles (Admin, Manager, Cashier, Barista).</p>
+            <p className="mb-24">Security permissions and functional capabilities assigned across store staff roles (Admin, Manager, Cashier, Staff).</p>
             <div className="about-table-wrapper">
               <table className="about-roles-table">
                 <thead>

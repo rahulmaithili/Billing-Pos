@@ -18,7 +18,6 @@
         case 'payment-methods': return <PaymentMethodsView user={user} role={role} />;
         case 'settings': return <SettingsView user={user} role={role} />;
         case 'users': return <UsersView user={user} role={role} />;
-        case 'permissions': return <PermissionsView user={user} role={role} />;
         case 'logs': return <LogsView />;
         case 'my-settings': return <MySettingsView user={user} role={role} />;
         case 'my-account': return <MyAccountView user={user} role={role} />;
@@ -74,7 +73,6 @@
         'payment-methods': 'Payment Methods',
         settings: 'Settings',
         users: 'Users',
-        permissions: 'Permissions',
         logs: 'Activity Logs',
         'my-settings': 'My Settings',
         'my-account': 'My Account',
@@ -99,7 +97,6 @@
         'payment-methods': 'fa-building-columns',
         settings: 'fa-sliders',
         users: 'fa-users',
-        permissions: 'fa-user-shield',
         logs: 'fa-clock-rotate-left',
         'my-settings': 'fa-palette',
         'my-account': 'fa-user-circle',
