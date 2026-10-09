@@ -1107,16 +1107,26 @@ const { useState, useEffect, useRef, useMemo, useCallback, useDeferredValue } = 
     }
 
     // --- Sidebar ---
-    function Sidebar({ activeMenu, setActiveMenu, role, user, onLogout, collapsed }) {
+    function Sidebar({ activeMenu, setActiveMenu, role, user, onLogout, collapsed, mobileOpen, onCloseMobile }) {
       const isAdmin = role === 'Admin';
       return (
-        <div className={'sidebar' + (collapsed ? ' collapsed' : '')}>
+        <div className={'sidebar' + (collapsed ? ' collapsed' : '') + (mobileOpen ? ' mobile-open' : '')}>
           <div className="sidebar-brand">
             <img src={LOGO_URL} alt="" className="sidebar-brand-logo" />
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-              <span className="sidebar-brand-name">{ls.get('shop_name') || 'Kirana & Supermarket POS'}</span>
-              <span style={{ fontSize: '10px', background: 'rgba(255,255,255,0.18)', color: '#fff', padding: '2px 8px', borderRadius: '4px', fontWeight: 700, letterSpacing: '0.8px', marginTop: '2px' }}>ADMIN</span>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', flex: 1, minWidth: 0 }}>
+              <span className="sidebar-brand-name" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: '100%' }}>{ls.get('shop_name') || 'Kirana & Supermarket POS'}</span>
+              <span style={{ fontSize: '10px', background: 'rgba(255,255,255,0.18)', color: '#fff', padding: '2px 8px', borderRadius: '4px', fontWeight: 700, letterSpacing: '0.8px', marginTop: '2px' }}>{role ? role.toUpperCase() : 'ADMIN'}</span>
             </div>
+            {onCloseMobile && (
+              <button
+                type="button"
+                className="sidebar-mobile-close-btn"
+                onClick={onCloseMobile}
+                title="Close Menu"
+              >
+                <i className="fas fa-times"></i>
+              </button>
+            )}
           </div>
           <div className="sidebar-user-info"><div className="sidebar-user-name">{user?.name}</div><div className="sidebar-user-role">{role}</div></div>
           <div className="sidebar-menu-section">

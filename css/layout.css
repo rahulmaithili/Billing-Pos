@@ -2045,8 +2045,61 @@
 
     /* Mobile Responsive */
     @media (max-width: 768px) {
+      .app-container {
+        display: block !important;
+        position: relative !important;
+        width: 100% !important;
+        overflow-x: hidden !important;
+      }
+      .main-content {
+        width: 100% !important;
+        min-width: 0 !important;
+        margin: 0 !important;
+        padding-bottom: 75px !important;
+      }
       .sidebar {
-        width: 220px;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        bottom: 0 !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        width: 280px !important;
+        max-width: 85vw !important;
+        z-index: 9999 !important;
+        transform: translateX(-105%) !important;
+        transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        box-shadow: 4px 0 25px rgba(0, 0, 0, 0.45) !important;
+        display: flex !important;
+        flex-direction: column !important;
+      }
+      .sidebar.mobile-open {
+        transform: translateX(0) !important;
+      }
+      .sidebar-mobile-overlay {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        background: rgba(0, 0, 0, 0.55) !important;
+        backdrop-filter: blur(2px) !important;
+        -webkit-backdrop-filter: blur(2px) !important;
+        z-index: 9998 !important;
+      }
+      .sidebar-mobile-close-btn {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.18);
+        border: none;
+        color: #fff;
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        margin-left: 8px;
       }
 
       .form-grid {
@@ -2111,6 +2164,13 @@
 
       .searchable-dropdown-input {
         font-size: 16px !important;
+      }
+    }
+
+    @media (min-width: 769px) {
+      .sidebar-mobile-close-btn,
+      .sidebar-mobile-overlay {
+        display: none !important;
       }
     }
 

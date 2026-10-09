@@ -141,8 +141,11 @@
       display: flex;
       gap: 8px;
       overflow-x: auto;
-      padding: 4px 2px 8px 2px;
+      padding: 4px 2px 10px 2px;
       scrollbar-width: thin;
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior: smooth;
+      touch-action: pan-x;
     }
     .pos-category-ribbon::-webkit-scrollbar {
       height: 4px;
@@ -152,6 +155,7 @@
       border-radius: 4px;
     }
     .pos-cat-pill {
+      flex-shrink: 0 !important;
       padding: 7px 14px;
       border-radius: var(--r-pill, 999px);
       border: 1.5px solid #e2e8f0;
@@ -160,11 +164,14 @@
       font-size: 12.5px;
       font-weight: 600;
       cursor: pointer;
-      white-space: nowrap;
+      white-space: nowrap !important;
       display: inline-flex;
       align-items: center;
       gap: 6px;
       transition: all 0.2s ease;
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
     .pos-cat-pill:hover {
       background: #e2e8f0;
@@ -631,4 +638,187 @@
       border-radius: var(--r-pill, 999px);
       font-size: 13.5px;
       font-weight: 800;
+    }
+
+
+    /* ==========================================================================
+       Mobile Billing & Responsive POS Visual Enhancements
+       ========================================================================== */
+    .pos-mobile-view-tabs {
+      display: none;
+    }
+    .pos-mobile-cat-dropdown-wrap {
+      display: none;
+    }
+    .pos-cart-mobile-back-row {
+      display: none;
+    }
+    .pos-mobile-floating-cart-bar {
+      display: none;
+    }
+
+    @media (max-width: 900px) {
+      .pos-premium-view {
+        padding: 10px 8px 90px 8px;
+      }
+      .pos-main-header {
+        margin-bottom: 10px;
+        padding-bottom: 8px;
+      }
+      .pos-main-header h2 {
+        font-size: 18px;
+      }
+      .pos-mobile-view-tabs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-bottom: 12px;
+        background: #f1f5f9;
+        padding: 4px;
+        border-radius: 10px;
+        border: 1px solid #cbd5e1;
+      }
+      .pos-mobile-tab-btn {
+        padding: 10px 8px;
+        border-radius: 8px;
+        border: none;
+        background: transparent;
+        color: #475569;
+        font-weight: 700;
+        font-size: 13px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        transition: all 0.2s ease;
+      }
+      .pos-mobile-tab-btn.active {
+        background: #ffffff;
+        color: var(--navy-primary);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      }
+      .pos-mobile-cart-badge {
+        background: #16a34a;
+        color: #ffffff;
+        font-size: 11px;
+        padding: 2px 7px;
+        border-radius: 999px;
+        font-weight: 800;
+      }
+      .pos-mobile-cat-dropdown-wrap {
+        display: block;
+        margin-bottom: 8px;
+      }
+      .pos-mobile-cat-select {
+        width: 100%;
+        padding: 9px 12px !important;
+        border-radius: 8px !important;
+        border: 1.5px solid #cbd5e1 !important;
+        background: #f8fafc !important;
+        font-size: 13px !important;
+        font-weight: 600;
+        color: #0f172a !important;
+      }
+      .pos-catalog-panel {
+        padding: 12px;
+      }
+      .pos-catalog-topbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .pos-search-box {
+        min-width: 100%;
+      }
+      .pos-quick-scan-form {
+        width: 100%;
+      }
+      .pos-scan-input-wrap {
+        flex: 1;
+      }
+      .pos-barcode-input {
+        width: 100% !important;
+      }
+      .pos-products-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px;
+        max-height: calc(100vh - 280px);
+        padding: 2px;
+      }
+      .pos-product-card {
+        padding: 8px;
+      }
+      .pos-card-thumb {
+        height: 75px;
+      }
+      .pos-card-name {
+        font-size: 11.5px;
+        height: 28px;
+      }
+      .pos-card-price {
+        font-size: 13px;
+      }
+      .pos-terminal-cart-panel {
+        padding: 12px;
+        position: static;
+      }
+      /* Visibility toggle on mobile */
+      .pos-catalog-panel.mobile-hidden,
+      .pos-terminal-cart-panel.mobile-hidden {
+        display: none !important;
+      }
+      .pos-cart-mobile-back-row {
+        display: block;
+      }
+      /* Floating Mobile Cart Bar */
+      .pos-mobile-floating-cart-bar {
+        position: fixed;
+        bottom: 72px;
+        left: 10px;
+        right: 10px;
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        color: #ffffff;
+        padding: 10px 14px;
+        border-radius: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 1000;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        cursor: pointer;
+      }
+      .pos-floating-cart-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: #16a34a;
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        font-size: 14px;
+      }
+      .pos-floating-cart-icon span {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        background: #ef4444;
+        color: #ffffff;
+        font-size: 10px;
+        font-weight: 800;
+        padding: 1px 5px;
+        border-radius: 999px;
+      }
+      .pos-floating-cart-btn {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: #16a34a;
+        padding: 7px 12px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 12px;
+        color: #ffffff;
+      }
     }

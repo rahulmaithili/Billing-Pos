@@ -21,6 +21,7 @@ function POSView({ user, role }) {
       const [selectedCategory, setSelectedCategory] = useState('ALL');
       const [billingMode, setBillingMode] = useState('retail'); // 'retail' | 'wholesale'
       const [searchQuery, setSearchQuery] = useState('');
+      const [mobileTab, setMobileTab] = useState('catalog'); // 'catalog' | 'cart'
       const scanRef = useRef(null);
 
       const { loading: loadingProducts, data: productsData } = useFetch(() => fbGetProducts(), []);
@@ -390,9 +391,48 @@ function POSView({ user, role }) {
             </div>
           </div>
 
+          {/* Mobile View Switcher Tabs: Products vs Cart */}
+          <div className="pos-mobile-view-tabs">
+            <button
+              type="button"
+              className={`pos-mobile-tab-btn ${mobileTab === 'catalog' ? 'active' : ''}`}
+              onClick={() => setMobileTab('catalog')}
+            >
+              <i className="fas fa-boxes-stacked"></i> Products (सामान)
+            </button>
+            <button
+              type="button"
+              className={`pos-mobile-tab-btn ${mobileTab === 'cart' ? 'active' : ''}`}
+              onClick={() => setMobileTab('cart')}
+            >
+              <i className="fas fa-cart-shopping"></i> Bill &amp; Cart ({cart.length})
+              {cart.length > 0 && <span className="pos-mobile-cart-badge">{itemCount}</span>}
+            </button>
+          </div>
+
           <div className="pos-terminal-layout">
             {/* LEFT COLUMN: Visual Product Catalog & Categories */}
-            <div className="pos-catalog-panel">
+            <div className={`pos-catalog-panel ${mobileTab !== 'catalog' ? 'mobile-hidden' : ''}`}>
+              {/* Mobile Category Dropdown Selector */}
+              <div className="pos-mobile-cat-dropdown-wrap">
+                <select
+                  className="pos-mobile-cat-select"
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                >
+                  {categories.map((cat) => {
+                    const catNorm = String(cat).trim().toLowerCase();
+                    const count = catNorm === 'all'
+                      ? products.filter(p => p.active !== false).length
+                      : products.filter(p => p.active !== false && String(p.category || '').trim().toLowerCase() === catNorm).length;
+                    return (
+                      <option key={cat} value={cat}>
+                        {cat === 'ALL' ? `📦 All Categories / सभी सामान (${count})` : `${cat} (${count})`}
+                      </option>
+                    );
+                  })}
+                </select>
+              </div>
               {/* Top Controls: Search Bar & Barcode Scanner */}
               <div className="pos-catalog-topbar">
                 <div className="pos-search-box">
@@ -432,7 +472,10 @@ function POSView({ user, role }) {
               {/* Category Ribbon */}
               <div className="pos-category-ribbon">
                 {categories.map((cat) => {
-                  const count = cat === 'ALL' ? products.length : products.filter(p => p.category === cat).length;
+                  const catNorm = String(cat).trim().toLowerCase();
+                  const count = catNorm === 'all'
+                    ? products.filter(p => p.active !== false).length
+                    : products.filter(p => p.active !== false && String(p.category || '').trim().toLowerCase() === catNorm).length;
                   return (
                     <button
                       key={cat}
@@ -527,7 +570,32 @@ function POSView({ user, role }) {
             </div>
 
             {/* RIGHT COLUMN: Interactive Cart & Payment Terminal */}
-            <div className="pos-terminal-cart-panel">
+            <div className={`pos-terminal-cart-panel ${mobileTab !== 'cart' ? 'mobile-hidden' : ''}`}>
+              {/* Back to Products button on mobile */}
+              <div className="pos-cart-mobile-back-row">
+                <button
+                  type="button"
+                  className="btn btn-sm"
+                  onClick={() => setMobileTab('catalog')}
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 8,
+                    padding: '9px 12px',
+                    fontWeight: 700,
+                    borderRadius: 8,
+                    marginBottom: 10,
+                    background: '#e0f2fe',
+                    border: '1.5px solid #0284c7',
+                    color: '#0369a1',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <i className="fas fa-arrow-left"></i> Add More Items (सामान और जोड़ें)
+                </button>
+              </div>
               {/* Cart Top Header */}
               <div className="pos-cart-header">
                 <div className="pos-cart-title">
