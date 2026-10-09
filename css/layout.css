@@ -2512,11 +2512,12 @@
     }
 
     .ts-logo {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      object-fit: cover;
-      margin-bottom: 4px;
+      max-width: 90px;
+      max-height: 60px;
+      object-fit: contain;
+      display: block;
+      margin: 0 auto 6px auto;
+      border-radius: 4px;
     }
 
     .ts-app-name {

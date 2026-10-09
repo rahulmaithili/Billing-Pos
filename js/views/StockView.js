@@ -212,18 +212,26 @@ function StockView({ user, role }) {
     }
 
     // --- Thermal receipt slip (80mm POS printout) ---
-    function ThermalSlip({ sale }) {
+        function ThermalSlip({ sale }) {
       if (!sale) return null;
       const items = sale.items || [];
+      const shopLogo = (CFG.logoUrl && CFG.logoUrl.trim()) || ls.get('shop_logo_url') || LOGO_URL;
+      const shopName = (CFG.business && CFG.business.name && CFG.business.name.trim()) || ls.get('shop_name') || 'Supermarket & Kirana Mart';
+      const shopAddress = CFG.business?.address || ls.get('shop_address') || '';
+      const shopPhone = CFG.business?.phone || ls.get('shop_phone') || '';
+      const shopGstin = CFG.gstinNumber || ls.get('shop_gstin') || '';
+      const shopFooter = CFG.receiptFooter || ls.get('shop_receipt_footer') || 'Thank you for shopping with us! Visit again.';
+
       return (
         <div className="thermal-slip-print">
           <div className="ts-header">
-            <img src={CFG.logoUrl || LOGO_URL} alt="" className="ts-logo" />
-            <div className="ts-app-name">{CFG.business?.name || 'Firebase Records Manager'}</div>
-            {CFG.business?.address ? <div className="ts-sub">{CFG.business.address}</div> : null}
-            {CFG.business?.phone ? <div className="ts-sub">{CFG.business.phone}</div> : null}
+            {shopLogo ? <img src={shopLogo} alt="Shop Logo" className="ts-logo" /> : null}
+            <div className="ts-app-name">{shopName}</div>
+            {shopAddress ? <div className="ts-sub">{shopAddress}</div> : null}
+            {shopPhone ? <div className="ts-sub">Ph: {shopPhone}</div> : null}
+            {shopGstin ? <div className="ts-sub">GSTIN: {shopGstin}</div> : null}
             {CFG.receiptHeader ? <div className="ts-sub">{CFG.receiptHeader}</div> : null}
-            <div className="ts-sub">Sales Receipt</div>
+            <div className="ts-sub" style={{ fontWeight: 700, marginTop: 4, letterSpacing: '0.5px' }}>TAX INVOICE / RETAIL BILL</div>
           </div>
           <div className="ts-meta">
             <div className="ts-meta-row"><span>Date:</span><span>{formatDateForDisplay(sale.createdAt)}</span></div>
@@ -280,7 +288,7 @@ function StockView({ user, role }) {
           )}
           <div className="ts-divider"></div>
           <div className="ts-footer">
-            <div>{CFG.receiptFooter || 'Thank you for your purchase!'}</div>
+            <div>{shopFooter}</div>
             <div className="ts-cashier">Served by: {sale.cashier}</div>
           </div>
         </div>

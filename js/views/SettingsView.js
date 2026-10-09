@@ -188,72 +188,231 @@ function SettingsView({ user, role }) {
 
               {/* 1. Shop Tab */}
               {activeTab === 'shop' && (
-                <LteCard title="Shop details" icon="fa-id-card">
-                  <p style={{ margin: '0 0 16px 0', fontSize: '13px', color: '#64748b' }}>
-                    Name, contact and the logo used on receipts.
-                  </p>
-                  <div className="form-grid">
-                    <div className="form-group">
-                      <label>Shop name *</label>
-                      <input type="text" value={form.businessName || ''} onChange={e => upd('businessName', e.target.value)} placeholder="Retail & Wholesale Store" />
+                <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: 20, alignItems: 'start' }}>
+                  {/* Left Column: Form Fields */}
+                  <LteCard title="Shop Identity & Logo" icon="fa-id-card">
+                    <p style={{ margin: '0 0 16px 0', fontSize: '13px', color: '#64748b' }}>
+                      Configure your official store name, logo, contact and tax info printed on every bill receipt.
+                    </p>
+
+                    <div className="form-group" style={{ marginBottom: 12 }}>
+                      <label style={{ fontWeight: 700 }}>Shop / Store Name *</label>
+                      <input
+                        type="text"
+                        value={form.businessName || ''}
+                        onChange={e => upd('businessName', e.target.value)}
+                        placeholder="e.g. Rahul Kirana & Supermarket"
+                        style={{ fontSize: 14, fontWeight: 700 }}
+                        required
+                      />
                     </div>
-                    <div className="form-group">
-                      <label><i className="fas fa-phone"></i> Phone</label>
-                      <input type="text" value={form.phone || ''} onChange={e => upd('phone', e.target.value)} placeholder="03001000001" />
-                    </div>
-                  </div>
-                  <div className="form-grid">
-                    <div className="form-group">
-                      <label><i className="fas fa-envelope"></i> Email</label>
-                      <input type="email" value={form.email || ''} onChange={e => upd('email', e.target.value)} placeholder="shop@demo.com" />
-                    </div>
-                    <div className="form-group">
-                      <label><i className="fas fa-map-location-dot"></i> Map link</label>
-                      <input type="text" value={form.mapLink || ''} onChange={e => upd('mapLink', e.target.value)} placeholder="https://maps.google.com/?q=Demo+City" />
-                    </div>
-                  </div>
-                  <div className="form-group">
-                    <label><i className="fas fa-location-dot"></i> Address</label>
-                    <textarea rows="2" value={form.address || ''} onChange={e => upd('address', e.target.value)} placeholder="Shop 1, Street 1, Demo City"></textarea>
-                  </div>
-                  <div className="form-group">
-                    <label><i className="fas fa-image"></i> Logo</label>
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 16,
-                        border: '1.5px dashed #cbd5e1',
-                        padding: '16px 20px',
-                        borderRadius: '8px',
-                        background: '#f8fafc'
-                      }}
-                      onDragOver={e => e.preventDefault()}
-                      onDrop={e => {
-                        e.preventDefault();
-                        if (e.dataTransfer.files && e.dataTransfer.files[0]) handleLogoFile(e.dataTransfer.files[0]);
-                      }}
-                    >
-                      <div style={{ width: 50, height: 50, borderRadius: 8, background: '#e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-                        {form.logoUrl ? (
-                          <img src={form.logoUrl} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-                        ) : (
-                          <i className="fas fa-store" style={{ color: '#94a3b8', fontSize: 24 }}></i>
-                        )}
+
+                    <div className="form-grid" style={{ marginBottom: 12 }}>
+                      <div className="form-group">
+                        <label><i className="fas fa-tag"></i> Store Tagline</label>
+                        <input
+                          type="text"
+                          value={form.storeHeadline || ''}
+                          onChange={e => upd('storeHeadline', e.target.value)}
+                          placeholder="e.g. Pure Desi Ghee & Fresh Groceries"
+                        />
                       </div>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontWeight: 600, fontSize: 13, color: '#1e293b' }}>Drag &amp; drop the logo here</div>
-                        <div style={{ fontSize: 11.5, color: '#64748b' }}>PNG with a clear background works best · up to 12 MB</div>
+                      <div className="form-group">
+                        <label><i className="fas fa-file-invoice"></i> GSTIN / Tax Number</label>
+                        <input
+                          type="text"
+                          value={form.gstinNumber || ''}
+                          onChange={e => upd('gstinNumber', e.target.value)}
+                          placeholder="e.g. 07AAAAA0000A1Z5"
+                        />
                       </div>
+                    </div>
+
+                    <div className="form-grid" style={{ marginBottom: 12 }}>
+                      <div className="form-group">
+                        <label><i className="fas fa-phone"></i> Phone / Mobile</label>
+                        <input
+                          type="text"
+                          value={form.phone || ''}
+                          onChange={e => upd('phone', e.target.value)}
+                          placeholder="+91 98765 43210"
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label><i className="fas fa-envelope"></i> Email (Optional)</label>
+                        <input
+                          type="email"
+                          value={form.email || ''}
+                          onChange={e => upd('email', e.target.value)}
+                          placeholder="store@example.com"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-group" style={{ marginBottom: 14 }}>
+                      <label><i className="fas fa-location-dot"></i> Full Address (Shown on receipt)</label>
+                      <textarea
+                        rows="2"
+                        value={form.address || ''}
+                        onChange={e => upd('address', e.target.value)}
+                        placeholder="Shop No. 12, Main Market, City - PIN"
+                      ></textarea>
+                    </div>
+
+                    {/* Logo Section */}
+                    <div className="form-group" style={{ marginBottom: 16 }}>
+                      <label style={{ fontWeight: 700, display: 'block', marginBottom: 8 }}>
+                        <i className="fas fa-image"></i> Shop Logo (Printed on all receipts)
+                      </label>
+                      
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 16,
+                          border: '2px dashed #cbd5e1',
+                          padding: '16px',
+                          borderRadius: '8px',
+                          background: '#f8fafc',
+                          marginBottom: 12
+                        }}
+                        onDragOver={e => e.preventDefault()}
+                        onDrop={e => {
+                          e.preventDefault();
+                          if (e.dataTransfer.files && e.dataTransfer.files[0]) handleLogoFile(e.dataTransfer.files[0]);
+                        }}
+                      >
+                        <div style={{ width: 70, height: 70, borderRadius: 8, background: '#ffffff', border: '1px solid #cbd5e1', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', padding: 4 }}>
+                          {form.logoUrl ? (
+                            <img src={form.logoUrl} alt="Logo" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+                          ) : (
+                            <i className="fas fa-store" style={{ color: '#94a3b8', fontSize: 28 }}></i>
+                          )}
+                        </div>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontWeight: 700, fontSize: 13, color: '#0f172a' }}>Upload Custom Store Logo</div>
+                          <div style={{ fontSize: 11.5, color: '#64748b', marginBottom: 8 }}>JPG, PNG or SVG · Auto-compressed for instant fast printing</div>
+                          <div style={{ display: 'flex', gap: 8 }}>
+                            <input ref={logoInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={e => handleLogoFile(e.target.files[0])} />
+                            <button type="button" className="btn btn-primary btn-sm" onClick={() => logoInputRef.current && logoInputRef.current.click()}>
+                              <i className="fas fa-upload" style={{ marginRight: 4 }}></i> Choose Photo
+                            </button>
+                            {form.logoUrl && (
+                              <button type="button" className="btn btn-secondary btn-sm" onClick={() => upd('logoUrl', '')} style={{ color: '#ef4444' }}>
+                                Remove
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Ready-Made Supermarket Logos */}
                       <div>
-                        <input ref={logoInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={e => handleLogoFile(e.target.files[0])} />
-                        <button type="button" className="btn btn-secondary" style={{ fontSize: 12.5 }} onClick={() => logoInputRef.current && logoInputRef.current.click()}>
-                          Choose File
-                        </button>
+                        <label style={{ fontSize: 11.5, fontWeight: 700, color: '#475569', display: 'block', marginBottom: 6 }}>
+                          Or Pick a Ready-Made Supermarket / Kirana Logo:
+                        </label>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
+                          {PRESET_LOGOS.map((pl, idx) => (
+                            <button
+                              key={idx}
+                              type="button"
+                              onClick={() => upd('logoUrl', pl.url)}
+                              style={{
+                                padding: '8px 6px',
+                                borderRadius: 8,
+                                border: (form.logoUrl === pl.url) ? '2px solid var(--navy-accent)' : '1px solid #cbd5e1',
+                                background: (form.logoUrl === pl.url) ? '#e0f2fe' : '#ffffff',
+                                cursor: 'pointer',
+                                textAlign: 'center',
+                                transition: 'all 0.15s ease'
+                              }}
+                            >
+                              <img src={pl.url} alt="" style={{ width: 34, height: 34, objectFit: 'contain', display: 'block', margin: '0 auto 4px' }} />
+                              <span style={{ fontSize: 10, color: '#334155', fontWeight: 600, display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{pl.name}</span>
+                            </button>
+                          ))}
+                        </div>
                       </div>
                     </div>
+
+                    <div className="form-group" style={{ marginBottom: 8 }}>
+                      <label><i className="fas fa-comment-dots"></i> Bill Receipt Footer Note</label>
+                      <input
+                        type="text"
+                        value={form.receiptFooter || ''}
+                        onChange={e => upd('receiptFooter', e.target.value)}
+                        placeholder="e.g. Bika hua maal wapas nahi hoga · Thank you!"
+                      />
+                    </div>
+                  </LteCard>
+
+                  {/* Right Column: Live Thermal Print Preview */}
+                  <div>
+                    <LteCard title="Live Receipt Print Preview" icon="fa-receipt">
+                      <div style={{ fontSize: 11.5, color: '#64748b', marginBottom: 12 }}>
+                        Live preview of how your logo, shop name and address will print on customer bills:
+                      </div>
+
+                      <div style={{
+                        background: '#ffffff',
+                        border: '1px dashed #94a3b8',
+                        padding: '16px 14px',
+                        fontFamily: "'Courier New', Courier, monospace",
+                        fontSize: 12,
+                        borderRadius: 6,
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                        color: '#0f172a',
+                        maxWidth: 320,
+                        margin: '0 auto'
+                      }}>
+                        <div style={{ textAlign: 'center', marginBottom: 10 }}>
+                          {form.logoUrl ? (
+                            <img src={form.logoUrl} alt="Logo" style={{ maxWidth: 80, maxHeight: 55, objectFit: 'contain', margin: '0 auto 6px', display: 'block' }} />
+                          ) : (
+                            <div style={{ fontSize: 24, marginBottom: 4 }}><i className="fas fa-store"></i></div>
+                          )}
+                          <div style={{ fontWeight: 800, fontSize: 14.5, textTransform: 'uppercase' }}>
+                            {form.businessName || 'YOUR SHOP NAME'}
+                          </div>
+                          {form.storeHeadline ? <div style={{ fontSize: 10.5, fontStyle: 'italic', color: '#475569' }}>{form.storeHeadline}</div> : null}
+                          {form.address ? <div style={{ fontSize: 11, color: '#334155', marginTop: 2 }}>{form.address}</div> : null}
+                          {form.phone ? <div style={{ fontSize: 11, color: '#334155' }}>Ph: {form.phone}</div> : null}
+                          {form.gstinNumber ? <div style={{ fontSize: 11, fontWeight: 700 }}>GSTIN: {form.gstinNumber}</div> : null}
+                          <div style={{ fontWeight: 700, borderTop: '1px dashed #000', borderBottom: '1px dashed #000', padding: '3px 0', margin: '8px 0 4px', fontSize: 11 }}>
+                            --- TAX INVOICE / RETAIL BILL ---
+                          </div>
+                        </div>
+
+                        <div style={{ fontSize: 11, marginBottom: 6 }}>
+                          <div>Date: {new Date().toLocaleDateString('en-GB')} {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                          <div>Bill No: INV-SAMPLE-01</div>
+                          <div>Customer: Walk-in</div>
+                        </div>
+
+                        <div style={{ borderTop: '1px dashed #94a3b8', borderBottom: '1px dashed #94a3b8', padding: '4px 0', margin: '6px 0', fontSize: 11 }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 700 }}>
+                            <span>Item</span><span>Total</span>
+                          </div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
+                            <span>Basmati Rice 5kg</span><span>{form.currencySymbol || '₹'} 450.00</span>
+                          </div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
+                            <span>Pure Mustard Oil 1L</span><span>{form.currencySymbol || '₹'} 160.00</span>
+                          </div>
+                        </div>
+
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 800, fontSize: 13, margin: '6px 0' }}>
+                          <span>GRAND TOTAL</span>
+                          <span>{form.currencySymbol || '₹'} 610.00</span>
+                        </div>
+
+                        <div style={{ textAlign: 'center', borderTop: '1px dashed #000', paddingTop: 8, marginTop: 10, fontSize: 10.5, color: '#475569' }}>
+                          <div>{form.receiptFooter || 'Thank you for shopping with us! Visit again.'}</div>
+                        </div>
+                      </div>
+                    </LteCard>
                   </div>
-                </LteCard>
+                </div>
               )}
 
               {/* 2. Storefront Tab */}

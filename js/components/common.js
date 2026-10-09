@@ -821,6 +821,13 @@ const { useState, useEffect, useRef, useMemo, useCallback, useDeferredValue } = 
       CFG.upiId = s.upiId || CFG.upiId;
       CFG.upiPayeeName = s.upiPayeeName || s.businessName || CFG.upiPayeeName;
       CFG.business = { name: s.businessName || CFG.business.name, address: s.address || '', phone: s.phone || '', email: s.email || '' };
+      CFG.gstinNumber = s.gstinNumber || CFG.gstinNumber || '';
+      if (s.businessName) ls.set('shop_name', s.businessName);
+      if (s.logoUrl) ls.set('shop_logo_url', s.logoUrl);
+      if (s.address) ls.set('shop_address', s.address);
+      if (s.phone) ls.set('shop_phone', s.phone);
+      if (s.gstinNumber) ls.set('shop_gstin', s.gstinNumber);
+      if (s.receiptFooter) ls.set('shop_receipt_footer', s.receiptFooter);
     }
     // settings + categories flow down through here; refreshConfig re-pulls after an edit
     const ConfigContext = React.createContext({ settings: {}, categories: [], refreshConfig: () => { } });
