@@ -31,7 +31,7 @@ function OrderBoardView({ user, role }) {
             <div>
               <h2><i className="fas fa-blender"></i> Order Board (Live Kitchen Queue)</h2>
               <div style={{ color: '#64748b', fontSize: '13px', marginTop: 4 }}>
-                Real-time beverage queue for baristas and kitchen staff.
+                Real-time fulfillment and dispatch queue for packing and warehouse staff.
               </div>
             </div>
             <button className="btn btn-secondary" onClick={loadOrders}><i className="fas fa-rotate"></i> Refresh Queue</button>

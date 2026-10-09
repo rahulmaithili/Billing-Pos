@@ -20,7 +20,7 @@ function SettingsView({ user, role }) {
       const save = async () => {
         setSaving(true);
         const payload = {
-          businessName: form.businessName || 'Demo Drinks',
+          businessName: form.businessName || 'Retail & Wholesale Store',
           phone: form.phone || '',
           email: form.email || '',
           address: form.address || '',
@@ -41,9 +41,11 @@ function SettingsView({ user, role }) {
           deliveryEnabled: form.deliveryEnabled !== false,
           deliveryFee: Number(form.deliveryFee) || 0,
           minOrderAmount: Number(form.minOrderAmount) || 0,
-          sugarLevels: form.sugarLevels || '100% (Regular), 70% (Less Sweet), 50% (Half Sweet), 30% (Slight Sweet), 0% (No Sugar)',
-          iceLevels: form.iceLevels || 'Regular Ice, Less Ice, No Ice, Warm / Hot',
-          availableAddons: form.availableAddons || 'Tapioca Pearls, Coconut Jelly, Grass Jelly, Popping Boba, Cheese Foam',
+          wholesaleDiscountPct: Number(form.wholesaleDiscountPct) || 15,
+          defaultWholesaleMoq: Number(form.defaultWholesaleMoq) || 5,
+          gstinNumber: form.gstinNumber || '',
+          defaultHsn: form.defaultHsn || '',
+          availableUnits: form.availableUnits || 'Pcs, Box, Carton, Kg, Gram, Pack, Dozen, Ltr, Meter, Bundle',
           currencySymbol: form.currencySymbol || '$',
           currencyCode: form.currencyCode || 'USD',
           currencyDecimals: Number(form.currencyDecimals) || 2,
@@ -115,7 +117,7 @@ function SettingsView({ user, role }) {
         { id: 'storefront', title: 'Storefront', sub: 'Headline, about text, banner', icon: 'fa-shop', heroDesc: 'Header title, brand story and promotional banner for your customers.' },
         { id: 'hours', title: 'Opening hours', sub: 'Weekly hours, last order', icon: 'fa-clock', heroDesc: 'Set standard store operating hours and order cut-off times.' },
         { id: 'ordering', title: 'Ordering & pickup', sub: 'Pause, prep time, delivery', icon: 'fa-bag-shopping', heroDesc: 'Kitchen preparation lead time, pause status and delivery options.' },
-        { id: 'drinks', title: 'Drink options', sub: 'Sugar and ice levels', icon: 'fa-mug-hot', heroDesc: 'Sweetness percentages, ice levels and drink customizations.' },
+        { id: 'wholesale', title: 'Wholesale & Tax', sub: 'Wholesale rules, GST & units', icon: 'fa-boxes-stacked', heroDesc: 'Wholesale pricing rules, minimum order quantity (MOQ) and default GST/tax rules.' },
         { id: 'currency', title: 'Currency', sub: 'Symbol and decimals', icon: 'fa-coins', heroDesc: 'Store currency, price formatting decimals and default sales tax.' },
         { id: 'receipts', title: 'Payments & receipts', sub: 'Receipt upload rules', icon: 'fa-receipt', heroDesc: 'Customer payment instructions and payment verification rules.' },
         { id: 'notifications', title: 'Notifications', sub: 'Shop + customer emails', icon: 'fa-bell', heroDesc: 'Alert emails and customer pickup WhatsApp alert templates.' },
@@ -138,7 +140,7 @@ function SettingsView({ user, role }) {
                 </div>
                 <div className="settings-nav-header-text">
                   <h3>Settings</h3>
-                  <span>{form.businessName || 'Demo Drinks'}</span>
+                  <span>{form.businessName || 'Retail & Wholesale Store'}</span>
                 </div>
               </div>
 
@@ -185,7 +187,7 @@ function SettingsView({ user, role }) {
                   <div className="form-grid">
                     <div className="form-group">
                       <label>Shop name *</label>
-                      <input type="text" value={form.businessName || ''} onChange={e => upd('businessName', e.target.value)} placeholder="Demo Drinks" />
+                      <input type="text" value={form.businessName || ''} onChange={e => upd('businessName', e.target.value)} placeholder="Retail & Wholesale Store" />
                     </div>
                     <div className="form-group">
                       <label><i className="fas fa-phone"></i> Phone</label>
@@ -332,20 +334,32 @@ function SettingsView({ user, role }) {
                 </LteCard>
               )}
 
-              {/* 5. Drink Options */}
-              {activeTab === 'drinks' && (
-                <LteCard title="Drink Customization Levels" icon="fa-mug-hot">
-                  <div className="form-group">
-                    <label>Sugar Sweetness Levels (Comma separated)</label>
-                    <textarea rows="2" value={form.sugarLevels || ''} onChange={e => upd('sugarLevels', e.target.value)} placeholder="100% (Regular), 70% (Less Sweet), 50% (Half Sweet), 30% (Slight Sweet), 0% (No Sugar)"></textarea>
+              {/* 5. Wholesale & Tax Configuration */}
+              {activeTab === 'wholesale' && (
+                <LteCard title="Wholesale Rules & Tax Setup" icon="fa-boxes-stacked">
+                  <div className="form-grid">
+                    <div className="form-group">
+                      <label>Default Wholesale Discount (% off MRP)</label>
+                      <input type="number" step="0.1" min="0" max="100" value={form.wholesaleDiscountPct || 15} onChange={e => upd('wholesaleDiscountPct', Number(e.target.value))} placeholder="15" />
+                    </div>
+                    <div className="form-group">
+                      <label>Default Wholesale Minimum Qty (MOQ)</label>
+                      <input type="number" min="1" value={form.defaultWholesaleMoq || 5} onChange={e => upd('defaultWholesaleMoq', Number(e.target.value))} placeholder="5" />
+                    </div>
+                  </div>
+                  <div className="form-grid">
+                    <div className="form-group">
+                      <label>GSTIN / Tax Registration Number</label>
+                      <input type="text" value={form.gstinNumber || ''} onChange={e => upd('gstinNumber', e.target.value)} placeholder="e.g. 07AAAAA0000A1Z5" />
+                    </div>
+                    <div className="form-group">
+                      <label>Default HSN / SAC Code</label>
+                      <input type="text" value={form.defaultHsn || ''} onChange={e => upd('defaultHsn', e.target.value)} placeholder="e.g. 1006" />
+                    </div>
                   </div>
                   <div className="form-group">
-                    <label>Ice Levels (Comma separated)</label>
-                    <textarea rows="2" value={form.iceLevels || ''} onChange={e => upd('iceLevels', e.target.value)} placeholder="Regular Ice, Less Ice, No Ice, Warm / Hot"></textarea>
-                  </div>
-                  <div className="form-group">
-                    <label>Default Available Add-ons (Quick tags)</label>
-                    <textarea rows="2" value={form.availableAddons || ''} onChange={e => upd('availableAddons', e.target.value)} placeholder="Tapioca Pearls, Coconut Jelly, Grass Jelly, Popping Boba, Cheese Foam"></textarea>
+                    <label>Units of Measurement (Comma separated)</label>
+                    <input type="text" value={form.availableUnits || 'Pcs, Box, Carton, Kg, Gram, Pack, Dozen, Ltr, Meter, Bundle'} onChange={e => upd('availableUnits', e.target.value)} placeholder="Pcs, Box, Carton, Kg, Gram, Pack, Dozen, Ltr, Meter, Bundle" />
                   </div>
                 </LteCard>
               )}

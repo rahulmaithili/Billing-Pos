@@ -1,4 +1,4 @@
-    // --- Drink Add-ons & Customizations View ---
+    // --- Packaging & Extra Surcharges View (Retail & Wholesale) ---
     function AddonsView({ user, role }) {
       const [addons, setAddons] = useState([]);
       const [loading, setLoading] = useState(false);
@@ -32,7 +32,7 @@
         const confirm = await Swal.fire({
           icon: 'warning',
           title: `Delete "${a.name}"?`,
-          text: 'This will remove the add-on from POS beverage drink customizer.',
+          text: 'This will remove the packaging or service surcharge from POS checkout options.',
           showCancelButton: true,
           confirmButtonColor: '#ea4335',
           confirmButtonText: 'Yes, delete it'
@@ -62,14 +62,14 @@
       const inStockCount = useMemo(() => addons.filter(a => a.is_available !== false).length, [addons]);
       const outOfStockCount = addons.length - inStockCount;
 
-      const categoryPills = ['ALL', 'Topping', 'Jelly', 'Foam', 'Shot'];
+      const categoryPills = ['ALL', 'Packaging', 'Freight & Delivery', 'Labour & Handling', 'Extra Service'];
 
       const getCategoryBadgeColor = (cat) => {
         switch (cat) {
-          case 'Topping': return { bg: '#e0f2fe', color: '#0284c7' };
-          case 'Jelly': return { bg: '#fef3c7', color: '#b45309' };
-          case 'Foam': return { bg: '#fce7f3', color: '#be185d' };
-          case 'Shot': return { bg: '#ede9fe', color: '#6d28d9' };
+          case 'Packaging': return { bg: '#e0f2fe', color: '#0284c7' };
+          case 'Freight & Delivery': return { bg: '#fef3c7', color: '#b45309' };
+          case 'Labour & Handling': return { bg: '#ede9fe', color: '#6d28d9' };
+          case 'Extra Service': return { bg: '#ecfdf5', color: '#059669' };
           default: return { bg: '#f1f5f9', color: '#475569' };
         }
       };
@@ -81,9 +81,9 @@
           {/* Section Header */}
           <div className="section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
             <div>
-              <h2><i className="fas fa-circle-plus" style={{ color: 'var(--navy-accent)', marginRight: 10 }}></i> Drink Add-ons &amp; Customizations</h2>
+              <h2><i className="fas fa-box-archive" style={{ color: 'var(--navy-accent)', marginRight: 10 }}></i> Packaging &amp; Extra Charges</h2>
               <div style={{ color: '#64748b', fontSize: 13, marginTop: 4 }}>
-                Boba pearls, popping pearls, jellies, pudding, syrups, and foam toppings for beverage menu.
+                Packaging cartons, carry bags, wooden crates, delivery/freight fees, and labour handling charges.
               </div>
             </div>
             <div style={{ display: 'flex', gap: 10 }}>
@@ -91,7 +91,7 @@
                 <i className="fas fa-rotate"></i> Refresh
               </button>
               <button type="button" className="btn btn-primary" onClick={() => { setEditingAddon(null); setShowModal(true); }} style={{ fontWeight: 700 }}>
-                <i className="fas fa-plus"></i> + Add New Add-on
+                <i className="fas fa-plus"></i> + Add Packaging / Surcharge
               </button>
             </div>
           </div>
@@ -102,7 +102,7 @@
               <div className="stat-icon" style={{ background: '#e0f2fe', color: '#0284c7' }}><i className="fas fa-cubes"></i></div>
               <div className="stat-content">
                 <div className="stat-value">{addons.length}</div>
-                <div className="stat-label">Total Customizers</div>
+                <div className="stat-label">Total Packaging / Surcharges</div>
               </div>
             </div>
             <div className="stat-card">
@@ -186,7 +186,7 @@
                         <td>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                             <div style={{ width: 34, height: 34, borderRadius: 'var(--r-sm, 8px)', background: '#f1f5f9', color: 'var(--navy-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14 }}>
-                              <i className="fas fa-mug-hot"></i>
+                              <i className="fas fa-box"></i>
                             </div>
                             <div>
                               <strong style={{ fontSize: 14, color: '#0f172a', display: 'block' }}>{a.name}</strong>
@@ -286,7 +286,7 @@
                     autoFocus
                     value={form.name}
                     onChange={e => setForm(p => ({ ...p, name: e.target.value }))}
-                    placeholder="e.g. Brown Sugar Pearls, Cheese Foam"
+                    placeholder="e.g. 5-Ply Packing Box, Wooden Crate, Express Delivery"
                     style={{ width: '100%', padding: '9px 12px', borderRadius: 'var(--r-sm, 8px)', border: '1.5px solid #cbd5e1', fontSize: 14 }}
                   />
                 </div>

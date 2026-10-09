@@ -128,7 +128,7 @@ function DashboardView({ user, role, setActiveMenu }) {
     return ordersCount > 0 ? (revenue / ordersCount) : 0;
   }, [revenue, ordersCount]);
 
-  const drinksSoldCount = useMemo(() => {
+  const itemsSoldCount = useMemo(() => {
     return filteredSales.reduce((sum, s) => {
       return sum + (s.items || []).reduce((n, it) => n + (Number(it.qty) || 1), 0);
     }, 0);
@@ -139,7 +139,7 @@ function DashboardView({ user, role, setActiveMenu }) {
     const counts = {};
     filteredSales.forEach(s => {
       (s.items || []).forEach(it => {
-        const nm = it.name || 'Drink';
+        const nm = it.name || 'Product';
         counts[nm] = (counts[nm] || 0) + (Number(it.qty) || 1);
       });
     });
@@ -192,13 +192,13 @@ function DashboardView({ user, role, setActiveMenu }) {
   }, [filteredSales, revenue, getSaleAmount]);
 
   // Top 5 Selling Drinks Ranking
-  const topDrinksRanking = useMemo(() => {
+  const topProductsRanking = useMemo(() => {
     const map = {};
     filteredSales.forEach(s => {
       (s.items || []).forEach(it => {
         const id = it.productId || it.name || 'item';
         if (!map[id]) {
-          map[id] = { name: it.name || 'Drink', qty: 0, revenue: 0, category: it.category || 'Beverage' };
+          map[id] = { name: it.name || 'Product', qty: 0, revenue: 0, category: it.category || 'Beverage' };
         }
         const q = Number(it.qty) || 1;
         const p = Number(it.price) || 0;
@@ -614,19 +614,19 @@ function DashboardView({ user, role, setActiveMenu }) {
               </div>
             </div>
 
-            {/* Drinks sold */}
+            {/* Items sold */}
             <div className="dash-kpi-subcard">
               <div className="dash-kpi-subcard-top">
-                <span className="dash-kpi-subcard-title">Drinks sold</span>
+                <span className="dash-kpi-subcard-title">Items sold</span>
                 <div className="dash-kpi-circle-icon" style={{ background: '#fef3c7', color: '#d97706' }}>
-                  <i className="fas fa-mug-hot"></i>
+                  <i className="fas fa-box-open"></i>
                 </div>
               </div>
               <div>
-                <div className="dash-kpi-subcard-num">{drinksSoldCount}</div>
+                <div className="dash-kpi-subcard-num">{itemsSoldCount}</div>
                 <div className="dash-kpi-subcard-note">
-                  <span style={{ color: drinksSoldCount > 0 ? '#16a34a' : '#94a3b8' }}>
-                    <i className="fas fa-bottle-water"></i> Total cups/items
+                  <span style={{ color: itemsSoldCount > 0 ? '#16a34a' : '#94a3b8' }}>
+                    <i className="fas fa-boxes-stacked"></i> Total units / items
                   </span>
                 </div>
               </div>
@@ -778,30 +778,30 @@ function DashboardView({ user, role, setActiveMenu }) {
           )}
         </div>
 
-        {/* Top 5 Drinks Leaderboard for this date */}
+        {/* Top 5 Products Leaderboard for this date */}
         <div className="dash-card-box">
           <div className="dash-card-box-header">
             <div>
               <div className="dash-card-box-title">
-                <i className="fas fa-mug-hot" style={{ color: '#d97706' }}></i>
-                Top Drinks Sold ({periodLabel})
+                <i className="fas fa-boxes-stacked" style={{ color: '#0284c7' }}></i>
+                Top Products Sold ({periodLabel})
               </div>
               <div className="dash-card-box-sub">Most popular items by quantity sold</div>
             </div>
             <span style={{ fontSize: 12, fontWeight: 700, color: '#64748b' }}>
-              {topDrinksRanking.length} items
+              {topProductsRanking.length} items
             </span>
           </div>
 
-          {topDrinksRanking.length === 0 ? (
+          {topProductsRanking.length === 0 ? (
             <div className="dash-chart-empty">
-              <i className="fas fa-mug-saucer"></i>
-              <span>No drinks sold in this period</span>
+              <i className="fas fa-box-open"></i>
+              <span>No products sold in this period</span>
             </div>
           ) : (
-            <div className="dash-top-drinks-list">
-              {topDrinksRanking.map((item, idx) => (
-                <div key={item.name + idx} className="dash-top-drink-row">
+            <div className="dash-top-products-list">
+              {topProductsRanking.map((item, idx) => (
+                <div key={item.name + idx} className="dash-top-product-row">
                   <div style={{ display: 'flex', alignItems: 'center' }}>
                     <span className={`dash-top-rank-badge dash-top-rank-${idx === 0 ? '1' : (idx === 1 ? '2' : (idx === 2 ? '3' : 'other'))}`}>
                       {idx + 1}

@@ -1,11 +1,11 @@
-// --- Enhanced Categories Management View (Full Beverage & Cafe Catalog Support) ---
+// --- Enhanced Categories Management View (Retail & Wholesale Catalog) ---
 function CategoriesView({ user, role, setActiveMenu }) {
   const [reloadKey, setReloadKey] = useState(0);
   const reload = () => setReloadKey(k => k + 1);
 
   const [showModal, setShowModal] = useState(false);
   const [editingCat, setEditingCat] = useState(null);
-  const [formData, setFormData] = useState({ name: '', icon: 'fa-mug-hot', description: '' });
+  const [formData, setFormData] = useState({ name: '', icon: 'fa-box', description: '' });
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('all'); // 'all' | 'has_products' | 'empty'
   const [sortBy, setSortBy] = useState('name'); // 'name' | 'products' | 'newest'
@@ -63,7 +63,7 @@ function CategoriesView({ user, role, setActiveMenu }) {
 
   const openAddModal = () => {
     setEditingCat(null);
-    setFormData({ name: '', icon: 'fa-mug-hot', description: '' });
+    setFormData({ name: '', icon: 'fa-box', description: '' });
     setShowModal(true);
   };
 
@@ -108,7 +108,7 @@ function CategoriesView({ user, role, setActiveMenu }) {
     const assigned = (productsByCat[cat.name] || []).length;
     let warningHtml = `Are you sure you want to delete category <strong>"${cat.name}"</strong>?`;
     if (assigned > 0) {
-      warningHtml += `<br><br><span style="color: #ea4335; font-size: 13px;">⚠️ Warning: ${assigned} drink(s) are currently assigned to this category.</span>`;
+      warningHtml += `<br><br><span style="color: #ea4335; font-size: 13px;">⚠️ Warning: ${assigned} product(s) are currently assigned to this category.</span>`;
     }
 
     const confirm = await Swal.fire({
@@ -131,10 +131,10 @@ function CategoriesView({ user, role, setActiveMenu }) {
     }
   };
 
-  const handleSeedBeverage = async () => {
+  const handleSeedRetail = async () => {
     const confirm = await Swal.fire({
-      title: 'Seed Beverage Categories?',
-      text: 'This will automatically add standard Cafe & Drink categories (Boba Milk Tea, Coffee, Fruit Tea, Frappes, Bakery...) to your menu catalog.',
+      title: 'Seed Retail & Wholesale Categories?',
+      text: 'This will automatically load standard Retail & Wholesale categories (Groceries, Packaged Goods, Electronics, Apparel, Wholesale Cartons...) to your catalog.',
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#0f172a',
@@ -144,7 +144,7 @@ function CategoriesView({ user, role, setActiveMenu }) {
     if (!confirm.isConfirmed) return;
 
     if (typeof fbSeedBeverageCategories === 'function') {
-      const res = await fbSeedBeverageCategories(user);
+      const res = await fbSeedRetailCategories(user);
       if (res.success) {
         Swal.fire({ icon: 'success', title: 'Categories Seeded!', text: res.message, timer: 1800, showConfirmButton: false });
         reload();
@@ -155,7 +155,7 @@ function CategoriesView({ user, role, setActiveMenu }) {
   };
 
   const iconOptions = [
-    { label: 'Boba & Milk Tea', icon: 'fa-mug-hot' },
+    { label: 'Boba & Milk Tea', icon: 'fa-box' },
     { label: 'Hot Coffee / Espresso', icon: 'fa-coffee' },
     { label: 'Cold Brew / Frappe', icon: 'fa-blender' },
     { label: 'Fruit Tea / Citrus', icon: 'fa-lemon' },
@@ -170,11 +170,11 @@ function CategoriesView({ user, role, setActiveMenu }) {
   ];
 
   const getCatColor = (icon = '') => {
-    if (icon.includes('mug') || icon.includes('tea')) return { bg: '#e0f2fe', color: '#0284c7' };
-    if (icon.includes('coffee')) return { bg: '#fef3c7', color: '#b45309' };
-    if (icon.includes('blender') || icon.includes('ice')) return { bg: '#fce7f3', color: '#be185d' };
-    if (icon.includes('lemon')) return { bg: '#ecfdf5', color: '#059669' };
-    if (icon.includes('cookie') || icon.includes('cake')) return { bg: '#fff7ed', color: '#ea580c' };
+    if (icon.includes('basket') || icon.includes('cart')) return { bg: '#e0f2fe', color: '#0284c7' };
+    if (icon.includes('boxes') || icon.includes('warehouse')) return { bg: '#fef3c7', color: '#b45309' };
+    if (icon.includes('plug') || icon.includes('wrench')) return { bg: '#ede9fe', color: '#6d28d9' };
+    if (icon.includes('shirt') || icon.includes('tag')) return { bg: '#ecfdf5', color: '#059669' };
+    if (icon.includes('bottle') || icon.includes('pump')) return { bg: '#fff7ed', color: '#ea580c' };
     return { bg: '#f1f5f9', color: '#475569' };
   };
 
@@ -190,7 +190,7 @@ function CategoriesView({ user, role, setActiveMenu }) {
             <span>/</span>
             <span>Home</span>
             <span>/</span>
-            <span>Menu Catalog</span>
+            <span>Catalog</span>
             <span>/</span>
             <span style={{ color: '#0f172a', fontWeight: 600 }}>Categories</span>
           </div>
@@ -199,7 +199,7 @@ function CategoriesView({ user, role, setActiveMenu }) {
             Categories Management
           </h2>
           <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: 13 }}>
-            Organize store drinks &amp; menu items into clean categories for POS Billing Terminal and Storefront catalog
+            Organize store products &amp; inventory into clean categories for POS Billing, Wholesale Orders and Invoices
           </p>
         </div>
 
@@ -207,12 +207,12 @@ function CategoriesView({ user, role, setActiveMenu }) {
           <button
             type="button"
             className="btn btn-secondary"
-            onClick={handleSeedBeverage}
-            title="Load standard cafe & drink categories"
+            onClick={handleSeedRetail}
+            title="Load standard retail & wholesale categories"
             style={{ fontWeight: 600, padding: '7px 14px', fontSize: 13 }}
           >
             <i className="fas fa-magic" style={{ color: '#8b5cf6', marginRight: 6 }}></i>
-            Seed Beverage Categories
+            Seed Retail & Wholesale
           </button>
           <button
             type="button"
@@ -249,7 +249,7 @@ function CategoriesView({ user, role, setActiveMenu }) {
         {/* Products Assigned */}
         <div className="stat-card">
           <div className="stat-icon" style={{ background: '#dcfce7', color: '#16a34a' }}>
-            <i className="fas fa-mug-hot"></i>
+            <i className="fas fa-box"></i>
           </div>
           <div className="stat-content">
             <div className="stat-value">{products.length}</div>
@@ -268,14 +268,14 @@ function CategoriesView({ user, role, setActiveMenu }) {
           </div>
         </div>
 
-        {/* Uncategorized Drinks */}
+        {/* Uncategorized Items */}
         <div className="stat-card">
           <div className="stat-icon" style={{ background: uncategorizedCount > 0 ? '#fee2e2' : '#f1f5f9', color: uncategorizedCount > 0 ? '#dc2626' : '#64748b' }}>
             <i className="fas fa-circle-question"></i>
           </div>
           <div className="stat-content">
             <div className="stat-value">{uncategorizedCount}</div>
-            <div className="stat-label">Uncategorized Drinks</div>
+            <div className="stat-label">Uncategorized Items</div>
           </div>
         </div>
       </div>
@@ -311,7 +311,7 @@ function CategoriesView({ user, role, setActiveMenu }) {
               onClick={() => setFilterType('has_products')}
               style={{ border: 'none', padding: '5px 12px', fontSize: 12 }}
             >
-              With Drinks ({activeInPosCount})
+              With Products ({activeInPosCount})
             </button>
             <button
               type="button"
@@ -347,7 +347,7 @@ function CategoriesView({ user, role, setActiveMenu }) {
             <button type="button" className="btn btn-primary" onClick={openAddModal}>
               <i className="fas fa-plus"></i> Create Category
             </button>
-            <button type="button" className="btn btn-secondary" onClick={handleSeedBeverage}>
+            <button type="button" className="btn btn-secondary" onClick={handleSeedRetail}>
               <i className="fas fa-magic"></i> Seed Cafe Categories
             </button>
           </div>
@@ -592,7 +592,7 @@ function CategoryProductsModal({ category, products, onClose, onGoToProducts }) 
         <div className="modal-body" style={{ padding: 16 }}>
           {products.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '30px 16px', color: '#94a3b8' }}>
-              <i className="fas fa-mug-saucer" style={{ fontSize: 32, color: '#cbd5e1', marginBottom: 8, display: 'block' }}></i>
+              <i className="fas fa-box-open" style={{ fontSize: 32, color: '#cbd5e1', marginBottom: 8, display: 'block' }}></i>
               No products are currently assigned to this category.
             </div>
           ) : (
@@ -628,7 +628,7 @@ function CategoryProductsModal({ category, products, onClose, onGoToProducts }) 
                         </td>
                         <td>
                           <span style={{ fontFamily: 'monospace', color: '#0284c7', background: '#f0f9ff', padding: '2px 6px', borderRadius: 4, fontSize: 11 }}>
-                            #{p.sku || p.code || 'DRK'}
+                            #{p.sku || p.code || 'SKU'}
                           </span>
                         </td>
                         <td>

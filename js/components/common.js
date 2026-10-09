@@ -1114,7 +1114,7 @@ const { useState, useEffect, useRef, useMemo, useCallback, useDeferredValue } = 
           <div className="sidebar-brand">
             <img src={LOGO_URL} alt="" className="sidebar-brand-logo" />
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-              <span className="sidebar-brand-name">Soft Drink Shop</span>
+              <span className="sidebar-brand-name">Retail &amp; Wholesale POS</span>
               <span style={{ fontSize: '10px', background: 'rgba(255,255,255,0.18)', color: '#fff', padding: '2px 8px', borderRadius: '4px', fontWeight: 700, letterSpacing: '0.8px', marginTop: '2px' }}>ADMIN</span>
             </div>
           </div>
@@ -1134,19 +1134,19 @@ const { useState, useEffect, useRef, useMemo, useCallback, useDeferredValue } = 
             <div className="sidebar-group">
               <div className="sidebar-group-title">Orders</div>
               <ul className="sidebar-menu">
-                <li><button className={activeMenu === 'board' ? 'active' : ''} onClick={() => setActiveMenu('board')}><i className="fas fa-blender"></i><span>Order Board</span><em className="nav-badge-pill">1</em></button></li>
+                <li><button className={activeMenu === 'board' ? 'active' : ''} onClick={() => setActiveMenu('board')}><i className="fas fa-truck-ramp-box"></i><span>Dispatch Board</span><em className="nav-badge-pill">1</em></button></li>
                 <li><button className={activeMenu === 'review' ? 'active' : ''} onClick={() => setActiveMenu('review')}><i className="fas fa-magnifying-glass-dollar"></i><span>Payment Review</span><em className="nav-badge-pill">1</em></button></li>
                 <li><button className={activeMenu === 'sales-history' ? 'active' : ''} onClick={() => setActiveMenu('sales-history')}><i className="fas fa-receipt"></i><span>All Orders</span></button></li>
               </ul>
             </div>
 
-            {/* MENU */}
+            {/* CATALOG */}
             <div className="sidebar-group">
-              <div className="sidebar-group-title">Menu</div>
+              <div className="sidebar-group-title">Catalog</div>
               <ul className="sidebar-menu">
-                <li><button className={activeMenu === 'products' ? 'active' : ''} onClick={() => setActiveMenu('products')}><i className="fas fa-mug-hot"></i><span>Products</span></button></li>
+                <li><button className={activeMenu === 'products' ? 'active' : ''} onClick={() => setActiveMenu('products')}><i className="fas fa-boxes-stacked"></i><span>Products</span></button></li>
                 <li><button className={activeMenu === 'categories' ? 'active' : ''} onClick={() => setActiveMenu('categories')}><i className="fas fa-layer-group"></i><span>Categories</span></button></li>
-                <li><button className={activeMenu === 'addons' ? 'active' : ''} onClick={() => setActiveMenu('addons')}><i className="fas fa-circle-plus"></i><span>Add-ons</span></button></li>
+                <li><button className={activeMenu === 'addons' ? 'active' : ''} onClick={() => setActiveMenu('addons')}><i className="fas fa-box-archive"></i><span>Packaging &amp; Extras</span></button></li>
                 <li><button className={activeMenu === 'stock' ? 'active' : ''} onClick={() => setActiveMenu('stock')}><i className="fas fa-dolly"></i><span>Stock In/Out</span></button></li>
               </ul>
             </div>

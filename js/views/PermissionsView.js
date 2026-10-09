@@ -23,13 +23,13 @@
           barista: { level: 'none', text: 'No Access', desc: 'Order status view only' }
         },
         {
-          module: 'Order Board & Kitchen Queue (KDS)',
-          icon: 'fa-blender',
-          category: 'Kitchen',
+          module: 'Dispatch & Fulfillment Board',
+          icon: 'fa-truck-ramp-box',
+          category: 'Warehouse',
           admin: { level: 'view', text: 'Full Audit', desc: 'Real-time orders queue overview' },
           manager: { level: 'manage', text: 'Manage Queue', desc: 'Prioritize, cancel or reroute orders' },
           cashier: { level: 'view', text: 'Ready Status', desc: 'Check order readiness for pickup' },
-          barista: { level: 'operate', text: 'Primary Station', desc: 'Prepare drinks & mark ready' }
+          barista: { level: 'operate', text: 'Primary Station', desc: 'Pack items & mark dispatched' }
         },
         {
           module: 'Payment Review & Slip Verification',
@@ -41,17 +41,17 @@
           barista: { level: 'none', text: 'No Access', desc: 'Hidden / Blocked' }
         },
         {
-          module: 'Products & Beverage Menu',
-          icon: 'fa-mug-hot',
+          module: 'Products & Wholesale Catalog',
+          icon: 'fa-boxes-stacked',
           category: 'Catalog',
           admin: { level: 'full', text: 'Full Control', desc: 'Create, edit pricing, costs & delete' },
           manager: { level: 'manage', text: 'Availability', desc: 'Toggle 86 / In-Stock items' },
           cashier: { level: 'view', text: 'View Catalog', desc: 'Lookup prices & ingredients' },
-          barista: { level: 'view', text: 'View Recipes', desc: 'Beverage formulas & cup sizes' }
+          barista: { level: 'view', text: 'View Recipes', desc: 'Product specs & pack units' }
         },
         {
-          module: 'Drink Add-ons & Modifiers',
-          icon: 'fa-circle-plus',
+          module: 'Packaging & Surcharges',
+          icon: 'fa-box-archive',
           category: 'Catalog',
           admin: { level: 'full', text: 'Full Control', desc: 'Syrups, milk alternatives & prices' },
           manager: { level: 'manage', text: 'Manage Stock', desc: 'Toggle modifier availability' },

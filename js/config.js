@@ -6,9 +6,9 @@ window.CFG = window.CFG || {
   upiId: 'shop@upi',
   upiPayeeName: 'My Store',
   business: {
-    name: 'Coffee & Records Cafe',
-    address: 'Main Market, City',
+    name: 'Retail & Wholesale Store',
+    address: 'Main Market, Wholesale Complex',
     phone: '+91 98765 43210',
-    receiptFooter: 'Thank you for your visit!'
+    receiptFooter: 'Thank you for your business! Visit again.'
   }
 };

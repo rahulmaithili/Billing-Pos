@@ -95,24 +95,28 @@ seedDemoData();
         const dupe = await db.ref('categories').orderByChild('name').equalTo(nm).once('value');
         if (dupe.exists()) return { success: false, message: 'That category already exists' };
         const payload = isObj
-          ? Object.assign({ createdAt: nowIso(), icon: 'fa-mug-hot', description: '' }, nameOrData, { name: nm })
-          : { name: nm, icon: 'fa-tag', description: '', createdAt: nowIso() };
+          ? Object.assign({ createdAt: nowIso(), icon: 'fa-box', description: '' }, nameOrData, { name: nm })
+          : { name: nm, icon: 'fa-box', description: '', createdAt: nowIso() };
         const ref = await db.ref('categories').push(payload);
         await fbLogActivity('Add Category', user, nm);
         return { success: true, message: 'Category added', id: ref.key };
       } catch (e) { return { success: false, message: e.message }; }
     }
 
-    async function fbSeedBeverageCategories(user) {
+    async function fbSeedRetailCategories(user) {
       try {
         const defaults = [
-          { name: 'Milk Tea & Boba', icon: 'fa-mug-hot', description: 'Freshly brewed bubble milk tea, pearls & brown sugar' },
-          { name: 'Cold Brew & Iced Coffee', icon: 'fa-blender', description: 'Cold drip coffee, iced lattes & frappes' },
-          { name: 'Hot Coffee & Espresso', icon: 'fa-coffee', description: 'Single origin espresso, cappuccino & americano' },
-          { name: 'Fruit Teas & Refreshers', icon: 'fa-lemon', description: 'Fresh fruit infused green teas & lemonades' },
-          { name: 'Smoothies & Frappes', icon: 'fa-blender', description: 'Real fruit smoothies, yogurt shakes & crushes' },
-          { name: 'Bakery & Snacks', icon: 'fa-cookie', description: 'Pastries, muffins, cookies & light cafe bites' },
-          { name: 'Desserts & Ice Cream', icon: 'fa-ice-cream', description: 'Soft serve, sundaes & sweet toppings' }
+          { name: 'Groceries & Staples', icon: 'fa-basket-shopping', description: 'Grains, pulses, oils, spices & kitchen staples' },
+          { name: 'Packaged Foods & Snacks', icon: 'fa-box-archive', description: 'Biscuits, noodles, chips & ready-to-eat packs' },
+          { name: 'Beverages & Cold Drinks', icon: 'fa-bottle-water', description: 'Packaged juices, soft drinks, water & sodas' },
+          { name: 'Personal Care & Hygiene', icon: 'fa-pump-soap', description: 'Soaps, shampoos, oral care, creams & lotions' },
+          { name: 'Electronics & Accessories', icon: 'fa-plug', description: 'Cables, chargers, earphones & mobile accessories' },
+          { name: 'Clothing & Apparel', icon: 'fa-shirt', description: 'Readymade garments, hosiery & fashion wear' },
+          { name: 'Home & Kitchenware', icon: 'fa-kitchen-set', description: 'Cookware, plastic containers & household utensils' },
+          { name: 'Hardware & Tools', icon: 'fa-wrench', description: 'Tools, electrical fixtures & fasteners' },
+          { name: 'Stationery & Office Supplies', icon: 'fa-pen-ruler', description: 'Notebooks, pens, office papers & supplies' },
+          { name: 'Wholesale Bulk Cartons', icon: 'fa-boxes-packing', description: 'Bulk cartons, master cases & wholesale trade packs' },
+          { name: 'General Merchandise', icon: 'fa-tags', description: 'Seasonal products & assorted retail goods' }
         ];
         let added = 0;
         for (const item of defaults) {
@@ -122,10 +126,11 @@ seedDemoData();
             added++;
           }
         }
-        await fbLogActivity('Seed Categories', user, `${added} beverage categories seeded`);
+        await fbLogActivity('Seed Categories', user, `${added} retail & wholesale categories seeded`);
         return { success: true, message: `${added} categories created successfully!`, count: added };
       } catch (e) { return { success: false, message: e.message }; }
     }
+    const fbSeedBeverageCategories = fbSeedRetailCategories;
     async function fbDeleteCategory(id, name, user) {
       try {
         await db.ref('categories/' + id).remove();
@@ -612,40 +617,43 @@ seedDemoData();
       } catch (e) { return { success: false, message: e.message }; }
     }
 
-    // Seed Demo Drinks (specialty cafe/beverage catalog)
-    async function fbSeedDemoDrinks(user) {
+    // Seed Demo Products (Retail & Wholesale catalog)
+    async function fbSeedDemoProducts(user) {
       try {
-        const drinks = [
-          { name: 'Classic Brown Sugar Boba Milk', sku: 'DRK-BOBA-01', price: 5.50, cost: 2.20, category: 'Boba & Tea', brand: 'House Special', unit: 'Cup', status: 'active', qty: 100 },
-          { name: 'Matcha Green Tea Latte', sku: 'DRK-TEA-02', price: 5.00, cost: 1.80, category: 'Boba & Tea', brand: 'Uji Matcha', unit: 'Cup', status: 'active', qty: 85 },
-          { name: 'Iced Caramel Macchiato', sku: 'DRK-COF-03', price: 4.80, cost: 1.50, category: 'Coffee', brand: 'Artisan Roast', unit: 'Cup', status: 'active', qty: 90 },
-          { name: 'Mango Passionfruit Smoothie', sku: 'DRK-SMO-04', price: 6.00, cost: 2.10, category: 'Smoothies', brand: 'Fresh Fruit', unit: 'Cup', status: 'active', qty: 70 },
-          { name: 'Strawberry Jasmine Fruit Tea', sku: 'DRK-TEA-05', price: 5.20, cost: 1.90, category: 'Fruit Tea', brand: 'Jasmine Pure', unit: 'Cup', status: 'active', qty: 80 },
-          { name: 'Taro Milk Tea with Pearls', sku: 'DRK-BOBA-06', price: 5.50, cost: 2.00, category: 'Boba & Tea', brand: 'House Special', unit: 'Cup', status: 'active', qty: 75 },
-          { name: 'Espresso Double Shot', sku: 'DRK-COF-07', price: 3.50, cost: 0.90, category: 'Coffee', brand: 'Italian Blend', unit: 'Cup', status: 'active', qty: 120 },
-          { name: 'Cold Brew Citrus Splash', sku: 'DRK-COF-08', price: 4.50, cost: 1.40, category: 'Coffee', brand: 'Slow Steep', unit: 'Cup', status: 'active', qty: 65 }
+        const demoItems = [
+          { name: 'Basmati Rice Premium (5 Kg Bag)', sku: 'RTL-RIC-01', price: 420.00, wholesalePrice: 380.00, cost: 350.00, category: 'Groceries & Staples', unit: 'Bag', status: 'active', qty: 50, hsnCode: '1006' },
+          { name: 'Pure Refined Sunflower Oil (1 Litre)', sku: 'RTL-OIL-02', price: 135.00, wholesalePrice: 122.00, cost: 115.00, category: 'Groceries & Staples', unit: 'Pcs', status: 'active', qty: 120, hsnCode: '1512' },
+          { name: 'Packaged Cream Biscuits (Box of 24)', sku: 'RTL-BIS-03', price: 240.00, wholesalePrice: 200.00, cost: 180.00, category: 'Packaged Foods & Snacks', unit: 'Box', status: 'active', qty: 40, hsnCode: '1905' },
+          { name: 'USB Fast Charging Cable Type-C (1.5m)', sku: 'RTL-ELC-04', price: 199.00, wholesalePrice: 120.00, cost: 90.00, category: 'Electronics & Accessories', unit: 'Pcs', status: 'active', qty: 75, hsnCode: '8544' },
+          { name: 'Antibacterial Hand Soap (Pack of 4)', sku: 'RTL-SOP-05', price: 160.00, wholesalePrice: 135.00, cost: 120.00, category: 'Personal Care & Hygiene', unit: 'Pack', status: 'active', qty: 60, hsnCode: '3401' },
+          { name: 'Round Neck Cotton T-Shirt (Assorted)', sku: 'RTL-APP-06', price: 399.00, wholesalePrice: 260.00, cost: 220.00, category: 'Clothing & Apparel', unit: 'Pcs', status: 'active', qty: 85, hsnCode: '6109' },
+          { name: 'Wholesale Master Carton - Instant Noodles (72 Pcs)', sku: 'WHS-NDL-07', price: 864.00, wholesalePrice: 720.00, cost: 650.00, category: 'Wholesale Bulk Cartons', unit: 'Carton', status: 'active', qty: 25, hsnCode: '1902' },
+          { name: 'Heavy Duty Packaging Box 5-Ply', sku: 'WHS-BOX-08', price: 35.00, wholesalePrice: 24.00, cost: 18.00, category: 'Wholesale Bulk Cartons', unit: 'Pcs', status: 'active', qty: 200, hsnCode: '4819' }
         ];
 
-        const cats = ['Boba & Tea', 'Coffee', 'Smoothies', 'Fruit Tea'];
+        const cats = ['Groceries & Staples', 'Packaged Foods & Snacks', 'Electronics & Accessories', 'Personal Care & Hygiene', 'Clothing & Apparel', 'Wholesale Bulk Cartons'];
         for (const c of cats) {
           const snap = await db.ref('categories').orderByChild('name').equalTo(c).once('value');
           if (!snap.exists()) {
-            await db.ref('categories').push({ name: c, createdAt: nowIso() });
+            await db.ref('categories').push({ name: c, icon: 'fa-box', createdAt: nowIso() });
           }
         }
 
         let added = 0;
-        for (const d of drinks) {
+        for (const d of demoItems) {
           const snap = await db.ref('products').orderByChild('name').equalTo(d.name).once('value');
           if (!snap.exists()) {
             const res = await fbAddProduct({
               name: d.name,
               sku: d.sku,
               price: d.price,
+              retailPrice: d.price,
+              wholesalePrice: d.wholesalePrice,
+              wholesale_price: d.wholesalePrice,
               cost: d.cost,
               category: d.category,
-              brand: d.brand,
               unit: d.unit,
+              hsnCode: d.hsnCode,
               reorderLevel: 10,
               status: d.status
             }, user);
@@ -654,18 +662,19 @@ seedDemoData();
                 productId: res.id,
                 type: 'in',
                 qty: d.qty,
-                reason: 'Opening stock (Demo Drinks Seeder)',
-                reference: 'DEMO-SEED',
+                reason: 'Opening stock (Retail & Wholesale Seeder)',
+                reference: 'RETAIL-SEED',
                 unitCost: d.cost
               }, d.name, user);
               added++;
             }
           }
         }
-        await fbLogActivity('Seed Demo Drinks', user, `Seeded ${added} demo drinks into catalog`);
-        return { success: true, message: `Successfully seeded ${added} delicious demo drinks!` };
+        await fbLogActivity('Seed Demo Products', user, `Seeded ${added} retail/wholesale products`);
+        return { success: true, message: `Successfully seeded ${added} retail & wholesale demo items!` };
       } catch (e) { return { success: false, message: e.message }; }
     }
+    const fbSeedDemoDrinks = fbSeedDemoProducts;
 
     // Database Backup & Restore
     async function fbExportDatabase() {

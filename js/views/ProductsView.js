@@ -1,4 +1,4 @@
-// --- Products View V2 (Exact Match to Screenshots 2, 3 & 4) ---
+// --- Products View V2 (Retail & Wholesale Catalog) ---
 function ProductsView({ user, role }) {
   const catOpts = useCategoryOpts();
   const [showModal, setShowModal] = useState(false);
@@ -61,11 +61,13 @@ function ProductsView({ user, role }) {
         isPopular,
         sold30: stats.sold30,
         lastDate: stats.lastDate,
-        code: p.sku || p.code || ('DRK-' + (p.id ? p.id.slice(-3).toUpperCase() : '001')),
+        code: p.sku || p.code || ('SKU-' + (p.id ? p.id.slice(-4).toUpperCase() : '1001')),
         basePrice: Number(p.base_price != null ? p.base_price : p.price || 0),
+        wholesalePrice: Number(p.wholesalePrice != null ? p.wholesalePrice : p.wholesale_price || (p.base_price || p.price || 0)),
+        costPrice: Number(p.costPrice != null ? p.costPrice : p.cost || 0),
+        unit: p.unit || 'Pcs',
+        hsnCode: p.hsnCode || p.hsn || '',
         sizes: p.sizes || [],
-        offerSugar: p.has_sugar !== false && p.offerSugar !== false,
-        offerIce: p.has_ice !== false && p.offerIce !== false,
         addonIds: p.addon_ids || p.addons || []
       };
     });
@@ -185,7 +187,7 @@ function ProductsView({ user, role }) {
   const handleDeleteProduct = async (p) => {
     const confirm = await Swal.fire({
       icon: 'warning',
-      title: 'Delete Drink?',
+      title: 'Delete Product?',
       text: `Are you sure you want to permanently delete "${p.name}"?`,
       showCancelButton: true,
       confirmButtonColor: '#ea4335',
@@ -207,13 +209,13 @@ function ProductsView({ user, role }) {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12, marginBottom: 12 }}>
         <div>
           <div className="dash-breadcrumb">
-            <span><i className="fas fa-mug-hot" style={{ color: 'var(--navy-accent)' }}></i> <strong>Products</strong></span>
+            <span><i className="fas fa-boxes-stacked" style={{ color: 'var(--navy-accent)' }}></i> <strong>Products</strong></span>
             <span>/</span>
             <span>Home</span>
             <span>/</span>
-            <span>Menu</span>
+            <span>Catalog</span>
             <span>/</span>
-            <span style={{ color: '#0f172a', fontWeight: 600 }}>Products</span>
+            <span style={{ color: '#0f172a', fontWeight: 600 }}>Inventory Items</span>
           </div>
         </div>
 
@@ -224,7 +226,7 @@ function ProductsView({ user, role }) {
             onClick={() => { setEditingProduct(null); setShowModal(true); }}
             style={{ fontWeight: 700, padding: '7px 16px', display: 'inline-flex', alignItems: 'center', gap: 6 }}
           >
-            <i className="fas fa-plus"></i> Add Drink
+            <i className="fas fa-plus"></i> Add Product
           </button>
           <button
             type="button"
@@ -288,7 +290,7 @@ function ProductsView({ user, role }) {
             <i className="fas fa-search" style={{ position: 'absolute', left: 10, top: 10, color: '#94a3b8', fontSize: 12 }}></i>
             <input
               type="text"
-              placeholder="Search drink, category, add-on..."
+              placeholder="Search product, category, SKU, barcode..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               style={{ width: '100%', paddingLeft: 30, paddingRight: 10, height: 34, borderRadius: 6, border: '1px solid #cbd5e1', fontSize: 13 }}
@@ -356,7 +358,7 @@ function ProductsView({ user, role }) {
           <button type="button" className="prod-bulk-btn" onClick={() => handleBulkArchive(false)} disabled={!selectedIds.length}>
             <i className="fas fa-rotate-left" style={{ marginRight: 4 }}></i> Restore
           </button>
-          <button type="button" className="prod-bulk-btn" onClick={() => setShowBulkQr(true)} disabled={!selectedIds.length} title="Print QR Labels for selected drinks">
+          <button type="button" className="prod-bulk-btn" onClick={() => setShowBulkQr(true)} disabled={!selectedIds.length} title="Print QR Labels for selected products">
             <i className="fas fa-qrcode" style={{ color: '#0284c7', marginRight: 4 }}></i> Print QR ({selectedIds.length})
           </button>
           <button type="button" className="prod-bulk-btn" onClick={handleExportSelected} disabled={!selectedIds.length}>
@@ -381,9 +383,9 @@ function ProductsView({ user, role }) {
                   onChange={handleSelectAll}
                 />
               </th>
-              <th style={{ minWidth: 200 }}>Drink</th>
-              <th style={{ minWidth: 140 }}>Price</th>
-              <th style={{ minWidth: 180 }}>Options</th>
+              <th style={{ minWidth: 200 }}>Product / Item</th>
+              <th style={{ minWidth: 150 }}>Pricing (Retail / W-Sale)</th>
+              <th style={{ minWidth: 160 }}>Unit &amp; Specs</th>
               <th style={{ minWidth: 140 }}>Sales</th>
               <th style={{ minWidth: 90, textAlign: 'center' }}>Available</th>
               <th style={{ minWidth: 90, textAlign: 'center' }}>Popular</th>
@@ -395,8 +397,8 @@ function ProductsView({ user, role }) {
             {filteredProducts.length === 0 ? (
               <tr>
                 <td colSpan="9" style={{ textAlign: 'center', padding: '48px 16px', color: '#94a3b8' }}>
-                  <i className="fas fa-mug-hot" style={{ fontSize: 32, color: '#cbd5e1', marginBottom: 10, display: 'block' }}></i>
-                  No drinks match your filters
+                  <i className="fas fa-boxes-stacked" style={{ fontSize: 32, color: '#cbd5e1', marginBottom: 10, display: 'block' }}></i>
+                  No products match your filters
                 </td>
               </tr>
             ) : (
@@ -421,7 +423,7 @@ function ProductsView({ user, role }) {
                           <img src={p.imageUrl || p.image_url} alt={p.name} className="prod-v2-thumb" />
                         ) : (
                           <div className="prod-v2-thumb" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontSize: 18 }}>
-                            <i className="fas fa-mug-hot"></i>
+                            <i className="fas fa-box"></i>
                           </div>
                         )}
                         <div>
@@ -436,12 +438,13 @@ function ProductsView({ user, role }) {
                     <td>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 3, fontSize: 12 }}>
                         <div>
-                          <span style={{ background: '#dcfce7', color: '#16a34a', padding: '1px 6px', borderRadius: 4, fontWeight: 700, fontSize: 10.5, marginRight: 4 }}>Base</span>
+                          <span style={{ background: '#dcfce7', color: '#16a34a', padding: '1px 6px', borderRadius: 4, fontWeight: 700, fontSize: 10, marginRight: 4 }}>Retail MRP</span>
                           <strong>{money(p.basePrice)}</strong>
                         </div>
-                        {p.sizes.length > 0 && (
-                          <div style={{ color: '#64748b', fontSize: 11 }}>
-                            <span style={{ color: '#0284c7', fontWeight: 600 }}>Sizes:</span> {p.sizes.map(s => `${s.name} ${s.price_delta ? '+' + money(s.price_delta) : ''}`).join(', ')}
+                        {p.wholesalePrice > 0 && (
+                          <div style={{ fontSize: 11 }}>
+                            <span style={{ background: '#fef3c7', color: '#b45309', padding: '1px 6px', borderRadius: 4, fontWeight: 700, fontSize: 10, marginRight: 4 }}>Wholesale</span>
+                            <strong>{money(p.wholesalePrice)}</strong>
                           </div>
                         )}
                       </div>
@@ -449,11 +452,14 @@ function ProductsView({ user, role }) {
                     <td>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 2, fontSize: 11.5 }}>
                         <div>
-                          <span style={{ color: '#8b5cf6', fontWeight: 700 }}>Sugar / Ice:</span> {p.offerSugar ? 'Yes' : 'No'} / {p.offerIce ? 'Yes' : 'No'}
+                          <span style={{ color: '#0284c7', fontWeight: 700 }}>Unit:</span> <strong style={{ color: '#0f172a' }}>{p.unit}</strong>
+                          {p.hsnCode && <span style={{ marginLeft: 6, color: '#64748b', fontSize: 10.5 }}>HSN: {p.hsnCode}</span>}
                         </div>
-                        <div style={{ color: '#64748b' }}>
-                          <span style={{ color: '#0284c7', fontWeight: 700 }}>Add-ons:</span> {addonsSummary.slice(0, 30)}{addonsSummary.length > 30 ? '...' : ''}
-                        </div>
+                        {p.sizes.length > 0 && (
+                          <div style={{ color: '#64748b', fontSize: 11 }}>
+                            <span style={{ color: '#8b5cf6', fontWeight: 600 }}>Packs:</span> {p.sizes.map(s => s.name).join(', ')}
+                          </div>
+                        )}
                       </div>
                     </td>
                     <td>
@@ -511,7 +517,7 @@ function ProductsView({ user, role }) {
                           type="button"
                           className="action-icon edit-icon"
                           onClick={() => { setEditingProduct(p); setShowModal(true); }}
-                          title="Edit drink"
+                          title="Edit product"
                         >
                           <i className="fas fa-edit"></i>
                         </button>
@@ -519,7 +525,7 @@ function ProductsView({ user, role }) {
                           type="button"
                           className="action-icon delete-icon"
                           onClick={() => handleDeleteProduct(p)}
-                          title="Delete drink"
+                          title="Delete product"
                         >
                           <i className="fas fa-trash"></i>
                         </button>
@@ -533,7 +539,7 @@ function ProductsView({ user, role }) {
         </table>
       </div>
 
-      {/* Add / Edit Drink Modal (Screenshots 3 & 4 Match) */}
+      {/* Add / Edit Product Modal (Screenshots 3 & 4 Match) */}
       {showModal && (
         <AddDrinkModal
           product={editingProduct}
@@ -564,7 +570,7 @@ function ProductsView({ user, role }) {
   );
 }
 
-// --- Rich Add / Edit Drink Modal Component (Screenshots 3 & 4) ---
+// --- Rich Add / Edit Product Modal (Retail & Wholesale Edition) ---
 function AddDrinkModal({ product, categories, addons, onClose, onSaved, user }) {
   const categoryOptions = useMemo(() => {
     const names = new Set((categories || []).map(c => c && c.name).filter(Boolean));
@@ -572,27 +578,35 @@ function AddDrinkModal({ product, categories, addons, onClose, onSaved, user }) 
       names.add(product.category);
     }
     if (names.size === 0) {
-      ['Coffee', 'Tea & Milk Tea', 'Specialty Drinks', 'Pastries & Bakery', 'Snacks', 'Beverages'].forEach(n => names.add(n));
+      ['Groceries & Staples', 'Packaged Foods & Snacks', 'Beverages & Cold Drinks', 'Personal Care & Hygiene', 'Electronics & Accessories', 'Clothing & Apparel', 'Wholesale Bulk Cartons', 'General Merchandise'].forEach(n => names.add(n));
     }
     return Array.from(names);
   }, [categories, product]);
 
-  const [category, setCategory] = useState(product ? product.category || '' : (categoryOptions[0] || 'Coffee'));
+  const [name, setName] = useState(product ? product.name || '' : '');
+  const [sku, setSku] = useState(product ? (product.sku || product.code || '') : '');
+  const [category, setCategory] = useState(product ? product.category || '' : (categoryOptions[0] || 'Groceries & Staples'));
+  const [unit, setUnit] = useState(product ? (product.unit || 'Pcs') : 'Pcs');
+  const [hsnCode, setHsnCode] = useState(product ? (product.hsnCode || product.hsn || '') : '');
   const [description, setDescription] = useState(product ? product.description || '' : '');
   const [imageUrl, setImageUrl] = useState(product ? (product.imageUrl || product.image_url || '') : '');
+  
+  // Pricing Fields (Retail MRP, Wholesale Price, Cost/Purchase Price)
   const [basePrice, setBasePrice] = useState(product ? String(product.basePrice || product.base_price || product.price || '') : '');
+  const [wholesalePrice, setWholesalePrice] = useState(product ? String(product.wholesalePrice || product.wholesale_price || '') : '');
+  const [costPrice, setCostPrice] = useState(product ? String(product.costPrice || product.cost || '') : '');
+  const [minWholesaleQty, setMinWholesaleQty] = useState(product ? Number(product.minWholesaleQty || 1) : 1);
+  
+  // Variations / Pack sizes
   const [sizes, setSizes] = useState(product && product.sizes ? [...product.sizes] : []);
-  const [offerSugar, setOfferSugar] = useState(product ? product.offerSugar !== false : true);
-  const [offerIce, setOfferIce] = useState(product ? product.offerIce !== false : true);
   const [selectedAddons, setSelectedAddons] = useState(product ? (product.addonIds || product.addon_ids || []) : []);
-  const [maxAddons, setMaxAddons] = useState(product ? Number(product.max_addons || 3) : 3);
   const [isPopular, setIsPopular] = useState(product ? product.isPopular === true : false);
   const [isAvailable, setIsAvailable] = useState(product ? product.isAvailable !== false : true);
   const [isActive, setIsActive] = useState(product ? !product.isArchived : true);
   const [saving, setSaving] = useState(false);
 
   const handleAddSize = () => {
-    setSizes(prev => [...prev, { name: 'Large', price_delta: 1.00 }]);
+    setSizes(prev => [...prev, { name: 'Box of 10', price_delta: 0 }]);
   };
 
   const handleUpdateSize = (index, field, val) => {
@@ -620,30 +634,38 @@ function AddDrinkModal({ product, categories, addons, onClose, onSaved, user }) 
   const handleSave = async (e) => {
     e.preventDefault();
     if (!name.trim()) {
-      Swal.fire({ icon: 'warning', title: 'Name Required', text: 'Please enter a drink name.' });
+      Swal.fire({ icon: 'warning', title: 'Product Name Required', text: 'Please enter a product name.' });
       return;
     }
     if (!basePrice || isNaN(Number(basePrice))) {
-      Swal.fire({ icon: 'warning', title: 'Price Required', text: 'Please enter a valid base price.' });
+      Swal.fire({ icon: 'warning', title: 'Retail Price Required', text: 'Please enter a valid retail price (MRP).' });
       return;
     }
 
     setSaving(true);
+    const rPrice = Number(basePrice);
+    const wPrice = wholesalePrice && !isNaN(Number(wholesalePrice)) ? Number(wholesalePrice) : rPrice;
+    const cPrice = costPrice && !isNaN(Number(costPrice)) ? Number(costPrice) : 0;
+
     const payload = {
       name: name.trim(),
+      sku: sku.trim() || undefined,
       category,
+      unit,
+      hsnCode: hsnCode.trim(),
       description: description.trim(),
       imageUrl,
       image_url: imageUrl,
-      price: Number(basePrice),
-      base_price: Number(basePrice),
+      price: rPrice,
+      base_price: rPrice,
+      retailPrice: rPrice,
+      wholesalePrice: wPrice,
+      wholesale_price: wPrice,
+      costPrice: cPrice,
+      cost: cPrice,
+      minWholesaleQty: Number(minWholesaleQty) || 1,
       sizes,
-      has_sugar: offerSugar,
-      offerSugar,
-      has_ice: offerIce,
-      offerIce,
       addon_ids: selectedAddons,
-      max_addons: maxAddons,
       is_popular: isPopular,
       popular: isPopular,
       is_available: isAvailable,
@@ -659,7 +681,7 @@ function AddDrinkModal({ product, categories, addons, onClose, onSaved, user }) 
     setSaving(false);
 
     if (res.success) {
-      Swal.fire({ icon: 'success', title: 'Drink Saved!', timer: 1200, showConfirmButton: false });
+      Swal.fire({ icon: 'success', title: 'Product Saved!', timer: 1200, showConfirmButton: false });
       onSaved();
     } else {
       Swal.fire({ icon: 'error', title: 'Failed to Save', text: res.message || 'Error occurred.' });
@@ -668,12 +690,12 @@ function AddDrinkModal({ product, categories, addons, onClose, onSaved, user }) 
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
-      <div className="add-drink-modal-card" onClick={e => e.stopPropagation()}>
+      <div className="add-drink-modal-card" onClick={e => e.stopPropagation()} style={{ maxWidth: 640 }}>
         {/* Header */}
         <div className="modal-header" style={{ padding: '16px 24px', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h3 style={{ margin: 0, fontSize: 17, fontWeight: 700, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 8 }}>
-            <i className="fas fa-mug-hot" style={{ color: 'var(--navy-accent)' }}></i>
-            {product ? 'Edit Drink' : 'Add Drink'}
+            <i className="fas fa-boxes-stacked" style={{ color: 'var(--navy-accent)' }}></i>
+            {product ? 'Edit Product' : 'Add New Product'}
           </h3>
           <button type="button" className="modal-close-btn" onClick={onClose} style={{ fontSize: 18, color: '#64748b', background: 'none', border: 'none', cursor: 'pointer' }}>
             <i className="fas fa-times"></i>
@@ -682,19 +704,18 @@ function AddDrinkModal({ product, categories, addons, onClose, onSaved, user }) 
 
         {/* Modal Form Body */}
         <form onSubmit={handleSave} className="add-drink-body">
-          {/* Section 1: DRINK */}
+          {/* Section 1: GENERAL PRODUCT DETAILS */}
           <div>
             <div className="add-drink-sec-title">
-              <i className="fas fa-droplet"></i> Drink
-              <span style={{ fontSize: 10, color: '#94a3b8', textTransform: 'lowercase', marginLeft: 'auto', fontWeight: 500 }}>code is given on save</span>
+              <i className="fas fa-box"></i> Product Information
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 12, marginBottom: 12 }}>
               <div className="form-group" style={{ margin: 0 }}>
-                <label style={{ fontSize: 12.5, fontWeight: 600, color: '#334155', marginBottom: 4, display: 'block' }}>Name *</label>
+                <label style={{ fontSize: 12.5, fontWeight: 600, color: '#334155', marginBottom: 4, display: 'block' }}>Product Name *</label>
                 <input
                   type="text"
-                  placeholder="e.g. Classic Milk Tea"
+                  placeholder="e.g. Basmati Rice 5kg / USB Cable 20W"
                   value={name}
                   onChange={e => setName(e.target.value)}
                   required
@@ -702,6 +723,19 @@ function AddDrinkModal({ product, categories, addons, onClose, onSaved, user }) 
                 />
               </div>
 
+              <div className="form-group" style={{ margin: 0 }}>
+                <label style={{ fontSize: 12.5, fontWeight: 600, color: '#334155', marginBottom: 4, display: 'block' }}>Barcode / SKU</label>
+                <input
+                  type="text"
+                  placeholder="Auto if empty"
+                  value={sku}
+                  onChange={e => setSku(e.target.value)}
+                  style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #cbd5e1', fontSize: 13, fontFamily: 'monospace' }}
+                />
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr', gap: 12, marginBottom: 12 }}>
               <div className="form-group" style={{ margin: 0 }}>
                 <label style={{ fontSize: 12.5, fontWeight: 600, color: '#334155', marginBottom: 4, display: 'block' }}>Category *</label>
                 <select
@@ -714,13 +748,44 @@ function AddDrinkModal({ product, categories, addons, onClose, onSaved, user }) 
                   ))}
                 </select>
               </div>
+
+              <div className="form-group" style={{ margin: 0 }}>
+                <label style={{ fontSize: 12.5, fontWeight: 600, color: '#334155', marginBottom: 4, display: 'block' }}>Unit</label>
+                <select
+                  value={unit}
+                  onChange={e => setUnit(e.target.value)}
+                  style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #cbd5e1', fontSize: 13, background: '#fff' }}
+                >
+                  <option value="Pcs">Pcs (Pieces)</option>
+                  <option value="Box">Box</option>
+                  <option value="Carton">Carton</option>
+                  <option value="Kg">Kg (Kilogram)</option>
+                  <option value="Gram">Gram</option>
+                  <option value="Pack">Pack</option>
+                  <option value="Dozen">Dozen</option>
+                  <option value="Ltr">Ltr (Litre)</option>
+                  <option value="Meter">Meter</option>
+                  <option value="Bundle">Bundle</option>
+                </select>
+              </div>
+
+              <div className="form-group" style={{ margin: 0 }}>
+                <label style={{ fontSize: 12.5, fontWeight: 600, color: '#334155', marginBottom: 4, display: 'block' }}>HSN Code</label>
+                <input
+                  type="text"
+                  placeholder="e.g. 1006"
+                  value={hsnCode}
+                  onChange={e => setHsnCode(e.target.value)}
+                  style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #cbd5e1', fontSize: 13 }}
+                />
+              </div>
             </div>
 
             <div className="form-group" style={{ marginBottom: 14 }}>
               <label style={{ fontSize: 12.5, fontWeight: 600, color: '#334155', marginBottom: 4, display: 'block' }}>Description</label>
               <textarea
                 rows="2"
-                placeholder="One line shoppers read on the menu card"
+                placeholder="Product specifications, brand, size or notes"
                 value={description}
                 onChange={e => setDescription(e.target.value)}
                 style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #cbd5e1', fontSize: 13, resize: 'vertical' }}
@@ -733,17 +798,17 @@ function AddDrinkModal({ product, categories, addons, onClose, onSaved, user }) 
               <div className="add-drink-dropzone">
                 {imageUrl ? (
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14 }}>
-                    <img src={imageUrl} alt="Preview" style={{ width: 72, height: 72, borderRadius: 8, objectFit: 'cover', border: '1px solid #fca5a5' }} />
+                    <img src={imageUrl} alt="Preview" style={{ width: 72, height: 72, borderRadius: 8, objectFit: 'cover', border: '1px solid #cbd5e1' }} />
                     <div>
                       <button type="button" className="btn btn-secondary btn-sm" onClick={() => setImageUrl('')}>Remove photo</button>
                     </div>
                   </div>
                 ) : (
                   <>
-                    <div style={{ fontSize: 24, color: '#f43f5e', marginBottom: 6 }}><i className="fas fa-image"></i></div>
-                    <div style={{ fontWeight: 700, fontSize: 13, color: '#1e293b' }}>Drag &amp; drop a drink photo</div>
-                    <div style={{ fontSize: 11, color: '#64748b', marginBottom: 10 }}>or choose one below · square photos look best</div>
-                    <label className="btn btn-primary btn-sm" style={{ cursor: 'pointer', padding: '5px 14px', background: '#e11d48', borderColor: '#e11d48' }}>
+                    <div style={{ fontSize: 24, color: '#64748b', marginBottom: 6 }}><i className="fas fa-image"></i></div>
+                    <div style={{ fontWeight: 700, fontSize: 13, color: '#1e293b' }}>Upload product image</div>
+                    <div style={{ fontSize: 11, color: '#64748b', marginBottom: 10 }}>clear product picture for fast visual identification</div>
+                    <label className="btn btn-primary btn-sm" style={{ cursor: 'pointer', padding: '5px 14px' }}>
                       Choose File
                       <input type="file" accept="image/*" onChange={handlePhotoUpload} style={{ display: 'none' }} />
                     </label>
@@ -753,31 +818,57 @@ function AddDrinkModal({ product, categories, addons, onClose, onSaved, user }) 
             </div>
           </div>
 
-          {/* Section 2: PRICE & SIZES */}
+          {/* Section 2: RETAIL & WHOLESALE PRICING */}
           <div>
             <div className="add-drink-sec-title">
-              <i className="fas fa-tag"></i> Price &amp; Sizes
+              <i className="fas fa-tags"></i> Retail &amp; Wholesale Pricing
             </div>
 
-            <div style={{ maxWidth: 200, marginBottom: 12 }}>
-              <label style={{ fontSize: 12.5, fontWeight: 600, color: '#334155', marginBottom: 4, display: 'block' }}>Base price *</label>
-              <input
-                type="number"
-                step="0.01"
-                placeholder="3.50"
-                value={basePrice}
-                onChange={e => setBasePrice(e.target.value)}
-                required
-                style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #cbd5e1', fontSize: 13 }}
-              />
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginBottom: 12 }}>
+              <div>
+                <label style={{ fontSize: 12.5, fontWeight: 600, color: '#334155', marginBottom: 4, display: 'block' }}>Retail Price (MRP) *</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  placeholder="e.g. 100.00"
+                  value={basePrice}
+                  onChange={e => setBasePrice(e.target.value)}
+                  required
+                  style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #cbd5e1', fontSize: 13 }}
+                />
+              </div>
+
+              <div>
+                <label style={{ fontSize: 12.5, fontWeight: 600, color: '#334155', marginBottom: 4, display: 'block' }}>Wholesale Rate</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  placeholder="Bulk rate (e.g. 85.00)"
+                  value={wholesalePrice}
+                  onChange={e => setWholesalePrice(e.target.value)}
+                  style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #cbd5e1', fontSize: 13 }}
+                />
+              </div>
+
+              <div>
+                <label style={{ fontSize: 12.5, fontWeight: 600, color: '#334155', marginBottom: 4, display: 'block' }}>Cost / Purchase Price</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  placeholder="Purchase rate (e.g. 70.00)"
+                  value={costPrice}
+                  onChange={e => setCostPrice(e.target.value)}
+                  style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #cbd5e1', fontSize: 13 }}
+                />
+              </div>
             </div>
 
-            {/* Sizes Rows */}
+            {/* Pack Variations */}
             <div style={{ background: '#f8fafc', padding: 12, borderRadius: 8, border: '1px solid #e2e8f0', marginBottom: 6 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                <span style={{ fontSize: 12, color: '#64748b', fontWeight: 600 }}>Sizes optional — leave empty for one price</span>
+                <span style={{ fontSize: 12, color: '#64748b', fontWeight: 600 }}>Pack Variations (e.g. Pack of 6, Box of 24)</span>
                 <button type="button" className="btn btn-secondary btn-sm" onClick={handleAddSize} style={{ fontSize: 11.5, padding: '3px 8px' }}>
-                  <i className="fas fa-plus"></i> Add size
+                  <i className="fas fa-plus"></i> Add Pack Variant
                 </button>
               </div>
 
@@ -785,7 +876,7 @@ function AddDrinkModal({ product, categories, addons, onClose, onSaved, user }) 
                 <div key={idx} style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 6 }}>
                   <input
                     type="text"
-                    placeholder="Size name (e.g. Large)"
+                    placeholder="Variant name (e.g. Master Carton)"
                     value={s.name}
                     onChange={e => handleUpdateSize(idx, 'name', e.target.value)}
                     style={{ flex: 1, padding: '6px 10px', fontSize: 12.5, borderRadius: 6, border: '1px solid #cbd5e1' }}
@@ -796,7 +887,7 @@ function AddDrinkModal({ product, categories, addons, onClose, onSaved, user }) 
                     placeholder="+$ Price Delta"
                     value={s.price_delta}
                     onChange={e => handleUpdateSize(idx, 'price_delta', e.target.value)}
-                    style={{ width: 100, padding: '6px 10px', fontSize: 12.5, borderRadius: 6, border: '1px solid #cbd5e1' }}
+                    style={{ width: 110, padding: '6px 10px', fontSize: 12.5, borderRadius: 6, border: '1px solid #cbd5e1' }}
                   />
                   <button type="button" onClick={() => handleRemoveSize(idx)} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: 4 }}>
                     <i className="fas fa-trash"></i>
@@ -806,106 +897,57 @@ function AddDrinkModal({ product, categories, addons, onClose, onSaved, user }) 
             </div>
           </div>
 
-          {/* Section 3: OPTIONS (Sugar, Ice, Add-ons) */}
+          {/* Section 3: PACKAGING & STATUS */}
           <div>
             <div className="add-drink-sec-title">
-              <i className="fas fa-sliders"></i> Options
+              <i className="fas fa-box-archive"></i> Extra Packaging &amp; Status
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 14 }}>
+            {addons.length > 0 && (
+              <div style={{ marginBottom: 12 }}>
+                <label style={{ fontSize: 12.5, fontWeight: 600, color: '#334155', marginBottom: 4, display: 'block' }}>Extra Packaging &amp; Surcharges Offered</label>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, background: '#f8fafc', padding: 10, borderRadius: 8, border: '1px solid #cbd5e1' }}>
+                  {addons.map(a => {
+                    const on = selectedAddons.includes(a.id) || selectedAddons.includes(a.name);
+                    return (
+                      <button
+                        key={a.id}
+                        type="button"
+                        onClick={() => toggleAddon(a.id)}
+                        style={{
+                          padding: '4px 10px',
+                          borderRadius: 999,
+                          fontSize: 11.5,
+                          fontWeight: 600,
+                          border: '1px solid',
+                          cursor: 'pointer',
+                          borderColor: on ? '#0284c7' : '#cbd5e1',
+                          background: on ? '#e0f2fe' : '#ffffff',
+                          color: on ? '#0284c7' : '#475569'
+                        }}
+                      >
+                        {on ? '✓ ' : '+ '}{a.name} (+${Number(a.price || 0).toFixed(2)})
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Status Toggles */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginTop: 14 }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#f8fafc', padding: 10, borderRadius: 8, border: '1px solid #e2e8f0' }}>
-                <span style={{ fontSize: 12.5, fontWeight: 600, color: '#334155' }}><i className="fas fa-cubes-stacked" style={{ marginRight: 6, color: '#d97706' }}></i> Offer sugar levels</span>
-                <label className="switch-pill">
-                  <input type="checkbox" checked={offerSugar} onChange={e => setOfferSugar(e.target.checked)} />
-                  <span className="switch-slider"></span>
-                </label>
-              </div>
-
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#f8fafc', padding: 10, borderRadius: 8, border: '1px solid #e2e8f0' }}>
-                <span style={{ fontSize: 12.5, fontWeight: 600, color: '#334155' }}><i className="fas fa-snowflake" style={{ marginRight: 6, color: '#0284c7' }}></i> Offer ice levels</span>
-                <label className="switch-pill">
-                  <input type="checkbox" checked={offerIce} onChange={e => setOfferIce(e.target.checked)} />
-                  <span className="switch-slider"></span>
-                </label>
-              </div>
-            </div>
-
-            <div style={{ marginBottom: 12 }}>
-              <label style={{ fontSize: 12.5, fontWeight: 600, color: '#334155', marginBottom: 4, display: 'block' }}>Add-ons this drink offers</label>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, background: '#f8fafc', padding: 10, borderRadius: 8, border: '1px solid #cbd5e1' }}>
-                {addons.map(a => {
-                  const on = selectedAddons.includes(a.id) || selectedAddons.includes(a.name);
-                  return (
-                    <button
-                      key={a.id}
-                      type="button"
-                      onClick={() => toggleAddon(a.id)}
-                      style={{
-                        padding: '4px 10px',
-                        borderRadius: 999,
-                        fontSize: 11.5,
-                        fontWeight: 600,
-                        border: '1px solid',
-                        cursor: 'pointer',
-                        borderColor: on ? '#e11d48' : '#cbd5e1',
-                        background: on ? '#fff1f2' : '#ffffff',
-                        color: on ? '#e11d48' : '#475569'
-                      }}
-                    >
-                      {on ? '✓ ' : '+ '}{a.name} (+${Number(a.price || 0).toFixed(2)})
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 4, display: 'block' }}>Customer may choose up to</label>
-              <div style={{ display: 'flex', gap: 6 }}>
-                {[0, 1, 2, 3].map(n => (
-                  <button
-                    key={n}
-                    type="button"
-                    onClick={() => setMaxAddons(n)}
-                    style={{
-                      width: 32,
-                      height: 32,
-                      borderRadius: 6,
-                      fontSize: 13,
-                      fontWeight: 700,
-                      border: '1px solid',
-                      borderColor: maxAddons === n ? '#0f172a' : '#cbd5e1',
-                      background: maxAddons === n ? '#0f172a' : '#ffffff',
-                      color: maxAddons === n ? '#ffffff' : '#475569',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    {n}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Section 4: VISIBILITY */}
-          <div>
-            <div className="add-drink-sec-title">
-              <i className="fas fa-eye"></i> Visibility
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12 }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#f8fafc', padding: 10, borderRadius: 8, border: '1px solid #e2e8f0' }}>
-                <span style={{ fontSize: 12, fontWeight: 600, color: '#334155' }}>Popular (shows first)</span>
-                <label className="switch-pill">
-                  <input type="checkbox" checked={isPopular} onChange={e => setIsPopular(e.target.checked)} />
-                  <span className="switch-slider"></span>
-                </label>
-              </div>
-
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#f8fafc', padding: 10, borderRadius: 8, border: '1px solid #e2e8f0' }}>
-                <span style={{ fontSize: 12, fontWeight: 600, color: '#334155' }}>Available (off = sold out)</span>
+                <span style={{ fontSize: 12, fontWeight: 600, color: '#334155' }}>In Stock</span>
                 <label className="switch-pill">
                   <input type="checkbox" checked={isAvailable} onChange={e => setIsAvailable(e.target.checked)} />
+                  <span className="switch-slider"></span>
+                </label>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#f8fafc', padding: 10, borderRadius: 8, border: '1px solid #e2e8f0' }}>
+                <span style={{ fontSize: 12, fontWeight: 600, color: '#334155' }}>Featured / Top</span>
+                <label className="switch-pill">
+                  <input type="checkbox" checked={isPopular} onChange={e => setIsPopular(e.target.checked)} />
                   <span className="switch-slider"></span>
                 </label>
               </div>
@@ -920,46 +962,13 @@ function AddDrinkModal({ product, categories, addons, onClose, onSaved, user }) 
             </div>
           </div>
 
-          {/* Section 5: Storefront Preview */}
-          <div>
-            <div style={{ fontSize: 12, color: '#64748b', fontWeight: 600, marginBottom: 8 }}>Storefront preview</div>
-            <div className="add-drink-preview-card">
-              <div className="add-drink-preview-img">
-                {imageUrl ? (
-                  <img src={imageUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 8 }} />
-                ) : (
-                  <i className="fas fa-mug-hot"></i>
-                )}
-              </div>
-              <div style={{ fontWeight: 800, fontSize: 13, color: '#0f172a', textTransform: 'uppercase', marginBottom: 2 }}>
-                {name || 'DRINK NAME'}
-              </div>
-              <div style={{ fontWeight: 700, fontSize: 14, color: '#e11d48' }}>
-                ${Number(basePrice || 0).toFixed(2)}
-              </div>
-            </div>
-          </div>
-
-          {/* Modal Footer Actions */}
-          <div style={{ display: 'flex', justifyContent: 'flex-start', gap: 10, paddingTop: 14, borderTop: '1px solid #e2e8f0' }}>
-            <button
-              type="submit"
-              className="btn btn-primary"
-              disabled={saving}
-              style={{ background: '#0f172a', borderColor: '#0f172a', padding: '8px 20px', fontWeight: 700, fontSize: 13 }}
-            >
-              <i className="fas fa-save" style={{ marginRight: 6 }}></i>
-              {saving ? 'Saving...' : 'Save'}
-            </button>
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={onClose}
-              disabled={saving}
-              style={{ padding: '8px 18px', fontSize: 13 }}
-            >
-              <i className="fas fa-times" style={{ marginRight: 6 }}></i>
+          {/* Modal Footer */}
+          <div className="add-drink-footer">
+            <button type="button" className="btn btn-secondary" onClick={onClose} disabled={saving}>
               Cancel
+            </button>
+            <button type="submit" className="btn btn-primary" disabled={saving} style={{ fontWeight: 700, padding: '8px 24px' }}>
+              {saving ? <><i className="fas fa-circle-notch fa-spin"></i> Saving...</> : (product ? 'Update Product' : 'Create Product')}
             </button>
           </div>
         </form>
@@ -967,7 +976,6 @@ function AddDrinkModal({ product, categories, addons, onClose, onSaved, user }) 
     </div>
   );
 }
-
 
 // --- Product QR Label & Fast Billing Modal ---
 function ProductQRModal({ product, onClose }) {

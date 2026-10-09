@@ -16,6 +16,7 @@ function POSView({ user, role }) {
       const [onlineVerified, setOnlineVerified] = useState(false);
       const [held, setHeld] = useState(() => { try { return JSON.parse(localStorage.getItem('pos_held') || '[]'); } catch (e) { return []; } });
       const [selectedCategory, setSelectedCategory] = useState('ALL');
+      const [billingMode, setBillingMode] = useState('retail'); // 'retail' | 'wholesale'
       const [searchQuery, setSearchQuery] = useState('');
       const scanRef = useRef(null);
 
@@ -378,7 +379,7 @@ function POSView({ user, role }) {
                   <input
                     type="text"
                     className="pos-search-input"
-                    placeholder="Search menu, drinks, food, SKU..."
+                    placeholder="Search items, products, SKU, barcode..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
@@ -435,7 +436,7 @@ function POSView({ user, role }) {
                   </div>
                 ) : filteredProducts.length === 0 ? (
                   <div className="pos-empty-catalog">
-                    <i className="fas fa-mug-saucer"></i>
+                    <i className="fas fa-box-open"></i>
                     <h4>No items found</h4>
                     <p>No products match "{searchQuery || selectedCategory}"</p>
                   </div>
@@ -471,7 +472,7 @@ function POSView({ user, role }) {
                             className="pos-card-fallback-icon"
                             style={{ display: p.imageUrl ? 'none' : 'flex' }}
                           >
-                            <i className="fas fa-mug-hot"></i>
+                            <i className="fas fa-box"></i>
                           </div>
                         </div>
                         <div className="pos-card-info">
@@ -533,7 +534,7 @@ function POSView({ user, role }) {
                       <div className="pos-cart-row" key={it.productId}>
                         <div className="pi-name">
                           <strong>{it.name}</strong>
-                          <small>SKU: {it.sku} · {money(it.price)} each</small>
+                          <small>SKU: {it.sku || "—"} · {money(it.price)} / {it.unit || "unit"}</small>
                         </div>
                         <div className="pos-qty-ctrl">
                           <button type="button" onClick={() => changeQty(it.productId, -1)} title="Decrease">
