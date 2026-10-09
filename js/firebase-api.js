@@ -6,6 +6,18 @@
     window.db = firebase.database();
 
       function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+function sanitizeDbData(obj) {
+  if (obj === null || obj === undefined || typeof obj !== 'object') return obj;
+  if (Array.isArray(obj)) return obj.map(sanitizeDbData).filter(x => x !== undefined);
+  const clean = {};
+  Object.keys(obj).forEach(k => {
+    if (obj[k] !== undefined) {
+      clean[k] = sanitizeDbData(obj[k]);
+    }
+  });
+  return clean;
+}
+
 function nowIso() { return new Date().toISOString(); }
 
 // seed demo login + sample records once, first run only
@@ -77,7 +89,8 @@ seedDemoData();
       try { const snap = await db.ref('settings').once('value'); return { success: true, data: snap.val() || {} }; }
       catch (e) { return { success: false, message: e.message, data: {} }; }
     }
-    async function fbSaveSettings(data, user) {
+    async function fbSaveSettings(raw, user) {
+      const data = sanitizeDbData(raw);
       try { await db.ref('settings').update(data); await fbLogActivity('Update Settings', user, 'Business settings updated'); return { success: true, message: 'Settings saved' }; }
       catch (e) { return { success: false, message: e.message }; }
     }
@@ -226,7 +239,8 @@ seedDemoData();
       } catch (e) { return { success: false, message: e.message, data: [] }; }
     }
 
-    async function fbAddProduct(data, user) {
+    async function fbAddProduct(raw, user) {
+      const data = sanitizeDbData(raw);
       try {
         const skuRes = await fbGenerateSku();
         if (!skuRes.success) return { success: false, message: skuRes.message };
@@ -253,7 +267,8 @@ seedDemoData();
     }
 
     // sku is immutable - data here never includes it, so update() can't touch it
-    async function fbUpdateProduct(id, data, user) {
+    async function fbUpdateProduct(id, raw, user) {
+      const data = sanitizeDbData(raw);
       try {
         await db.ref('products/' + id).update(data);
         await fbLogActivity('Update Product', user, data.name);

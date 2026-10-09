@@ -3241,7 +3241,6 @@ function AddDrinkModal({ product, categories, addons, movements, onClose, onSave
 
     const payload = {
       name: name.trim(),
-      sku: sku.trim() || undefined,
       category,
       unit,
       hsnCode: hsnCode.trim(),
@@ -3255,16 +3254,22 @@ function AddDrinkModal({ product, categories, addons, movements, onClose, onSave
       wholesale_price: wPrice,
       costPrice: cPrice,
       cost: cPrice,
-      openingStock: openingStock ? Number(openingStock) : undefined,
       minStockAlert: Number(minStockAlert) || 5,
       minWholesaleQty: Number(minWholesaleQty) || 1,
-      sizes,
-      addon_ids: selectedAddons,
+      sizes: sizes || [],
+      addon_ids: selectedAddons || [],
       is_popular: isPopular,
       popular: isPopular,
       is_available: isAvailable,
       status: isActive ? (isAvailable ? 'active' : 'sold_out') : 'archived'
     };
+
+    if (sku && sku.trim()) {
+      payload.sku = sku.trim();
+    }
+    if (!product && openingStock && Number(openingStock) > 0) {
+      payload.openingStock = Number(openingStock);
+    }
 
         let res;
     if (product && product.id) {
